@@ -8,7 +8,7 @@ Easy to use PDO Wrapper for PHP 5.6+
 *    Help prevent injections.
 
 ### What's new
-2017-11-2017 (1.0.0):
+2017-11-18 (1.0.0):
 *    Initial release
 
 ### Installation
@@ -44,7 +44,7 @@ $Statement->sql('SELECT *')
           ->sql('     ) SUBQ')
           ->sql('ORDER BY `id` DESC;');
 
-// Show compukedSQL statement
+// Show computedSQL statement
 print_r($Statement->getComputed());
 
 $res = $db->selectRows($Statement);
