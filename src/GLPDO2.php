@@ -172,9 +172,9 @@ Class GLPDO2
     {
         $row = $this->selectRow($SQL);
 
-        if(!$caseSensitive)
+        if (!$caseSensitive)
         {
-            $row = array_change_key_case($row);
+            $row    = array_change_key_case($row);
             $column = strtolower($column);
         }
 
