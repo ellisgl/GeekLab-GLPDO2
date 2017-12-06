@@ -174,6 +174,7 @@ Class GLPDO2
 
         if(!$caseSensitive)
         {
+            $row = array_change_key_case($row);
             $column = strtolower($column);
         }
 

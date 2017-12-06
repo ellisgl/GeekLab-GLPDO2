@@ -340,6 +340,16 @@ class GLPDO2Test extends TestCase
         $this->assertEquals('Mexico', $this->db->selectRow($Statement)['location'], 'Record did not update correctly.');
     }
 
+    // selectValue tests
+    public function testSelectValueCaseInsenstive()
+    {
+        // todo
+    }
+
+    public function testSelectValueCaseSensitve()
+    {
+        // todo
+    }
     // Delete
     public function testDelete()
     {
