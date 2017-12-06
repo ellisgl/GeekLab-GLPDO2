@@ -8,11 +8,14 @@ Easy to use PDO Wrapper for PHP 5.6+
 *    Help prevent injections.
 
 ### What's new
+2017-1205 (1.0.2):
+*    Fixed case sensitivity with selectValue()
+
 2017-11-18 (1.0.0):
 *    Initial release
 
 ### Installation
-composer install geeklab/glpdo2
+composer require geeklab/glpdo2
 
 ### Todo
 *    More tests.
