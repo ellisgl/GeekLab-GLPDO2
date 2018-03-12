@@ -161,6 +161,7 @@ class GLPDO2Test extends TestCase
     }
 
     // Int array
+    // Todo...
 
     // Like
     public function testLikeBeginsWith()
@@ -343,13 +344,27 @@ class GLPDO2Test extends TestCase
     // selectValue tests
     public function testSelectValueCaseInsenstive()
     {
-        // todo
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` = \'Drew\';');
+
+        $this->assertEquals('Drew', $this->db->selectValue($Statement, 'NAMe'));
     }
 
     public function testSelectValueCaseSensitve()
     {
-        // todo
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` = \'Drew\';');
+
+        $this->assertNotEquals('Drew', $this->db->selectValue($Statement, 'NAMe', TRUE));
+        $this->assertEquals('Drew', $this->db->selectValue($Statement, 'name', TRUE));
     }
+
     // Delete
     public function testDelete()
     {
@@ -381,4 +396,14 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $this->db->selectRows($Statement), 'Table data does not match!');
     }
 
+    // Injection Test
+    public function testInjection()
+    {
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` = ?;')->bStr("1' OR 1; --'");
+
+        $this->assertEmpty($this->db->selectRows($Statement));
+    }
 }
