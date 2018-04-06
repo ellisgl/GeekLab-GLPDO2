@@ -406,4 +406,7 @@ class GLPDO2Test extends TestCase
 
         $this->assertEmpty($this->db->selectRows($Statement));
     }
+
+    // Todo: Test 'Raw' with over 10 places.
+
 }

@@ -386,7 +386,7 @@ class Statement
         // Replace raw placements with raw values
         foreach ($this->rawNamed as $name => $rVal)
         {
-            $sql = str_replace($name, $rVal, $sql);
+            $sql = preg_replace('/'.$name .'\b/', $rVal, $sql);
         }
 
         $stmt = $PDO->prepare($sql);
