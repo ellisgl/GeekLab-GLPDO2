@@ -8,7 +8,10 @@ Easy to use PDO Wrapper for PHP 5.6+
 *    Help prevent injections.
 
 ### What's new
-2017-1205 (1.0.2):
+2018-04-06 (1.0.4):
+*   Fixed issue with more than 10 raw bindings.
+ 
+2017-12-05 (1.0.2):
 *    Fixed case sensitivity with selectValue()
 
 2017-11-18 (1.0.0):
