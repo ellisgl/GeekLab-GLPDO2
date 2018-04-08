@@ -84,7 +84,7 @@ Statement->bind($name, $value, \PDO::PARAM_* $type)<br/>
 Binds a value to a named parameter with option PDO binding type (default \PDO::PARAM_STR)
 
 Statement->bRaw($value)<br/>
-Binds a raw value to '%%' in the sql statement. This is unquoted. Good for tables names and functions. Can be dangerous if not handle correctly.
+Binds a raw value to '%%' in the sql statement. This is unquoted and unescaped. Good for tables names and functions. Can be dangerous if not handled correctly.
 
 ### Query Methods
 GLPDO->queryDelete(Statement $SQL)<br/>
