@@ -121,5 +121,5 @@ Outputs the SQL statement for debuging purposes (Prettier version of Statement->
 Statement->execute(\PDO $PDO)<br/>
 Prepares and executes the statement
 
-Statement->getDebug()<br/>
+Statement->getComputed()<br/>
 Returns the the SQL query string might look like for debugging purposes.
