@@ -72,7 +72,7 @@ Statement->bInt($value, optional boolean $null)<br/>
 Bind a value as an integer, whith optional NULL return.
 
 Statement->bIntArray(array $data, integer $default)<br/>
-Converts an array of integers to a comma separated values. Will output $default (which is 0) if $data is not an array. Used with IN() statements.
+Converts an array of integers to a comma separated values. Will output $default (which is 0) if $data is not an array. Used with IN() statements. Use '%%' instead of '?'.
 
 Statement->bLike($value, boolean $ends, boolean $starts)<br/>
 Binds a value as a string for LIKE queries. $ends = "ends with", $starts = "starts with"
