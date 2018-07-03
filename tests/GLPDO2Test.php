@@ -158,7 +158,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $this->db->selectRows($Statement));
     }
 
-    // Todo: Int array
+    // Int array
     public function testIntArray()
     {
         $Statement = new GLPDO2\Statement();

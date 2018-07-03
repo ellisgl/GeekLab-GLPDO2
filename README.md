@@ -71,6 +71,9 @@ Binds a value aa a float, with decimal place (default of 3) and optional NULL re
 Statement->bInt($value, optional boolean $null)<br/>
 Bind a value as an integer, whith optional NULL return.
 
+Statement->bIntArray(array $data, integer $default)<br/>
+Converts an array of integers to a comma separated values. Will output $default (which is 0) if $data is not an array. Used with IN() statements.
+
 Statement->bLike($value, boolean $ends, boolean $starts)<br/>
 Binds a value as a string for LIKE queries. $ends = "ends with", $starts = "starts with"
 
@@ -120,6 +123,3 @@ Prepares and executes the statement
 
 Statement->getDebug()<br/>
 Returns the the SQL query string might look like for debuging purposes.
-
-Statement->intArray(array $data, integer $default)<br/>
-Converts an array of integers to a comma separed values. Will output $default (which is 0) if $data is not an array. Used with IN() statements.
