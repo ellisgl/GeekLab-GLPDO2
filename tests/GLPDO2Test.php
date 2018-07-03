@@ -159,8 +159,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $this->db->selectRows($Statement));
     }
 
-    // Int array
-    // Todo...
+    // Todo: Int array
 
     // Like
     public function testLikeBeginsWith()
@@ -435,7 +434,5 @@ class GLPDO2Test extends TestCase
         $this->assertEmpty($this->db->selectRows($Statement));
     }
 
-
-    // Transaction tests
-
+    // Todo: Transaction tests
 }
