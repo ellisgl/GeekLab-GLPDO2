@@ -62,6 +62,7 @@ class GLPDO2Test extends TestCase
     public function testBasicSelect()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT * FROM `test`;');
 
         // Make sure our statement is what it is.
@@ -79,6 +80,7 @@ class GLPDO2Test extends TestCase
     public function testBoolFalseInt()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  (0 = ?);')->bBool(NULL, FALSE, TRUE);
@@ -98,6 +100,7 @@ class GLPDO2Test extends TestCase
     public function testBoolTrueInt()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  (0 = ?);')->bBool('x', FALSE, TRUE);
@@ -120,6 +123,7 @@ class GLPDO2Test extends TestCase
     public function testFloat()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `dp` = ?;')->bFloat('1.101', 1); // Making it one decimal point
@@ -141,6 +145,7 @@ class GLPDO2Test extends TestCase
     public function testInt()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `id` = ?;')->bInt('1');
@@ -162,6 +167,7 @@ class GLPDO2Test extends TestCase
     public function testIntArray()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM `test`')
                   ->sql('WHERE `id` IN (%%);')->bIntArray(array(1, 2, 3));
@@ -177,6 +183,7 @@ class GLPDO2Test extends TestCase
             ['id' => '2', 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1'],
             ['id' => '3', 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2']
         ];
+
         $this->assertEquals($expected, $this->db->selectRows($Statement));
     }
 
@@ -184,6 +191,7 @@ class GLPDO2Test extends TestCase
     public function testLikeBeginsWith()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` LIKE ?;')->bLike('dr', FALSE, TRUE);
@@ -204,6 +212,7 @@ class GLPDO2Test extends TestCase
     public function testLikeEndsWith()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` LIKE ?;')->bLike('nn', TRUE, FALSE);
@@ -224,6 +233,7 @@ class GLPDO2Test extends TestCase
     public function testLikeSomewhere()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` LIKE ?;')->bLike('li');
@@ -244,6 +254,7 @@ class GLPDO2Test extends TestCase
     public function testLikeNowhere()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` LIKE ?;')->bLike('li', TRUE, TRUE);
@@ -260,6 +271,7 @@ class GLPDO2Test extends TestCase
     public function testRaw()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT * FROM `%%` ')->bRaw('test')
                   ->sql('WHERE ')
                   ->sql('(0  = %%) & ')->bRaw(0)
@@ -298,6 +310,7 @@ class GLPDO2Test extends TestCase
     public function testString()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bStr('Sarah');
@@ -319,6 +332,7 @@ class GLPDO2Test extends TestCase
     public function testStringArray()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `location` IN (%%);')->bStrArr(['Germany', 'USA']);
@@ -367,6 +381,7 @@ class GLPDO2Test extends TestCase
     public function testUpdate()
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('UPDATE `test`')
                   ->sql('SET    `location` = ?')->bStr('Mexico')
                   ->sql('WHERE  `name`     = ?;')->bStr('Drew');
@@ -382,7 +397,6 @@ class GLPDO2Test extends TestCase
                   ->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = \'Drew\';');
-
         $this->assertEquals('Mexico', $this->db->selectRow($Statement)['location'], 'Record did not update correctly.');
     }
 
@@ -394,7 +408,6 @@ class GLPDO2Test extends TestCase
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = \'Drew\';');
-
         $this->assertEquals('Drew', $this->db->selectValue($Statement, 'NAMe'));
     }
 
@@ -405,7 +418,6 @@ class GLPDO2Test extends TestCase
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = \'Drew\';');
-
         $this->assertNotEquals('Drew', $this->db->selectValue($Statement, 'NAMe', TRUE));
         $this->assertEquals('Drew', $this->db->selectValue($Statement, 'name', TRUE));
     }
@@ -427,7 +439,6 @@ class GLPDO2Test extends TestCase
                   ->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bStr('Drew');
-
         $this->assertEmpty($this->db->selectRow($Statement), 'Record did not delete.');
 
         $Statement->reset()
