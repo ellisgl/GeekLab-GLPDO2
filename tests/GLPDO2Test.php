@@ -44,14 +44,12 @@ class GLPDO2Test extends TestCase
                   ->sql('    `location` TEXT DEFAULT NULL,')
                   ->sql('    `dp` NUMERIC DEFAULT NULL')
                   ->sql(');');
-
         $this->db->queryInsert($Statement);
 
         $Statement->reset()
                   ->sql('INSERT INTO `test` (`id`,`name`,`location`,`dp`)')
                   ->sql('VALUES')
                   ->sql('    (1,"Davis", "Germany", "10.1"), (2,"Hyacinth", "Germany", "1.1"), (3,"Quynn", "USA", "5.2"), (4,"Julian", "USA", "2.0"), (5,"Kieran", "Canada", "100.5"), (6,"Ryder", "El Salvador", "60.0"), (7,"Reese", "Estonia", "15.2"), (8,"Sarah", "Christmas Island", "-10.5"), (9,"Nadine", "Gabon", "-56.9"), (10,"Drew", "Burundi", "-56.5");');
-
         $this->db->queryInsert($Statement);
     }
 
@@ -96,6 +94,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($this->x, $this->db->selectRows($Statement));
     }
 
+    // Bool
     public function testBoolTrueInt()
     {
         $Statement = new GLPDO2\Statement();
@@ -240,12 +239,41 @@ class GLPDO2Test extends TestCase
     }
 
     // Raw
+    // Todo: Test 'Raw' with over 10 places.
     public function testRaw()
     {
         $Statement = new GLPDO2\Statement();
-        $Statement->sql('SELECT * FROM `%%`;')->bRaw('test');
+        $Statement->sql('SELECT * FROM `%%` ')->bRaw('test')
+                  ->sql('WHERE ')
+                  ->sql('(0  = %%) & ')->bRaw(0)
+                  ->sql('(1  = %%) & ')->bRaw(1)
+                  ->sql('(2  = %%) & ')->bRaw(2)
+                  ->sql('(3  = %%) & ')->bRaw(3)
+                  ->sql('(4  = %%) & ')->bRaw(4)
+                  ->sql('(5  = %%) & ')->bRaw(5)
+                  ->sql('(6  = %%) & ')->bRaw(6)
+                  ->sql('(7  = %%) & ')->bRaw(7)
+                  ->sql('(8  = %%) & ')->bRaw(8)
+                  ->sql('(9  = %%) & ')->bRaw(9)
+                  ->sql('(10 = %%) & ')->bRaw(10)
+                  ->sql('(11 = %%);')->bRaw(11);
 
-        $this->assertEquals('SELECT * FROM `test`;', $Statement->getComputed());
+        $expected = "SELECT * FROM `test` \n".
+                    "WHERE \n".
+                    "(0  = 0) & \n".
+                    "(1  = 1) & \n".
+                    "(2  = 2) & \n".
+                    "(3  = 3) & \n".
+                    "(4  = 4) & \n".
+                    "(5  = 5) & \n".
+                    "(6  = 6) & \n".
+                    "(7  = 7) & \n".
+                    "(8  = 8) & \n".
+                    "(9  = 9) & \n".
+                    "(10 = 10) & \n".
+                    "(11 = 11);";
+
+        $this->assertEquals($expected, $Statement->getComputed());
         $this->assertEquals($this->x, $this->db->selectRows($Statement));
     }
 
@@ -407,6 +435,7 @@ class GLPDO2Test extends TestCase
         $this->assertEmpty($this->db->selectRows($Statement));
     }
 
-    // Todo: Test 'Raw' with over 10 places.
+
+    // Transaction tests
 
 }
