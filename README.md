@@ -8,6 +8,9 @@ Easy to use PDO Wrapper for PHP 5.6+
 *    Help prevent injections.
 
 ### What's new
+2018-07-03 (1.1.0):
+*   Changed Statement::intArray() to Statement->bIntArray(). Will bind to '%%'.
+
 2018-04-06 (1.0.4):
 *   Fixed issue with more than 10 raw bindings.
  
