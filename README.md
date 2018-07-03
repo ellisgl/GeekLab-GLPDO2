@@ -122,4 +122,4 @@ Statement->execute(\PDO $PDO)<br/>
 Prepares and executes the statement
 
 Statement->getComputed()<br/>
-Returns the the SQL query string might look like for debugging purposes.
+Returns what the compiled SQL query string might look like for debugging purposes.
