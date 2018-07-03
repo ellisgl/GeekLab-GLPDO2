@@ -114,8 +114,7 @@ class GLPDO2Test extends TestCase
     // BoolFalseBool
     // BoolTrueBool
 
-    // Need a better date handling.
-    // Date
+    // Todo: Date (Probably need to improve date stuff in Statement.php)
 
     // Float
     public function testFloat()
@@ -160,6 +159,26 @@ class GLPDO2Test extends TestCase
     }
 
     // Todo: Int array
+    public function testIntArray()
+    {
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('SELECT *')
+                  ->sql('FROM `test`')
+                  ->sql('WHERE `id` IN (%%);')->bIntArray(array(1, 2, 3));
+
+        $expected = "SELECT *\n" .
+                    "FROM `test`\n" .
+                    "WHERE `id` IN (1, 2, 3);";
+
+        $this->assertEquals($expected, $Statement->getComputed());
+
+        $expected = [
+            ['id' => '1', 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1'],
+            ['id' => '2', 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1'],
+            ['id' => '3', 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2']
+        ];
+        $this->assertEquals($expected, $this->db->selectRows($Statement));
+    }
 
     // Like
     public function testLikeBeginsWith()
@@ -256,19 +275,19 @@ class GLPDO2Test extends TestCase
                   ->sql('(10 = %%) & ')->bRaw(10)
                   ->sql('(11 = %%);')->bRaw(11);
 
-        $expected = "SELECT * FROM `test` \n".
-                    "WHERE \n".
-                    "(0  = 0) & \n".
-                    "(1  = 1) & \n".
-                    "(2  = 2) & \n".
-                    "(3  = 3) & \n".
-                    "(4  = 4) & \n".
-                    "(5  = 5) & \n".
-                    "(6  = 6) & \n".
-                    "(7  = 7) & \n".
-                    "(8  = 8) & \n".
-                    "(9  = 9) & \n".
-                    "(10 = 10) & \n".
+        $expected = "SELECT * FROM `test` \n" .
+                    "WHERE \n" .
+                    "(0  = 0) & \n" .
+                    "(1  = 1) & \n" .
+                    "(2  = 2) & \n" .
+                    "(3  = 3) & \n" .
+                    "(4  = 4) & \n" .
+                    "(5  = 5) & \n" .
+                    "(6  = 6) & \n" .
+                    "(7  = 7) & \n" .
+                    "(8  = 8) & \n" .
+                    "(9  = 9) & \n" .
+                    "(10 = 10) & \n" .
                     "(11 = 11);";
 
         $this->assertEquals($expected, $Statement->getComputed());

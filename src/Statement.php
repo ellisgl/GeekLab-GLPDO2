@@ -214,6 +214,33 @@ class Statement
     }
 
     /**
+     * Convert array of integers to comma separated values. Uses %%
+     * Great for IN() statements.
+     *
+     * @param array $data
+     * @param int $default
+     *
+     * @return int|string
+     */
+    public function bIntArray(array $data, $default = 0)
+    {
+
+        // Make unique integer array
+        $numbers = array();
+
+        foreach ($data as $value)
+        {
+            $numbers[(int)$value] = TRUE;
+        }
+
+        $numbers = array_keys($numbers);
+
+        // turn into a string
+        $result = join(', ', $numbers);
+
+        return $this->bRaw($result ? $result : $default);
+    }
+    /**
      * Create and bind string for LIKE() statements.
      *
      * @param $value
@@ -418,33 +445,6 @@ class Statement
         $stmt->execute();
 
         return $stmt;
-    }
-
-    /**
-     * Convert array of integers to comma separated values.
-     * Great for IN() statements.
-     *
-     * @param array $data
-     * @param int $default
-     *
-     * @return int|string
-     */
-    public static function intArray(array $data, $default = 0)
-    {
-        // Make unique integer array
-        $numbers = array();
-
-        foreach ($data as $value)
-        {
-            $numbers[(int)$value] = TRUE;
-        }
-
-        $numbers = array_keys($numbers);
-
-        // turn into a string
-        $result = join(', ', $numbers);
-
-        return $result ? $result : $default;
     }
 
     /**
