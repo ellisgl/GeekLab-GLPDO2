@@ -238,7 +238,6 @@ class GLPDO2Test extends TestCase
     }
 
     // Raw
-    // Todo: Test 'Raw' with over 10 places.
     public function testRaw()
     {
         $Statement = new GLPDO2\Statement();
