@@ -4,7 +4,7 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP 7.0+
 
 ### Features
-*    Bind value by the correct type. E.g. Don't bind a string value where an integer should be.
+*    Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
 *    Help prevent injections.
 
 ### What's new
@@ -109,7 +109,7 @@ GLPDO->queryUpdate(Statement $SQL)<br/>
 Runs an update query and returns number of affect rows
 
 GLPDO->selectRows(Statement $SQL, $kKey, $vKey)<br/>
-Run a normal query, returns multiple rows as an array of associative arraysa, with key & value selection.
+Run a normal query, returns multiple rows as an array of associative arrays, with key & value selection.
 
 GLPDO->selectRow(Statement $SQL)<br/>
 Runs a normal query, returns a single row as an array.
