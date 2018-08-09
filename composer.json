@@ -1,29 +1,31 @@
 {
-  "name"        : "geeklab/glpdo2",
-  "description" : "The easy to use and better PDO Wrapper.",
-  "minimum-stability" : "stable",
-  "license"     : "MIT",
-  "keywords"    : [
-    "GeekLab"
-  ],
-  "authors"     : [
-    {
-      "name"  : "Ellis GeekLab",
-      "email" : "name@domain.com"
+    "name"              : "geeklab/glpdo2",
+    "description"       : "The easy to use and better PDO Wrapper.",
+    "minimum-stability" : "stable",
+    "license"           : "MIT",
+    "keywords"          : [
+        "GeekLab"
+    ],
+    "authors"           : [
+        {
+            "name"  : "EllisGL",
+            "email" : "name@domain.com"
+        }
+    ],
+    "require"           : {
+        "php" : ">=7.0"
+    },
+    "autoload"          : {
+        "psr-4" : {
+            "GeekLab\\GLPDO2\\" : "src"
+        }
+    },
+    "autoload-dev"      : {
+        "psr-4" : {
+            "GeekLab\\" : "tests"
+        }
+    },
+    "require-dev"       : {
+        "phpunit/phpunit" : "5.7.23"
     }
-  ],
-  "require"     : {},
-  "autoload"    : {
-    "psr-4" : {
-      "GeekLab\\GLPDO2\\" : "src"
-    }
-  },
-  "autoload-dev"      : {
-    "psr-4" : {
-      "GeekLab\\" : "tests"
-    }
-  },
-  "require-dev"       : {
-    "phpunit/phpunit" : "5.7.23"
-  }
 }
