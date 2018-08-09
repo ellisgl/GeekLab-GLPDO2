@@ -1,13 +1,19 @@
 GeekLab\GLPDO2
 ============
 
-Easy to use PDO Wrapper for PHP 5.6+
+Easy to use PDO Wrapper for PHP 7.0+
 
 ### Features
 *    Bind value by the correct type. E.g. Don't bind a string value where an integer should be.
 *    Help prevent injections.
 
 ### What's new
+2018-08-08 (1.1.1):
+*   Forced PHP requirement to 7.0.
+*   Added type hints.
+*   Added return types.
+*   Code comment cleanup.
+
 2018-07-03 (1.1.0):
 *   Changed Statement::intArray() to Statement->bIntArray(). Will bind to '%%'.
 
