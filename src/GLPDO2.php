@@ -12,42 +12,42 @@ Class GLPDO2
     }
 
     /**
-     * Begin A Transaction ----
+     * Begin transaction.
      *
      * @return bool
      */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         return $this->PDO->beginTransaction();
     }
 
     /**
-     * Commit transaction ----
+     * Commit transaction.
      *
      * @return bool
      */
-    public function commit()
+    public function commit(): bool
     {
         return $this->PDO->commit();
     }
 
     /**
-     * Rollback transaction ----
+     * Rollback transaction.
+     *
      * @return bool
      */
-    public function rollback()
+    public function rollback(): bool
     {
         return $this->PDO->rollBack();
     }
 
     /**
-     * Perform 'UPDATE' or 'DELETE' query and return the number of affected rows
+     * Perform UPDATE or DELETE query and return the number of affected rows.
      *
      * @param Statement $SQL
-     *
-     * @return int|null
+     * @return int
      */
-    private function queryAffectedRows(Statement $SQL)
+    private function queryAffectedRows(Statement $SQL): int
     {
         // Execute statement
         $sth = $SQL->execute($this->PDO);
@@ -57,38 +57,32 @@ Class GLPDO2
     }
 
     /**
-     * Perform 'DELETE' query
+     * Perform DELETE query.
      *
-     * @static
      * @param Statement $SQL
-     *
-     * @return mixed
+     * @return int
      */
-    public function queryDelete(Statement $SQL)
+    public function queryDelete(Statement $SQL): int
     {
         return $this->queryAffectedRows($SQL);
     }
 
     /**
-     * Perform 'UPDATE' query
-     *
-     * @static
+     * Perform UPDATE query
      * @param Statement $SQL
      *
-     * @return mixed
+     * @return int
      */
-    public function queryUpdate(Statement $SQL)
+    public function queryUpdate(Statement $SQL): int
     {
         return $this->queryAffectedRows($SQL);
     }
 
     /**
-     * Perform 'INSERT' query
-     *
-     * @static
+     * Perform INSERT query
      * @param Statement $SQL
      *
-     * @return mixed
+     * @return bool|string
      */
     public function queryInsert(Statement $SQL)
     {
@@ -111,14 +105,12 @@ Class GLPDO2
     /**
      * Return multiple rows result as an array
      *
-     * @static
      * @param Statement $SQL
      * @param string $kKey
      * @param string $vKey
-     *
-     * @return array|string
+     * @return array
      */
-    public function selectRows(Statement $SQL, $kKey = "", $vKey = "")
+    public function selectRows(Statement $SQL, string $kKey = "", string $vKey = ""): array
     {
         $data = array();
 
@@ -147,8 +139,7 @@ Class GLPDO2
      * Execute statement and returns first row of results as an associative array.
      *
      * @param Statement $SQL
-     *
-     * @return mixed|null
+     * @return mixed
      */
     public function selectRow(Statement $SQL)
     {
@@ -166,9 +157,9 @@ Class GLPDO2
      * @param           $column
      * @param  bool     $caseSensitive
      * @param  bool     $default
-     * @return bool
+     * @return string
      */
-    public function selectValue(Statement $SQL, $column, $caseSensitive = FALSE, $default = FALSE)
+    public function selectValue(Statement $SQL, $column, bool $caseSensitive = FALSE, bool $default = FALSE): string
     {
         $row = $this->selectRow($SQL);
 

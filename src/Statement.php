@@ -5,56 +5,49 @@ namespace GeekLab\GLPDO2;
 class Statement
 {
     /**
-     * Position for SQL binds
-     *
+     * Position for SQL binds.
      * @var int
      */
     private $bindPos = 0;
 
     /**
-     * Position for Filtering
-     *
+     * Position for Filtering.
      * @var int
      */
     private $filterPos = 0;
 
     /**
-     * Named binding values
-     *
+     * Named binding values.
      * @var array
      */
     private $named = array();
 
     /**
-     * SQL Statement
-     *
+     * SQL Statement.
      * @var array
      */
     private $SQL = array();
 
     /**
-     * Position holder for statement processing
-     *
+     * Position holder for statement processing.
      * @var int
      */
     private $sqlPos = 0;
 
     /**
      * Raw Named
-     *
      * @var array
      */
     private $rawNamed = array();
 
     /**
-     * Position holder for raw statement processing
+     * Position holder for raw statement processing.
      * @var int
      */
     private $rawPos = 0;
 
     /**
-     * SQL Statement
-     *
+     * SQL Statement.
      * @var array
      */
     private $rawSql = array();
@@ -70,22 +63,20 @@ class Statement
     // Bind types
 
     /**
-     * Bind a boolean value as bool, with NULL option or with integer option
+     * Bind a boolean value as bool, with NULL option or with integer option.
      *
-     * @param $value
-     * @param bool $null
-     * @param bool $int
-     *
-     * @return $this
+     * @param       $value
+     * @param  bool $null
+     * @param  bool $int
+     * @return Statement
      */
-    public function bBool($value, $null = FALSE, $int = FALSE)
+    public function bBool($value, bool $null = FALSE, bool $int = FALSE): Statement
     {
         // use NULL
         if (!$value && $null)
         {
             return $this->bStr(NULL, TRUE);
         }
-
 
         $name  = $this->getNextName();
         $value = (boolean)$value;
@@ -96,17 +87,15 @@ class Statement
     }
 
     /**
-     * Bind a date value as date or optional NULL
-     * YYYY-MM-DD is the proper date format
+     * Bind a date value as date or optional NULL.
+     * YYYY-MM-DD is the proper date format.
      *
-     * @param $value
-     * @param bool $null
-     *
-     * @return $this
+     * @param  string $value
+     * @param  bool   $null
+     * @return Statement
      */
-    public function bDate($value, $null = FALSE)
+    public function bDate($value, bool $null = FALSE): Statement
     {
-
         $d = preg_match('%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%', $value);
 
         // Use NULL?
@@ -122,26 +111,24 @@ class Statement
     /**
      * Bind filtering stuff?
      *
-     * @param $value
-     *
-     * @return $this
+     * @param  string $value
+     * @return Statement
      */
-    public function bFilter($value)
+    public function bFilter(string $value): Statement
     {
         $this->bind('filter', $value, \PDO::PARAM_STR);
         return $this;
     }
 
     /**
-     * Bind a float
+     * Bind a float.
      *
-     * @param $value
-     * @param int $decimals
+     * @param      $value
+     * @param int  $decimals
      * @param bool $null
-     *
-     * @return $this
+     * @return Statement
      */
-    public function bFloat($value, $decimals = 3, $null = FALSE)
+    public function bFloat($value, $decimals = 3, $null = FALSE): Statement
     {
         // Use NULL?
         if (!$value && $null)
@@ -156,15 +143,14 @@ class Statement
     }
 
     /**
-     * Bind a value to a named parameter
+     * Bind a value to a named parameter.
      *
-     * @param $name
-     * @param $value
-     * @param $type
-     *
-     * @return $this
+     * @param  string $name
+     * @param         $value
+     * @param         $type
+     * @return Statement
      */
-    public function bind($name, $value, $type = \PDO::PARAM_STR)
+    public function bind($name, $value, $type = \PDO::PARAM_STR): Statement
     {
         $this->named[$name] = array(
             'type'  => $type,
@@ -175,14 +161,13 @@ class Statement
     }
 
     /**
-     * Bind a raw value to a named parameter
+     * Bind a raw value to a named parameter.
      *
-     * @param $name
-     * @param $value
-     *
-     * @return $this
+     * @param  $name
+     * @param  $value
+     * @return Statement
      */
-    public function rawBind($name, $value)
+    public function rawBind($name, $value): Statement
     {
         $this->rawNamed[$name] = $value;
 
@@ -190,14 +175,13 @@ class Statement
     }
 
     /**
-     * Bind an integer with optional NULL
+     * Bind an integer with optional NULL.
      *
-     * @param      $value
-     * @param bool $null
-     *
-     * @return $this
+     * @param       $value
+     * @param  bool $null
+     * @return Statement
      */
-    public function bInt($value, $null = FALSE)
+    public function bInt($value, bool $null = FALSE): Statement
     {
         // Use NULL?
         if (!$value && $null)
@@ -209,7 +193,6 @@ class Statement
         $value = sprintf('%u', $value);
 
         $this->bind($name, (int)$value, \PDO::PARAM_INT);
-
         return $this;
     }
 
@@ -217,9 +200,8 @@ class Statement
      * Convert array of integers to comma separated values. Uses %%
      * Great for IN() statements.
      *
-     * @param array $data
-     * @param int $default
-     *
+     * @param  array $data
+     * @param  int   $default
      * @return int|string
      */
     public function bIntArray(array $data, $default = 0)
@@ -240,16 +222,16 @@ class Statement
 
         return $this->bRaw($result ? $result : $default);
     }
+
     /**
      * Create and bind string for LIKE() statements.
      *
-     * @param $value
-     * @param bool $ends Ends with?
-     * @param bool $starts Starts with?
-     *
-     * @return $this
+     * @param  string $value
+     * @param  bool   $ends   Ends with?
+     * @param  bool   $starts Starts with?
+     * @return Statement
      */
-    public function bLike($value, $ends = FALSE, $starts = FALSE)
+    public function bLike(string $value, bool $ends = FALSE, bool $starts = FALSE): Statement
     {
         //$value = mysql_real_escape_string($value);
         $name = $this->getNextName();
@@ -264,18 +246,17 @@ class Statement
         $value = (!$starts && !$ends) ? '%' . $value . '%' : $value;
 
         $this->bind($name, $value);
-
         return $this;
     }
 
     /**
-     * Bind a raw value
+     * !!!DANGER!!!
+     * Bind a raw value.
      *
-     * @param $value
-     *
-     * @return $this
+     * @param  string $value
+     * @return Statement
      */
-    public function bRaw($value)
+    public function bRaw(string $value): Statement
     {
         $name = $this->getNextName('raw');
 
@@ -284,15 +265,14 @@ class Statement
     }
 
     /**
-     * Bind a string value
+     * Bind a string value.
      *
-     * @param $value
-     * @param bool $null
-     * @param $type
-     *
-     * @return $this
+     * @param       $value
+     * @param  bool $null
+     * @param       $type
+     * @return Statement
      */
-    public function bStr($value, $null = FALSE, $type = \PDO::PARAM_STR)
+    public function bStr($value, bool $null = FALSE, $type = \PDO::PARAM_STR): Statement
     {
         $name = $this->getNextName();
 
@@ -302,20 +282,18 @@ class Statement
         }
 
         $this->bind($name, $value, $type);
-
         return $this;
     }
 
     /**
-     * Convert an array into a string and bind it
+     * Convert an array into a string and bind it.
      * Great for IN() statements.
      *
-     * @param array $values
-     * @param string $default
-     *
-     * @return $this
+     * @param  array  $values
+     * @param         $default
+     * @return Statement
      */
-    public function bStrArr(array $values, $default = NULL)
+    public function bStrArr(array $values, $default = NULL): Statement
     {
         //  No array elements?
         $aStr = (!is_array($values)) ? $default : '\'' . join("', '", $values) . '\'';
@@ -331,11 +309,10 @@ class Statement
      * Convert an array to a comma delimited string, with keys.
      * Should I remove this?
      *
-     * @param array $data
-     *
+     * @param  array $data
      * @return string
      */
-    public static function arrToString(array $data)
+    public static function arrToString(array $data): string
     {
         if (!empty($data))
         {
@@ -355,21 +332,21 @@ class Statement
     /**
      * Name the positions for binding in PDO.
      *
-     * @param $type
-     *
+     * @param  string $type
      * @return string
      */
-    private function getNextName($type = FALSE)
+    private function getNextName(string $type = 'bind'): string
     {
         switch ($type)
         {
-            case 'filter' :
+            case 'filter':
                 // filter
                 $ret = sprintf(':filter%d', $this->filterPos++);
+
                 return $ret;
                 break;
 
-            case 'sql' :
+            case 'sql':
                 // sql statement syntax
                 $ret = sprintf(':pos%d', $this->sqlPos++);
 
@@ -383,29 +360,29 @@ class Statement
                 return $ret;
                 break;
 
-            case 'raw' :
+            case 'raw':
                 // raw statement syntax
                 $ret = sprintf(':raw%d', $this->rawPos++);
 
                 return $ret;
                 break;
 
-            case 'bind' :
-            default :
+            case 'bind':
+            default:
                 // bind/filling values
                 $ret = sprintf(':pos%d', $this->bindPos++);
+
                 return $ret;
         }
     }
 
     /**
-     * Prepare and Execute the SQL statement
+     * Prepare and Execute the SQL statement.
      *
-     * @param \PDO $PDO
-     *
+     * @param  \PDO $PDO
      * @return \PDOStatement
      */
-    public function execute(\PDO $PDO)
+    public function execute(\PDO $PDO): \PDOStatement
     {
         // prepare the SQL
         $sql = join(' ', $this->SQL);
@@ -413,7 +390,7 @@ class Statement
         // Replace raw placements with raw values
         foreach ($this->rawNamed as $name => $rVal)
         {
-            $sql = preg_replace('/'.$name .'\b/', $rVal, $sql);
+            $sql = preg_replace('/' . $name . '\b/', $rVal, $sql);
         }
 
         $stmt = $PDO->prepare($sql);
@@ -443,7 +420,6 @@ class Statement
         }
 
         $stmt->execute();
-
         return $stmt;
     }
 
@@ -451,11 +427,10 @@ class Statement
      * Used to assign a "positional" parameter which just ends up getting
      * translated to a named parameter magically.
      *
-     * @param $matches
-     *
+     * @param  array $matches
      * @return int|string
      */
-    private function placeholderFill($matches)
+    private function placeholderFill(array $matches)
     {
         $key = $matches[0];
 
@@ -498,33 +473,32 @@ class Statement
     }
 
     /**
-     * Get name of the placeholder
+     * Get name of the placeholder.
      *
      * @return string
      */
-    private function placeholderGetName()
+    private function placeholderGetName(): string
     {
         return $this->getNextName('sql');
     }
 
     /**
-     * Get name of the raw placeholder
+     * Get name of the raw placeholder.
      *
      * @return string
      */
-    private function rawPlaceHolderGetName()
+    private function rawPlaceHolderGetName(): string
     {
         return $this->getNextName('rawSql');
     }
 
     /**
-     * Builds up the SQL parameterized statement
+     * Builds up the SQL parameterized statement.
      *
-     * @param string $text
-     *
-     * @return $this
+     * @param  string $text
+     * @return Statement
      */
-    public function sql($text)
+    public function sql($text): Statement
     {
         // replace positioned placeholders with named placeholders (first value)
         $text = preg_replace_callback('/\?/m', array($this, 'placeholderGetName'), $text);
@@ -549,9 +523,9 @@ class Statement
     /**
      * Reset / Clear out properties.
      *
-     * @return $this
+     * @return Statement
      */
-    public function reset()
+    public function reset(): Statement
     {
         $this->bindPos   = 0;
         $this->filterPos = 0;
@@ -571,7 +545,7 @@ class Statement
      *
      * @return string
      */
-    public function getComputed()
+    public function getComputed(): string
     {
         // merge sql together
         $sql = join("\n", $this->SQL);
@@ -583,16 +557,21 @@ class Statement
     }
 
     /**
-     * Return the SQL as a string
+     * Return the SQL as a string.
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getComputed();
     }
 
-    public function __debugInfo()
+    /**
+     * Magic Method for debugging.
+     *
+     * @return array
+     */
+    public function __debugInfo(): array
     {
         return [
             'Named Positions' => $this->named,
