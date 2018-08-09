@@ -9,7 +9,7 @@ Easy to use PDO Wrapper for PHP 7.0+
 
 ### What's new
 2018-08-08 (1.1.1):
-*   Forced PHP requirement to 7.0.
+*   Forced PHP requirement to >=7.0.
 *   Added type hints.
 *   Added return types.
 *   Code comment cleanup.
