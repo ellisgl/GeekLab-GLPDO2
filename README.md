@@ -8,6 +8,9 @@ Easy to use PDO Wrapper for PHP 7.0+
 *    Help prevent injections.
 
 ### What's new
+2018-08-20 (1.1.2):
+*   Added exception throwing.
+
 2018-08-08 (1.1.1):
 *   Forced PHP requirement to >=7.0.
 *   Added type hints.

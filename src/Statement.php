@@ -69,13 +69,18 @@ class Statement
      * @param  bool $null
      * @param  bool $int
      * @return Statement
+     * @throws \Exception
      */
-    public function bBool($value, bool $null = FALSE, bool $int = FALSE): Statement
+    public function bBool($value = NULL, bool $null = FALSE, bool $int = FALSE): Statement
     {
         // use NULL
-        if (!$value && $null)
+        if (is_null($value) && $null)
         {
             return $this->bStr(NULL, TRUE);
+        }
+        elseif (is_null($value) && true)
+        {
+            throw new \Exception('Can not bind NULL in boolean spot.');
         }
 
         $name  = $this->getNextName();
@@ -93,15 +98,21 @@ class Statement
      * @param  string $value
      * @param  bool   $null
      * @return Statement
+     * @throws \Exception
      */
-    public function bDate($value, bool $null = FALSE): Statement
+    public function bDate($value = NULL, bool $null = FALSE): Statement
     {
         $d = preg_match('%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%', $value);
 
         // Use NULL?
-        if ((!$value || !$d) && $null)
+        if ((is_null($value) || !$d) && $null)
         {
             return $this->bStr(NULL, TRUE);
+        }
+        elseif (is_null($value) && !$null)
+        {
+            throw new \Exception('Can not bind NULL in date spot.');
+
         }
 
         $this->bStr(($d) ? $value : '1970-01-01');
@@ -127,13 +138,24 @@ class Statement
      * @param int  $decimals
      * @param bool $null
      * @return Statement
+     * @throws \Exception
      */
-    public function bFloat($value, $decimals = 3, $null = FALSE): Statement
+    public function bFloat($value = NULL, $decimals = 3, $null = FALSE): Statement
     {
         // Use NULL?
-        if (!$value && $null)
+        if (is_null($value) && $null)
         {
             return $this->bStr(NULL, TRUE);
+
+        }
+        elseif (is_null($value) && !$null)
+        {
+            throw new \Exception('Can not bind NULL in float spot.');
+        }
+
+        if (!is_numeric($value))
+        {
+            throw new \Exception('Can not bind "' . $value . '" in float spot.');
         }
 
         $format = sprintf('%%0.%df', $decimals);
@@ -150,7 +172,7 @@ class Statement
      * @param         $type
      * @return Statement
      */
-    public function bind($name, $value, $type = \PDO::PARAM_STR): Statement
+    public function bind(string $name, $value, $type = \PDO::PARAM_STR): Statement
     {
         $this->named[$name] = array(
             'type'  => $type,
@@ -180,15 +202,24 @@ class Statement
      * @param       $value
      * @param  bool $null
      * @return Statement
+     * @throws \Exception
      */
-    public function bInt($value, bool $null = FALSE): Statement
+    public function bInt($value = NULL, bool $null = FALSE): Statement
     {
         // Use NULL?
-        if (!$value && $null)
+        if (is_null($value) && $null)
         {
             return $this->bStr(NULL, TRUE);
         }
+        elseif (is_null($value) && !$null)
+        {
+            throw new \Exception('Can not bind NULL in integer spot.');
+        }
 
+        if (!is_numeric($value))
+        {
+            throw new \Exception('Can not bind "' . $value . '" in integer spot.');
+        }
         $name  = $this->getNextName();
         $value = sprintf('%u', $value);
 
@@ -203,9 +234,14 @@ class Statement
      * @param  array $data
      * @param  int   $default
      * @return int|string
+     * @throws \Exception
      */
     public function bIntArray(array $data, $default = 0)
     {
+        if (empty($data))
+        {
+            throw new \Exception('Can not bind an empty array.');
+        }
 
         // Make unique integer array
         $numbers = array();
@@ -236,10 +272,10 @@ class Statement
         //$value = mysql_real_escape_string($value);
         $name = $this->getNextName();
 
-        // Starts with
+        // Starts with.
         $value = ($starts && !$ends) ? $value . '%' : $value;
 
-        // Ends with
+        // Ends with.
         $value = (!$starts && $ends) ? '%' . $value : $value;
 
         // Is somewhere...
@@ -271,14 +307,19 @@ class Statement
      * @param  bool $null
      * @param       $type
      * @return Statement
+     * @throws \Exception
      */
     public function bStr($value, bool $null = FALSE, $type = \PDO::PARAM_STR): Statement
     {
         $name = $this->getNextName();
 
-        if (!$value && $null)
+        if (is_null($value) && $null)
         {
             $type = \PDO::PARAM_NULL;
+        }
+        elseif (is_null($value) && !$null)
+        {
+            throw new \Exception('Can not bind NULL in string spot.');
         }
 
         $this->bind($name, $value, $type);
@@ -311,22 +352,24 @@ class Statement
      *
      * @param  array $data
      * @return string
+     * @throws \Exception
      */
     public static function arrToString(array $data): string
     {
-        if (!empty($data))
+        if (empty($data))
         {
-            $query_string = array();
-
-            foreach ($data as $k => $v)
-            {
-                $query_string[] = $k . '="' . $v . '"';
-            }
-
-            return implode(',', $query_string);
+            throw new \Exception('Can not bind empty array.');
         }
 
-        return "";
+        $query_string = array();
+
+        foreach ($data as $k => $v)
+        {
+            $query_string[] = $k . '="' . $v . '"';
+        }
+
+        return implode(',', $query_string);
+
     }
 
     /**
@@ -424,17 +467,23 @@ class Statement
     }
 
     /**
-     * Used to assign a "positional" parameter which just ends up getting
-     * translated to a named parameter magically.
+     * Use for building out what a might look like when it's pass to the DB.
+     * Used by Statement::getComputed()
      *
      * @param  array $matches
-     * @return int|string
+     * @return mixed
+     * @throws \Exception
      */
     private function placeholderFill(array $matches)
     {
+        if (empty($matches))
+        {
+            throw new \Exception('Can not fill placeholders with empty array.');
+        }
+
         $key = $matches[0];
 
-        // can't file this param
+        // Can't fill this param.
         if (!isset($this->named[$key]) && !isset($this->rawNamed[$key]))
         {
             return $key;
@@ -461,15 +510,9 @@ class Statement
                     return "'" . $sVal['value'] . "'";
             }
         }
-        else
-        {
-            if (isset($this->rawNamed[$key]))
-            {
-                return $this->rawNamed[$key];
-            }
-        }
 
-        return false;
+        // Since it's not named, it must be raw.
+        return $this->rawNamed[$key];
     }
 
     /**
@@ -500,18 +543,18 @@ class Statement
      */
     public function sql($text): Statement
     {
-        // replace positioned placeholders with named placeholders (first value)
+        // Replace positioned placeholders with named placeholders (first value).
         $text = preg_replace_callback('/\?/m', array($this, 'placeholderGetName'), $text);
         $text = preg_replace_callback('/%%/m', array($this, 'rawPlaceholderGetName'), $text);
 
-        // just add the text as-is
+        // Just add the text as-is.
         if (func_num_args() === 1)
         {
             $this->SQL[] = $text;
         }
         else
         {
-            // treat as sprintf statement
+            // Treat as an sprintf statement.
             $args        = func_get_args();
             $args[0]     = $text;
             $this->SQL[] = call_user_func_array('sprintf', $args);
@@ -547,10 +590,10 @@ class Statement
      */
     public function getComputed(): string
     {
-        // merge sql together
+        // Merge SQL together
         $sql = join("\n", $this->SQL);
 
-        // replace positioned placeholders with named placeholders (first value)
+        // Replace positioned placeholders with named placeholders (first value).
         $sql = preg_replace_callback('/:[a-z0-9_]+/m', array($this, 'placeholderFill'), $sql);
 
         return $sql;

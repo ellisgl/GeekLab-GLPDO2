@@ -83,7 +83,7 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  (0 = ?);')->bBool(NULL, FALSE, TRUE);
+                  ->sql('WHERE  (0 = ?);')->bBool(FALSE, FALSE, TRUE);
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
@@ -464,4 +464,104 @@ class GLPDO2Test extends TestCase
     }
 
     // Todo: Transaction tests
+
+    // Exception Tests
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Can not bind NULL in integer spot.
+     */
+    public function testIntNullException()
+    {
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `id` = ?;')->bInt(NULL);
+
+        $this->db->selectRows($Statement);
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Can not bind NULL in string spot.
+     */
+    public function testStringNullException()
+    {
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` = ?;')->bStr(NULL);
+
+        $this->db->selectRows($Statement);
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Can not bind NULL in boolean spot.
+     */
+    public function testBoolNullException()
+    {
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` = ?;')->bBool(NULL);
+
+        $this->db->selectRows($Statement);
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Can not bind NULL in float spot.
+     */
+    public function testFloatNullException()
+    {
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` = ?;')->bFloat(NULL);
+
+        $this->db->selectRows($Statement);
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Can not bind an empty array.
+     */
+    public function testIntArrayEmptyArrayException()
+    {
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` IN (%%);')->bIntArray(array());
+
+        $this->db->selectRows($Statement);
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Can not bind "xyz" in float spot.
+     */
+    public function testFloatInvalidTypeException()
+    {
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` = ?;')->bFloat('xyz');
+
+        $this->db->selectRows($Statement);
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Can not bind "xyz" in integer spot.
+     */
+    public function testIntInvalidTypeException()
+    {
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` = ?;')->bInt('xyz');
+
+        $this->db->selectRows($Statement);
+    }
 }
