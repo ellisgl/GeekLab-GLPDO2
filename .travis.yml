@@ -1,0 +1,8 @@
+sudo: false
+before_script:
+  - composer self
+  - composer --version
+  - composer install -n
+language: php
+php:
+  - '7.2'
