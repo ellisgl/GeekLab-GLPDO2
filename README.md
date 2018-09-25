@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/ellisgl/GeekLab-GLPDO2.svg?branch=master)](https://travis-ci.com/ellisgl/GeekLab-GLPDO2)
+
 GeekLab\GLPDO2
 ============
 
