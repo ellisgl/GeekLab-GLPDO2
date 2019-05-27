@@ -91,7 +91,7 @@ class Statement
             return $this->bStr(null, true);
         }
 
-        if ($value === null && $null === true) {
+        if ($value === null && $null === false) {
             throw new DomainException('Can not bind NULL in boolean spot.');
         }
 
