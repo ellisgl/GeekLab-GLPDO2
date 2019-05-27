@@ -6,3 +6,4 @@ before_script:
 language: php
 php:
   - '7.2'
+  - '7.3'
