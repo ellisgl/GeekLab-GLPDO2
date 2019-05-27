@@ -569,7 +569,7 @@ class GLPDO2Test extends TestCase
     // Exception Tests
     public function testIntNullException(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -579,7 +579,7 @@ class GLPDO2Test extends TestCase
 
     public function testStringNullException(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -590,7 +590,7 @@ class GLPDO2Test extends TestCase
 
     public function testBoolNullException(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -600,7 +600,7 @@ class GLPDO2Test extends TestCase
 
     public function testFloatNullException(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -610,7 +610,7 @@ class GLPDO2Test extends TestCase
 
     public function testDateNullException(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -620,7 +620,7 @@ class GLPDO2Test extends TestCase
 
     public function testDateTimeNullException(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -631,7 +631,7 @@ class GLPDO2Test extends TestCase
 
     public function testIntArrayEmptyArrayException(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -641,7 +641,7 @@ class GLPDO2Test extends TestCase
 
     public function testFloatInvalidTypeException(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -651,7 +651,7 @@ class GLPDO2Test extends TestCase
 
     public function testIntInvalidTypeException(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -661,7 +661,7 @@ class GLPDO2Test extends TestCase
 
     public function testBadTransaction(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`)')->bRaw('test')
                   ->sql('VALUES (')
