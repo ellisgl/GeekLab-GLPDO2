@@ -469,43 +469,49 @@ class Statement
      * @param PDO $PDO
      *
      * @return PDOStatement
+     * @throws Exception
      */
     public function execute(PDO $PDO): PDOStatement
     {
-        // prepare the SQL
-        $sql = implode(' ', $this->SQL);
+        try {
+            // prepare the SQL
+            $sql = implode(' ', $this->SQL);
 
-        // Replace raw placements with raw values
-        foreach ($this->rawNamed as $name => $rVal) {
-            $sql = preg_replace('/' . $name . '\b/', $rVal, $sql);
-        }
-
-        $stmt = $PDO->prepare($sql);
-
-        // bind named parameters
-        foreach ($this->named as $name => $sVal) {
-            switch ($sVal['type']) {
-                case PDO::PARAM_BOOL :
-                    $stmt->bindValue($name, (boolean)$sVal['value'], $sVal['type']);
-                    break;
-
-                case PDO::PARAM_NULL :
-                    $stmt->bindValue($name, null);
-                    break;
-
-                case PDO::PARAM_INT :
-                    $stmt->bindValue($name, (int)$sVal['value'], $sVal['type']);
-                    break;
-
-                case PDO::PARAM_STR :
-                default :
-                    $stmt->bindValue($name, (string)$sVal['value'], $sVal['type']);
-                    break;
+            // Replace raw placements with raw values
+            foreach ($this->rawNamed as $name => $rVal) {
+                $sql = preg_replace('/' . $name . '\b/', $rVal, $sql);
             }
+
+            $stmt = $PDO->prepare($sql);
+
+            // bind named parameters
+            foreach ($this->named as $name => $sVal) {
+                switch ($sVal['type']) {
+                    case PDO::PARAM_BOOL :
+                        $stmt->bindValue($name, (boolean)$sVal['value'], $sVal['type']);
+                        break;
+
+                    case PDO::PARAM_NULL :
+                        $stmt->bindValue($name, null);
+                        break;
+
+                    case PDO::PARAM_INT :
+                        $stmt->bindValue($name, (int)$sVal['value'], $sVal['type']);
+                        break;
+
+                    case PDO::PARAM_STR :
+                    default :
+                        $stmt->bindValue($name, (string)$sVal['value'], $sVal['type']);
+                        break;
+                }
+            }
+
+            $stmt->execute();
+            return $stmt;
+        } catch (Exception $e) {
+            throw new Exception($e);
         }
 
-        $stmt->execute();
-        return $stmt;
     }
 
     /**

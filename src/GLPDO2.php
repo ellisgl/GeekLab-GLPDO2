@@ -4,6 +4,7 @@ namespace GeekLab\GLPDO2;
 
 // Make EA inspection stop complaining.
 use \PDO;
+use \Exception;
 
 Class GLPDO2
 {
@@ -59,7 +60,9 @@ Class GLPDO2
      * Perform UPDATE or DELETE query and return the number of affected rows.
      *
      * @param Statement $SQL
+     *
      * @return int
+     * @throws Exception
      */
     private function queryAffectedRows(Statement $SQL): int
     {
@@ -74,7 +77,9 @@ Class GLPDO2
      * Perform DELETE query.
      *
      * @param Statement $SQL
+     *
      * @return int
+     * @throws Exception
      */
     public function queryDelete(Statement $SQL): int
     {
@@ -83,9 +88,11 @@ Class GLPDO2
 
     /**
      * Perform UPDATE query
+     *
      * @param Statement $SQL
      *
      * @return int
+     * @throws Exception
      */
     public function queryUpdate(Statement $SQL): int
     {
@@ -94,9 +101,11 @@ Class GLPDO2
 
     /**
      * Perform INSERT query
+     *
      * @param Statement $SQL
      *
      * @return bool|string
+     * @throws Exception
      */
     public function queryInsert(Statement $SQL)
     {
@@ -118,7 +127,9 @@ Class GLPDO2
      * @param Statement $SQL
      * @param string    $kKey
      * @param string    $vKey
+     *
      * @return array
+     * @throws Exception
      */
     public function selectRows(Statement $SQL, string $kKey = '', string $vKey = ''): array
     {
@@ -145,7 +156,9 @@ Class GLPDO2
      * Execute statement and returns first row of results as an associative array.
      *
      * @param Statement $SQL
+     *
      * @return mixed
+     * @throws Exception
      */
     public function selectRow(Statement $SQL)
     {
@@ -163,7 +176,9 @@ Class GLPDO2
      * @param           $column
      * @param bool      $caseSensitive
      * @param bool      $default
+     *
      * @return string
+     * @throws Exception
      */
     public function selectValue(Statement $SQL, $column, bool $caseSensitive = false, bool $default = false): string
     {

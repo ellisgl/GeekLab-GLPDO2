@@ -56,7 +56,7 @@ class GLPDO2Test extends TestCase
 
     public function testPDOConnection(): void
     {
-        $this->assertInternalType('object', $this->db, '$this->db is not an object!');
+        $this->assertTrue(is_object($this->db), '$this->db is not an object!');
     }
 
     // Basic Select
@@ -566,10 +566,6 @@ class GLPDO2Test extends TestCase
     }
 
     // Exception Tests
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Can not bind NULL in integer spot.
-     */
     public function testIntNullException(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -577,7 +573,7 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `id` = ?;')->bInt(null);
 
-        $this->db->selectRows($Statement);
+        $this->expectException($this->db->selectRows($Statement));
     }
 
     /**
