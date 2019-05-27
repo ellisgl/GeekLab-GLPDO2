@@ -143,12 +143,11 @@ class GLPDO2Test extends TestCase
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
-                  ->sql('    ?,')->bBool(null, true) // Yeah, totally need to make the table better for all the tests...
+                  ->sql('    ?,')->bBool(null, true)// Yeah, totally need to make the table better for all the tests...
                   ->sql('    %%,')->bFloat('1.8', 1)
                   ->sql('    ?,')->bDate('2000-01-12')
                   ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
                   ->sql(');');
-
 
         $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
                     "VALUES (\n" .
@@ -169,12 +168,11 @@ class GLPDO2Test extends TestCase
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
-                  ->sql('    ?,')->bBool(true, false, false) // Yeah, totally need to make the table better for all the tests...
+                  ->sql('    ?,')->bBool(true, false, false)// Yeah, totally need to make the table better for all the tests...
                   ->sql('    %%,')->bFloat('1.8', 1)
                   ->sql('    ?,')->bDate('2000-01-12')
                   ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
                   ->sql(');');
-
 
         $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
                     "VALUES (\n" .
@@ -195,12 +193,11 @@ class GLPDO2Test extends TestCase
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
-                  ->sql('    ?,')->bBool(false, false, false) // Yeah, totally need to make the table better for all the tests...
+                  ->sql('    ?,')->bBool(false, false, false)// Yeah, totally need to make the table better for all the tests...
                   ->sql('    %%,')->bFloat('1.8', 1)
                   ->sql('    ?,')->bDate('2000-01-12')
                   ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
                   ->sql(');');
-
 
         $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
                     "VALUES (\n" .
@@ -299,6 +296,27 @@ class GLPDO2Test extends TestCase
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
+
+        $Statement->reset()
+                  ->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis')
+                  ->sql('    ?,')->bStr('USA')
+                  ->sql('    %%,')->bFloat(null, 1, true)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+
+        $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
+                    "VALUES (\n" .
+                    "    'Ellis',\n" .
+                    "    'USA',\n" .
+                    "    NULL,\n" .
+                    "    '2000-01-12',\n" .
+                    "    '2000-01-12 00:01:02'\n" .
+                    ');';
+
+        $this->assertEquals($expected, $Statement->getComputed());
     }
 
     // Int
@@ -321,6 +339,29 @@ class GLPDO2Test extends TestCase
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
+
+        $Statement->reset()
+                  ->sql('INSERT INTO `%%` (`id`, `name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bInt(null, true)
+                  ->sql('    ?,')->bStr('Ellis')
+                  ->sql('    ?,')->bStr('USA')
+                  ->sql('    %%,')->bFloat(8.10, 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+
+        $expected = "INSERT INTO `test` (`id`, `name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
+                    "VALUES (\n" .
+                    "    NULL,\n" .
+                    "    'Ellis',\n" .
+                    "    'USA',\n" .
+                    "    8.1,\n" .
+                    "    '2000-01-12',\n" .
+                    "    '2000-01-12 00:01:02'\n" .
+                    ');';
+
+        $this->assertEquals($expected, $Statement->getComputed());
     }
 
     // Int array
@@ -339,7 +380,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => '1', 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1','someDate' => '2000-01-01', 'someDateTime' => '2000-01-01 00:01:02'],
+            ['id' => '1', 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1', 'someDate' => '2000-01-01', 'someDateTime' => '2000-01-01 00:01:02'],
             ['id' => '2', 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1', 'someDate' => '2000-01-02', 'someDateTime' => '2000-01-02 00:01:02'],
             ['id' => '3', 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2', 'someDate' => '2000-01-03', 'someDateTime' => '2000-01-03 00:01:02']
         ];
@@ -405,7 +446,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => '4', 'name' => 'Julian', 'location' => 'USA', 'dp' => '2','someDate' => '2000-01-04', 'someDateTime' => '2000-01-04 00:01:02']
+            ['id' => '4', 'name' => 'Julian', 'location' => 'USA', 'dp' => '2', 'someDate' => '2000-01-04', 'someDateTime' => '2000-01-04 00:01:02']
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
