@@ -5,6 +5,7 @@ namespace GeekLab\GLPDO2;
 use GeekLab\GLPDO2;
 use PHPUnit\Framework\TestCase;
 use \PDO;
+use \PDOException;
 use \Exception;
 use \DomainException;
 
@@ -12,16 +13,16 @@ class GLPDO2Test extends TestCase
 {
     private $db;
     private const SAMPLE_DATA = [
-        ['id' => 1, 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1', 'someDate' => null],
-        ['id' => 2, 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1', 'someDate' => null],
-        ['id' => 3, 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2', 'someDate' => null],
-        ['id' => 4, 'name' => 'Julian', 'location' => 'USA', 'dp' => '2', 'someDate' => null],
-        ['id' => 5, 'name' => 'Kieran', 'location' => 'Canada', 'dp' => '100.5', 'someDate' => null],
-        ['id' => 6, 'name' => 'Ryder', 'location' => 'El Salvador', 'dp' => '60', 'someDate' => null],
-        ['id' => 7, 'name' => 'Reese', 'location' => 'Estonia', 'dp' => '15.2', 'someDate' => null],
-        ['id' => 8, 'name' => 'Sarah', 'location' => 'Christmas Island', 'dp' => '-10.5', 'someDate' => null],
-        ['id' => 9, 'name' => 'Nadine', 'location' => 'Gabon', 'dp' => '-56.9', 'someDate' => null],
-        ['id' => 10, 'name' => 'Drew', 'location' => 'Burundi', 'dp' => '-56.5', 'someDate' => null],
+        ['id' => 1, 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1', 'someDate' => '2000-01-01', 'someDateTime' => '2000-01-01 00:01:02'],
+        ['id' => 2, 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1', 'someDate' => '2000-01-02', 'someDateTime' => '2000-01-02 00:01:02'],
+        ['id' => 3, 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2', 'someDate' => '2000-01-03', 'someDateTime' => '2000-01-03 00:01:02'],
+        ['id' => 4, 'name' => 'Julian', 'location' => 'USA', 'dp' => '2', 'someDate' => '2000-01-04', 'someDateTime' => '2000-01-04 00:01:02'],
+        ['id' => 5, 'name' => 'Kieran', 'location' => 'Canada', 'dp' => '100.5', 'someDate' => '2000-01-05', 'someDateTime' => '2000-01-05 00:01:02'],
+        ['id' => 6, 'name' => 'Ryder', 'location' => 'El Salvador', 'dp' => '60', 'someDate' => '2000-01-06', 'someDateTime' => '2000-01-06 00:01:02'],
+        ['id' => 7, 'name' => 'Reese', 'location' => 'Estonia', 'dp' => '15.2', 'someDate' => '2000-01-07', 'someDateTime' => '2000-01-07 00:01:02'],
+        ['id' => 8, 'name' => 'Sarah', 'location' => 'Christmas Island', 'dp' => '-10.5', 'someDate' => '2000-01-08', 'someDateTime' => '2000-01-08 00:01:02'],
+        ['id' => 9, 'name' => 'Nadine', 'location' => 'Gabon', 'dp' => '-56.9', 'someDate' => '2000-01-09', 'someDateTime' => '2000-01-09 00:01:02'],
+        ['id' => 10, 'name' => 'Drew', 'location' => 'Burundi', 'dp' => '-56.5', 'someDate' => '2000-01-10', 'someDateTime' => '2000-01-10 00:01:02'],
     ];
 
     public function __construct($name = null, array $data = [], $dataName = '')
@@ -45,14 +46,24 @@ class GLPDO2Test extends TestCase
                   ->sql('    `name` VARCHAR(255) DEFAULT NULL,')
                   ->sql('    `location` VARCHAR(255) DEFAULT NULL,')
                   ->sql('    `dp` FLOAT(10,1) DEFAULT "0.0" NOT NULL,')
-                  ->sql('    `someDate` DATE DEFAULT NULL')
+                  ->sql('    `someDate` DATE NOT NULL,')
+                  ->sql('    `someDateTime` DATETIME NOT NULL')
                   ->sql(');');
         $this->db->queryInsert($Statement);
 
         $Statement->reset()
-                  ->sql('INSERT INTO `test` (`id`,`name`,`location`,`dp`)')
+                  ->sql('INSERT INTO `test` (`id`, `name`, `location`, `dp`, `someDate`, `someDateTime`)')
                   ->sql('VALUES')
-                  ->sql('    (1,"Davis", "Germany", "10.1"), (2,"Hyacinth", "Germany", "1.1"), (3,"Quynn", "USA", "5.2"), (4,"Julian", "USA", "2.0"), (5,"Kieran", "Canada", "100.5"), (6,"Ryder", "El Salvador", "60.0"), (7,"Reese", "Estonia", "15.2"), (8,"Sarah", "Christmas Island", "-10.5"), (9,"Nadine", "Gabon", "-56.9"), (10,"Drew", "Burundi", "-56.5");');
+                  ->sql('    (1,"Davis", "Germany", "10.1", "2000-01-01", "2000-01-01 00:01:02"),')
+                  ->sql('    (2,"Hyacinth", "Germany", "1.1", "2000-01-02", "2000-01-02 00:01:02"),')
+                  ->sql('    (3,"Quynn", "USA", "5.2", "2000-01-03", "2000-01-03 00:01:02"),')
+                  ->sql('    (4,"Julian", "USA", "2.0", "2000-01-04", "2000-01-04 00:01:02"),')
+                  ->sql('    (5,"Kieran", "Canada", "100.5", "2000-01-05", "2000-01-05 00:01:02"),')
+                  ->sql('    (6,"Ryder", "El Salvador", "60.0", "2000-01-06", "2000-01-06 00:01:02"),')
+                  ->sql('    (7,"Reese", "Estonia", "15.2", "2000-01-07", "2000-01-07 00:01:02"),')
+                  ->sql('    (8,"Sarah", "Christmas Island", "-10.5", "2000-01-08", "2000-01-08 00:01:02"),')
+                  ->sql('    (9,"Nadine", "Gabon", "-56.9", "2000-01-09", "2000-01-09 00:01:02"),')
+                  ->sql('    (10,"Drew", "Burundi", "-56.5", "2000-01-10", "2000-01-10 00:01:02");');
         $this->db->queryInsert($Statement);
     }
 
@@ -419,10 +430,10 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => 1, 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1', 'someDate' => null],
-            ['id' => 2, 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1', 'someDate' => null],
-            ['id' => 3, 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2', 'someDate' => null],
-            ['id' => 4, 'name' => 'Julian', 'location' => 'USA', 'dp' => '2', 'someDate' => null]
+            ['id' => 1, 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1', 'someDate' => "2000-01-01"],
+            ['id' => 2, 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1', 'someDate' => "2000-01-02"],
+            ['id' => 3, 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2', 'someDate' => "2000-01-03"],
+            ['id' => 4, 'name' => 'Julian', 'location' => 'USA', 'dp' => '2', 'someDate' => "2000-01-04"]
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
@@ -433,18 +444,22 @@ class GLPDO2Test extends TestCase
     {
         $Statement = new GLPDO2\Statement();
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`)')->bRaw('test')
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis')
                   ->sql('    ?,')->bStr('USA')
-                  ->sql('    %%')->bFloat(8.5, 1)
+                  ->sql('    %%,')->bFloat(8.5, 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
                   ->sql(');');
 
-        $expected = "INSERT INTO `test` (`name`, `location`, `dp`)\n" .
+        $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
                     "VALUES (\n" .
                     "    'Ellis',\n" .
                     "    'USA',\n" .
-                    "    8.5\n" .
+                    "    8.5,\n" .
+                    "    '2000-01-12',\n" .
+                    "    '2000-01-12 00:01:02'\n" .
                     ');';
 
         $this->assertEquals($expected, $Statement->getComputed());
@@ -590,11 +605,13 @@ class GLPDO2Test extends TestCase
     {
         $Statement = new GLPDO2\Statement();
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`)')->bRaw('test')
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
                   ->sql('    ?,')->bStr('USA')
-                  ->sql('    %%')->bFloat('1.8', 1)
+                  ->sql('    %%,')->bFloat('1.8', 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
                   ->sql(');');
 
         $this->db->beginTransaction();
@@ -610,11 +627,13 @@ class GLPDO2Test extends TestCase
     {
         $Statement = new GLPDO2\Statement();
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`)')->bRaw('test')
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
                   ->sql('    ?,')->bStr('USA')
-                  ->sql('    %%')->bFloat('1.8', 1)
+                  ->sql('    %%,')->bFloat('1.8', 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
                   ->sql(');');
 
         $this->db->beginTransaction();
@@ -675,28 +694,58 @@ class GLPDO2Test extends TestCase
         $this->db->selectRows($Statement);
     }
 
-
-    // This was working before.. Now things broke between things...
-
     public function testDateNullException(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `someDate` = ?;')->bDate(null);
         $this->db->selectRows($Statement);
+    }
 
+    public function testDateNullPDOException(): void
+    {
+        $this->expectException(Exception::class);
+
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis2')
+                  ->sql('    ?,')->bStr('USA')
+                  ->sql('    %%,')->bFloat('1.8', 1)
+                  ->sql('    ?,')->bDate(null, true)
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+        $this->db->queryInsert($Statement);
     }
 
     public function testDateTimeNullException(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `someDate` = ?;')->bDateTime(null, false);
         $this->db->selectRows($Statement);
+    }
+
+    public function testDateTimeNullPDOException(): void
+    {
+        $this->expectException(Exception::class);
+
+        $Statement = new GLPDO2\Statement();
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis2')
+                  ->sql('    ?,')->bStr('USA')
+                  ->sql('    %%,')->bFloat('1.8', 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime(null, true)
+                  ->sql(');');
+        $this->db->queryInsert($Statement);
     }
 
     public function testIntArrayEmptyArrayException(): void
@@ -733,11 +782,12 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`)')->bRaw('test')
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
                   ->sql('    ?,')->bStr('USA')
-                  ->sql('    ?')->bStr(null, true)
+                  ->sql('    ?,')->bStr(null, true)
+                  ->sql('    ?')->bDate('2000-01-12')
                   ->sql(');');
         $this->db->beginTransaction();
         $this->db->queryInsert($Statement);
