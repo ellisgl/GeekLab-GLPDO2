@@ -566,9 +566,9 @@ class GLPDO2Test extends TestCase
                 'SET    `location` = :pos0',
                 'WHERE  `name`     = :pos1;'
             ],
-            'Bound SQL' => "UPDATE `test`\n" .
-"SET    `location` = 'Mexico'\n" .
-"WHERE  `name`     = 'Drew';"
+            'Bound SQL'       => "UPDATE `test`\n" .
+                                 "SET    `location` = 'Mexico'\n" .
+                                 "WHERE  `name`     = 'Drew';"
         ];
 
         $this->assertSame($expected, $Statement->__debugInfo());
@@ -597,29 +597,40 @@ class GLPDO2Test extends TestCase
                   ->sql('    ?')->bFloat('1.8', 1)
                   ->sql(');');
 
-        $expected = "INSERT INTO `test` (`name`, `location`, `dp`)\n" .
-                    "VALUES (\n" .
-                    "    'Ellis2',\n" .
-                    "    'USA',\n" .
-                    "    '1.8'\n" .
-                    ');';
+        $this->db->beginTransaction();
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $result = $this->db->queryInsert($Statement);
 
-        try {
-            $this->db->beginTransaction();
+        $this->assertTrue($this->db->inTransaction());
+        $this->db->commit();
+        $this->assertEquals(11, $result, 'Insert statement did not return id of 11');
+    }
 
-            $result = $this->db->queryInsert($Statement);
+    public function testRollback(): void
+    {
+        $Statement = new GLPDO2\Statement();
 
-            $this->db->commit();
-            $this->assertEquals(11, $result, 'Insert statement did not return id of 11');
-        } catch (Exception $e) {
-            if ($this->db->inTransaction()) {
-                $this->db->rollback();
-            }
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis2')
+                  ->sql('    ?,')->bStr('USA')
+                  ->sql('    ?')->bFloat('1.8', 1)
+                  ->sql(');');
 
-            throw $e;
-        }
+        $this->db->beginTransaction();
+        $this->db->queryInsert($Statement);
+        $this->assertTrue($this->db->inTransaction());
+        $this->db->rollback();
+
+        $Statement->reset()
+                  ->sql('SELECT `id`')
+                  ->sql('FROM `test`')
+                  ->sql('WHERE `name` = ?')->bStr('Ellis2')
+                  ->sql('LIMIT 1;');
+
+        $result = $this->db->selectRow($Statement);
+
+        $this->assertEmpty($result);
     }
 
     // Exception Tests
