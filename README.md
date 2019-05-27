@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/ellisgl/GeekLab-GLPDO2.svg?branch=master)](https://travis-ci.com/ellisgl/GeekLab-GLPDO2)
+[![Coverage](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2/branch/master/graph/badge.svg)](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2)
 
 GeekLab\GLPDO2
 ============
