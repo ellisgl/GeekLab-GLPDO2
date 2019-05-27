@@ -7,3 +7,6 @@ language: php
 php:
   - '7.2'
   - '7.3'
+script:
+  - phpunit
+  - php coverage-checker.php clover.xml 75

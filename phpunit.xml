@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <phpunit colors="true" bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="GLPDO2 Tests">
@@ -6,7 +7,10 @@
     </testsuites>
     <filter>
         <whitelist>
-            <directory>src</directory>
+            <directory suffix=".php">./src</directory>
         </whitelist>
+        <logging>
+            <log type="coverage-clover" target="./clover.xml"/>
+        </logging>
     </filter>
 </phpunit>
