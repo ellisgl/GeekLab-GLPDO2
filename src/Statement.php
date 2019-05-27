@@ -17,12 +17,6 @@ class Statement
     private $bindPos = 0;
 
     /**
-     * Position for Filtering.
-     * @var int
-     */
-    private $filterPos = 0;
-
-    /**
      * Named binding values.
      * @var array
      */
@@ -164,19 +158,6 @@ class Statement
         }
 
         $this->bStr($value);
-        return $this;
-    }
-
-    /**
-     * Bind filtering stuff?
-     *
-     * @param string $value
-     *
-     * @return Statement
-     */
-    public function bFilter(string $value): self
-    {
-        $this->bind('filter', $value);
         return $this;
     }
 
@@ -427,13 +408,6 @@ class Statement
     private function getNextName(string $type = 'bind'): string
     {
         switch ($type) {
-            case 'filter':
-                // filter
-                $ret = sprintf(':filter%d', $this->filterPos++);
-
-                return $ret;
-                break;
-
             case 'sql':
                 // sql statement syntax
                 $ret = sprintf(':pos%d', $this->sqlPos++);
@@ -615,7 +589,6 @@ class Statement
     public function reset(): self
     {
         $this->bindPos   = 0;
-        $this->filterPos = 0;
         $this->named     = array();
         $this->SQL       = array();
         $this->sqlPos    = 0;
