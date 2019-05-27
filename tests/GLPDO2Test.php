@@ -583,7 +583,7 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bStr(null);
 
-        $this->expectException($this->db->selectRows($Statement)_;
+        $this->expectException($this->db->selectRows($Statement));
     }
 
     public function testBoolNullException(): void
