@@ -4,51 +4,11 @@
 GeekLab\GLPDO2
 ============
 
-Easy to use PDO Wrapper for PHP 7.0+
+Easy to use PDO Wrapper for PHP 7.2+
 
 ### Features
 *    Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
 *    Help prevent injections.
-
-### What's new / Updated.
-2019-05-27 (1.2.2):
-* Removed dead code.
-* Tests.
-
-2019-05-27 (1.2.1):
-* bFloat now binds to '%%', instead of '?'.
-* Tests.
-* Docs.
-* More fixes and tweaks.
-
-2019-05-27 (1.2.0):
-*   PHP Requirement set to >=7.2.
-*   PSR Styling.
-*   Updated for EA Inspections (Should improve speed and readability).
-*   Transaction support is completed.
-*   Tests.
-*   Docs.
-
-2018-08-20 (1.1.2):
-*   Added exception throwing.
-
-2018-08-08 (1.1.1):
-*   Forced PHP requirement to >=7.0.
-*   Added type hints.
-*   Added return types.
-*   Code comment cleanup.
-
-2018-07-03 (1.1.0):
-*   Changed Statement::intArray() to Statement->bIntArray(). Will bind to '%%'.
-
-2018-04-06 (1.0.4):
-*   Fixed issue with more than 10 raw bindings.
- 
-2017-12-05 (1.0.2):
-*    Fixed case sensitivity with selectValue()
-
-2017-11-18 (1.0.0):
-*    Initial release
 
 ### Installation
 composer require geeklab/glpdo2
@@ -161,9 +121,6 @@ Used to build up the SQL parameterized statement.
 
 Statement->reset()<br/>
 Used to reset Statement private variables. Usefully for creating multiple queries without having to create a new Statement object.
-
-Statement->dump(boolean $isDev)<br/>
-Outputs the SQL statement for debuging purposes (Prettier version of Statement->getDebug). $isDev default is false, which prohibits it's output.
 
 Statement->execute(\PDO $PDO)<br/>
 Prepares and executes the statement
