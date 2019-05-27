@@ -9,7 +9,15 @@ Easy to use PDO Wrapper for PHP 7.0+
 *    Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
 *    Help prevent injections.
 
-### What's new
+### What's new / Updated.
+2019-05-27 (1.2.0):
+*   PHP Requirement set to >=7.2.
+*   PSR Styling.
+*   Updated for EA Inspections (Should improve speed and readability).
+*   Transaction support is completed.
+*   Tests.
+*   Docs.
+
 2018-08-20 (1.1.2):
 *   Added exception throwing.
 
@@ -77,7 +85,10 @@ Statement->bBool($value, optional boolean $null, optional boolean $int)<br/>
 Binds a value as bool(true, false, 0, 1), with optional NULL or integer (0 or 1) value return.
 
 Statement->bDate($value, optional boolean $null)<br/>
-Binds a value as a date, with optional NULL return
+Binds a value as a date (string - validated for YYYY-MM-DD), with optional NULL return.
+
+Statement->bDateString($value, optional boolean $null)<br/>
+Binds a value as a date time (string - validated for YYYY-MM-DD HH:MM:SS), with optional NULL return.
 
 Statement->bFloat($value, optional integer $decimals, optional boolean $null)<br/>
 Binds a value aa a float, with decimal place (default of 3) and optional NULL return.
@@ -121,6 +132,18 @@ Runs a normal query, returns a single row as an array.
 
 GLPDO->selectValue(Statement $SQL, $column, $default)<br/>
 Runs a normal query, returns a single column ($column) and can return a default ($default = false) value is no value is in the column.
+
+GLPDO->selectRow(Statement $SQL)<br/>
+Runs a normal query, returns a single row as an array.
+
+GLPDO->beginTransaction()<br/>
+Begins an SQL Transaction.
+
+GLPDO->commit()<br/>
+Commits an SQL Transaction.
+
+GLPDO->inTransaction()<br/>
+Is there a transaction in progress, returns bool.
 
 ### Misc Methods
 Statement->sql(string $text)<br/>

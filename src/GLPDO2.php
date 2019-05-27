@@ -2,11 +2,15 @@
 
 namespace GeekLab\GLPDO2;
 
+// Make EA inspection stop complaining.
+use \PDO;
+
 Class GLPDO2
 {
+    /** @var PDO $PDO */
     private $PDO;
 
-    public function __construct(\PDO $pdo)
+    public function __construct(PDO $pdo)
     {
         $this->PDO = $pdo;
     }
@@ -99,28 +103,24 @@ Class GLPDO2
         // Execute the statement
         $sth = $SQL->execute($this->PDO);
 
-        if (!$sth->rowCount())
-        {
+        if (!$sth->rowCount()) {
             // Insert failed
-            return FALSE;
+            return false;
         }
 
-        // look up the last inserted id
-        $insert_id = $this->PDO->lastInsertId();
-
         // Return the ID
-        return $insert_id;
+        return $this->PDO->lastInsertId();
     }
 
     /**
      * Return multiple rows result as an array
      *
      * @param Statement $SQL
-     * @param string $kKey
-     * @param string $vKey
+     * @param string    $kKey
+     * @param string    $vKey
      * @return array
      */
-    public function selectRows(Statement $SQL, string $kKey = "", string $vKey = ""): array
+    public function selectRows(Statement $SQL, string $kKey = '', string $vKey = ''): array
     {
         $data = array();
 
@@ -128,15 +128,11 @@ Class GLPDO2
         $sth = $SQL->execute($this->PDO);
 
         // Reform the results
-        while ($row = $sth->fetch(\PDO::FETCH_ASSOC))
-        {
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             // No kKey or vKey. Save enumerated row
-            if (!$kKey)
-            {
+            if (!$kKey) {
                 $data[] = $row;
-            }
-            else
-            {
+            } else {
                 // kKey exists, save without vKey or with?
                 $data[$row[$kKey]] = (!$vKey) ? $row : $row[$vKey];
             }
@@ -157,7 +153,7 @@ Class GLPDO2
         $sth = $SQL->execute($this->PDO);
 
         // Return the first row fetched
-        return $sth->fetch(\PDO::FETCH_ASSOC);
+        return $sth->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -165,20 +161,19 @@ Class GLPDO2
      *
      * @param Statement $SQL
      * @param           $column
-     * @param  bool     $caseSensitive
-     * @param  bool     $default
+     * @param bool      $caseSensitive
+     * @param bool      $default
      * @return string
      */
-    public function selectValue(Statement $SQL, $column, bool $caseSensitive = FALSE, bool $default = FALSE): string
+    public function selectValue(Statement $SQL, $column, bool $caseSensitive = false, bool $default = false): string
     {
         $row = $this->selectRow($SQL);
 
-        if (!$caseSensitive)
-        {
+        if (!$caseSensitive) {
             $row    = array_change_key_case($row);
             $column = strtolower($column);
         }
 
-        return isset($row[$column]) ? $row[$column] : $default;
+        return $row[$column] ?? $default;
     }
 }
