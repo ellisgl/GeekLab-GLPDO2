@@ -43,7 +43,8 @@ class GLPDO2Test extends TestCase
                   ->sql('    `id`   INTEGER PRIMARY KEY AUTOINCREMENT,')
                   ->sql('    `name` TEXT DEFAULT NULL,')
                   ->sql('    `location` TEXT DEFAULT NULL,')
-                  ->sql('    `dp` NUMERIC DEFAULT "0.0" NOT NULL')
+                  ->sql('    `dp` NUMERIC DEFAULT "0.0" NOT NULL,')
+                  ->sql('    `someDate` TEXT DEFAULT NULL')
                   ->sql(');');
         $this->db->queryInsert($Statement);
 
@@ -573,7 +574,12 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `id` = ?;')->bInt();
 
-        $this->expectException($this->db->selectRows($Statement));
+        try {
+            $this->db->selectRows($Statement);
+        } catch (Exception $e) {
+            $this->expectException($e->getMessage());
+        }
+
     }
 
     public function testStringNullException(): void
@@ -583,7 +589,11 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bStr(null);
 
-        $this->expectException($this->db->selectRows($Statement));
+        try {
+            $this->db->selectRows($Statement);
+        } catch (Exception $e) {
+            $this->expectException($e->getMessage());
+        }
     }
 
     public function testBoolNullException(): void
@@ -593,7 +603,11 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bBool(null);
 
-        $this->expectException($this->db->selectRows($Statement));
+        try {
+            $this->db->selectRows($Statement);
+        } catch (Exception $e) {
+            $this->expectException($e->getMessage());
+        }
     }
 
     public function testFloatNullException(): void
@@ -603,7 +617,11 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bFloat(null);
 
-        $this->expectException($this->db->selectRows($Statement));
+        try {
+            $this->db->selectRows($Statement);
+        } catch (Exception $e) {
+            $this->expectException($e->getMessage());
+        }
     }
 
     public function testDateNullException(): void
@@ -614,7 +632,11 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `someDate` = ?;')->bDate(null, false);
 
-        $this->expectException($this->db->selectRows($Statement));
+        try {
+            $this->db->selectRows($Statement);
+        } catch (Exception $e) {
+            $this->expectException($e->getMessage());
+        }
     }
 
     public function testDateTimeNullException(): void
@@ -625,7 +647,11 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `someDate` = ?;')->bDateTime(null, false);
 
-        $this->expectException($this->db->selectRows($Statement));
+        try {
+            $this->db->selectRows($Statement);
+        } catch (Exception $e) {
+            $this->expectException($e->getMessage());
+        }
     }
 
     public function testIntArrayEmptyArrayException(): void
@@ -635,7 +661,11 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` IN (%%);')->bIntArray(array());
 
-        $this->expectException($this->db->selectRows($Statement));
+        try {
+            $this->db->selectRows($Statement);
+        } catch (Exception $e) {
+            $this->expectException($e->getMessage());
+        }
     }
 
     public function testFloatInvalidTypeException(): void
@@ -645,7 +675,11 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bFloat('xyz');
 
-        $this->expectException($this->db->selectRows($Statement));
+        try {
+            $this->db->selectRows($Statement);
+        } catch (Exception $e) {
+            $this->expectException($e->getMessage());
+        }
     }
 
     public function testIntInvalidTypeException(): void
@@ -655,7 +689,11 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bInt('xyz');
 
-        $this->expectException($this->db->selectRows($Statement));
+        try {
+            $this->db->selectRows($Statement);
+        } catch (Exception $e) {
+            $this->expectException($e->getMessage());
+        }
     }
 
     public function testBadTransaction(): void
@@ -668,25 +706,12 @@ class GLPDO2Test extends TestCase
                   ->sql('    ?,')->bStr('USA')
                   ->sql('    ?')->bStr(null, true)
                   ->sql(');');
+        $this->db->beginTransaction();
 
         try {
-            $this->db->beginTransaction();
-            $this->expectException($this->db->queryInsert($Statement));
-            $this->db->commit();
+            $this->db->queryInsert($Statement);
         } catch (Exception $e) {
-            if ($this->db->inTransaction()) {
-                $this->db->rollback();
-            }
-
-            $Statement = new GLPDO2\Statement();
-
-            $Statement->sql('SELECT *')
-                      ->sql('FROM   `test`')
-                      ->sql('WHERE  `name` = ?;')->bStr('Ellis2'); // Making it one decimal point
-
-            $this->assertEmpty($this->db->selectRows($Statement), 'Row inserted when it should not have been.');
-
-            throw $e;
+            $this->expectException($e->getMessage());
         }
     }
 }
