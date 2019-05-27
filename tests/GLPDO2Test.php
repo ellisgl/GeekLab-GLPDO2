@@ -610,17 +610,18 @@ class GLPDO2Test extends TestCase
 
 
     // This was working before.. Now things broke between things...
-    /**
+
     public function testDateNullException(): void
     {
         $this->expectException(Exception::class);
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `someDate` = ?;')->bDate(null, false);
+                  ->sql('WHERE  `someDate` = ?;')->bDate(null);
         $this->db->selectRows($Statement);
+
     }
-    /**
+
     public function testDateTimeNullException(): void
     {
         $this->expectException(Exception::class);
@@ -630,7 +631,7 @@ class GLPDO2Test extends TestCase
                   ->sql('WHERE  `someDate` = ?;')->bDateTime(null, false);
         $this->db->selectRows($Statement);
     }
-    **/
+
     public function testIntArrayEmptyArrayException(): void
     {
         $this->expectException(Exception::class);

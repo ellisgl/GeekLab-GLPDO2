@@ -59,7 +59,7 @@ class Statement
     private $rawSql = array();
 
     /** @const string DATE_REGEX Standard date format YYYY-MM-DD */
-    private const DATE_REGEX      = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])$%';
+    private const DATE_REGEX = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])$%';
 
     /** @const string DATE_TIME_REGEX Standard date time format YYYY-MM-DD HH:MM:SS */
     private const DATE_TIME_REGEX = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$%';
@@ -115,16 +115,16 @@ class Statement
      */
     public function bDate($value = null, bool $null = false): self
     {
+        if ($value === null && !$null) {
+            throw new DomainException('Can not bind NULL in date spot.');
+        }
+
         $value = trim($value);
         $d     = preg_match(self::DATE_REGEX, $value);
 
         // Use NULL?
-        if (($value === null || !$d) && $null) {
+        if (!$d && $null) {
             return $this->bStr(null, true);
-        }
-
-        if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in date spot.');
         }
 
         $this->bStr($d ? $value : '1970-01-01');
@@ -143,19 +143,19 @@ class Statement
      */
     public function bDateTime($value = null, bool $null = false): self
     {
-        $value = trim($value);
-        $dt    = preg_match(self::DATE_TIME_REGEX, $value);
-
-        // Use NULL?
-        if (($value === null || !$dt) && $null) {
-            return $this->bStr(null, true);
-        }
-
         if ($value === null && !$null) {
             throw new DomainException('Can not bind NULL in date time spot.');
         }
 
-        if(!$dt) {
+        $value = trim($value);
+        $dt    = preg_match(self::DATE_TIME_REGEX, $value);
+
+        // Use NULL?
+        if (!$dt && $null) {
+            return $this->bStr(null, true);
+        }
+
+        if (!$dt) {
             if (!preg_match(self::DATE_REGEX, $value)) {
                 $value = '1970-01-01 00:00:00';
             } else {
@@ -597,8 +597,8 @@ class Statement
             $this->SQL[] = $text;
         } else {
             // Treat as an sprintf statement.
-            $args        = func_get_args();
-            $args[0]     = $text;
+            $args    = func_get_args();
+            $args[0] = $text;
             // Use argument unpacking, instead of call_user_func_array().
             $this->SQL[] = sprintf(...$args);
         }

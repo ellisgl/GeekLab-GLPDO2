@@ -9,4 +9,3 @@ php:
   - '7.3'
 script:
   - phpunit
-  - php coverage-checker.php clover.xml 75
