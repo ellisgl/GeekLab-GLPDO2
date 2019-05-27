@@ -136,9 +136,83 @@ class GLPDO2Test extends TestCase
         $this->assertEmpty($this->db->selectRows($Statement));
     }
 
-    // These two don't translate to SQLite...
-    // BoolFalseBool
-    // BoolTrueBool
+    public function testBoolNull(): void
+    {
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis2')
+                  ->sql('    ?,')->bBool(null, true) // Yeah, totally need to make the table better for all the tests...
+                  ->sql('    %%,')->bFloat('1.8', 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+
+
+        $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
+                    "VALUES (\n" .
+                    "    'Ellis2',\n" .
+                    "    NULL,\n" .
+                    "    1.8,\n" .
+                    "    '2000-01-12',\n" .
+                    "    '2000-01-12 00:01:02'\n" .
+                    ');';
+
+        $this->assertEquals($expected, $Statement->getComputed());
+    }
+
+    public function testBoolTrue(): void
+    {
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis2')
+                  ->sql('    ?,')->bBool(true, false, false) // Yeah, totally need to make the table better for all the tests...
+                  ->sql('    %%,')->bFloat('1.8', 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+
+
+        $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
+                    "VALUES (\n" .
+                    "    'Ellis2',\n" .
+                    "    TRUE,\n" .
+                    "    1.8,\n" .
+                    "    '2000-01-12',\n" .
+                    "    '2000-01-12 00:01:02'\n" .
+                    ');';
+
+        $this->assertEquals($expected, $Statement->getComputed());
+    }
+
+    public function testBoolFalse(): void
+    {
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis2')
+                  ->sql('    ?,')->bBool(false, false, false) // Yeah, totally need to make the table better for all the tests...
+                  ->sql('    %%,')->bFloat('1.8', 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+
+
+        $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
+                    "VALUES (\n" .
+                    "    'Ellis2',\n" .
+                    "    FALSE,\n" .
+                    "    1.8,\n" .
+                    "    '2000-01-12',\n" .
+                    "    '2000-01-12 00:01:02'\n" .
+                    ');';
+
+        $this->assertEquals($expected, $Statement->getComputed());
+    }
 
     // Date
     public function testDate(): void
