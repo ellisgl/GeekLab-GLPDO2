@@ -44,8 +44,7 @@ composer require geeklab/glpdo2
 
 ### Todo
 *    More tests.
-*    API docs with specific samples.
-*    Convert Statement to interface?
+*    More real wold example.
 *    More / Improved data bindings.
 
 ### Basic Usage (Quick-N-Dirty)
