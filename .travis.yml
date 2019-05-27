@@ -8,4 +8,21 @@ php:
   - '7.2'
   - '7.3'
 script:
-  - phpunit
+  #- phpunit
+  - composer test -- --coverage-clover=coverage.xml
+after_success:
+  # Submit coverage report to https://codecov.io
+  - bash <(curl -s https://codecov.io/bash)
+
+#after_failure:
+
+# Monitor only these branches
+branches:
+  only:
+    - master
+    - dev
+
+# You can delete the cache using travis-ci web interface
+cache:
+  directories:
+    - $HOME/.composer/cache

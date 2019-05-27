@@ -1,5 +1,13 @@
 <?xml version="1.0"?>
-<phpunit colors="true" bootstrap="vendor/autoload.php">
+<phpunit  backupGlobals="false"
+          backupStaticAttributes="false"
+          colors="true"
+          bootstrap="vendor/autoload.php"
+          convertErrorsToExceptions="true"
+          convertNoticesToExceptions="true"
+          convertWarningsToExceptions="true"
+          processIsolation="false"
+          stopOnFailure="false">
     <testsuites>
         <testsuite name="GLPDO2 Tests">
             <directory suffix="Test.php">tests</directory>
