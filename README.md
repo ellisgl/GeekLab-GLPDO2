@@ -11,6 +11,10 @@ Easy to use PDO Wrapper for PHP 7.0+
 *    Help prevent injections.
 
 ### What's new / Updated.
+2019-05-27 (1.2.2):
+* Removed dead code.
+* Tests.
+
 2019-05-27 (1.2.1):
 * bFloat now binds to '%%', instead of '?'.
 * Tests.
