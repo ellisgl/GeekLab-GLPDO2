@@ -22,6 +22,16 @@ Class GLPDO2
     }
 
     /**
+     * Is the operation in the middle of the transaction?
+     *
+     * @return bool
+     */
+    public function inTransaction(): bool
+    {
+        return $this->PDO->inTransaction();
+    }
+
+    /**
      * Commit transaction.
      *
      * @return bool

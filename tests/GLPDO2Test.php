@@ -42,7 +42,7 @@ class GLPDO2Test extends TestCase
                   ->sql('    `id`   INTEGER PRIMARY KEY AUTOINCREMENT,')
                   ->sql('    `name` TEXT DEFAULT NULL,')
                   ->sql('    `location` TEXT DEFAULT NULL,')
-                  ->sql('    `dp` NUMERIC DEFAULT NULL')
+                  ->sql('    `dp` NUMERIC DEFAULT "0.0" NOT NULL')
                   ->sql(');');
         $this->db->queryInsert($Statement);
 
@@ -463,7 +463,80 @@ class GLPDO2Test extends TestCase
         $this->assertEmpty($this->db->selectRows($Statement));
     }
 
-    // Todo: Transaction tests
+    // Transactions
+    // Good transaction
+    public function testGoodTransaction()
+    {
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis2')
+                  ->sql('    ?,')->bStr('USA')
+                  ->sql('    ?')->bFloat('1.8', 1)
+                  ->sql(');');
+
+        $expected = "INSERT INTO `test` (`name`, `location`, `dp`)\n" .
+                    "VALUES (\n" .
+                    "    'Ellis2',\n" .
+                    "    'USA',\n" .
+                    "    '1.8'\n" .
+                    ");";
+
+        $this->assertEquals($expected, $Statement->getComputed());
+
+        try {
+            $this->db->beginTransaction();
+
+            $result = $this->db->queryInsert($Statement);
+
+            $this->db->commit();
+            $this->assertEquals(11, $result, 'Insert statement did not return id of 11');
+        } catch (\Exception $e) {
+            if($this->db->inTransaction()) {
+                $this->db->rollback();
+            }
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Bad transaction
+     *
+     * @expectedException \Exception
+     */
+    public function testBadTransaction()
+    {
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis2')
+                  ->sql('    ?,')->bStr('USA')
+                  ->sql('    ?')->bStr(null, true)
+                  ->sql(');');
+
+        try {
+            $this->db->beginTransaction();
+            $this->db->queryInsert($Statement);
+            $this->db->commit();
+        } catch (\Exception $e) {
+            if($this->db->inTransaction()) {
+                $this->db->rollback();
+            }
+
+            $Statement = new GLPDO2\Statement();
+
+            $Statement->sql('SELECT *')
+                      ->sql('FROM   `test`')
+                      ->sql('WHERE  `name` = ?;')->bStr('Ellis2'); // Making it one decimal point
+
+            $this->assertEmpty($this->db->selectRows($Statement), 'Row inserted when it should not have been.');
+
+            throw $e;
+        }
+    }
 
     // Exception Tests
 
