@@ -78,6 +78,15 @@ class GLPDO2Test extends TestCase
         $this->assertEquals(self::SAMPLE_DATA, $this->db->selectRows($Statement));
     }
 
+    // For code coverage...
+    public function testDoesItConstruct(): void
+    {
+        $dbConn = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $db     = new GLPDO2\GLPDO2($dbConn);
+
+        $this->assertSame(\GeekLab\GLPDO2\GLPDO2::class, get_class($db));
+    }
+
     // Select with bindings
     // Bool
     public function testBoolFalseInt(): void
@@ -516,6 +525,53 @@ class GLPDO2Test extends TestCase
         array_pop($expected);
 
         $this->assertEquals($expected, $this->db->selectRows($Statement), 'Table data does not match!');
+    }
+
+    public function testToString(): void
+    {
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('UPDATE `test`')
+                  ->sql('SET    `location` = ?')->bStr('Mexico')
+                  ->sql('WHERE  `name`     = ?;')->bStr('Drew');
+
+        $expected = "UPDATE `test`\n" .
+                    "SET    `location` = 'Mexico'\n" .
+                    "WHERE  `name`     = 'Drew';";
+
+        $this->assertEquals($expected, (string)$Statement);
+    }
+
+    public function testDebugInfo(): void
+    {
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('UPDATE `test`')
+                  ->sql('SET    `location` = ?')->bStr('Mexico')
+                  ->sql('WHERE  `name`     = ?;')->bStr('Drew');
+
+        $expected = [
+            'Named Positions' => [
+                ':pos0' => [
+                    'type'  => 2,
+                    'value' => 'Mexico'
+                ],
+                ':pos1' => [
+                    'type'  => 2,
+                    'value' => 'Drew'
+                ]
+            ],
+            'Unbound SQL'     => [
+                'UPDATE `test`',
+                'SET    `location` = :pos0',
+                'WHERE  `name`     = :pos1;'
+            ],
+            'Bound SQL' => "UPDATE `test`\n" .
+"SET    `location` = 'Mexico'\n" .
+"WHERE  `name`     = 'Drew';"
+        ];
+
+        $this->assertSame($expected, $Statement->__debugInfo());
     }
 
     // Injection Test

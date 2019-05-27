@@ -195,7 +195,6 @@ class Statement
         // Use NULL?
         if ($value === null && $null) {
             return $this->bStr(null, true);
-
         }
 
         if ($value === null && !$null) {
