@@ -87,7 +87,7 @@ Binds a value as bool(true, false, 0, 1), with optional NULL or integer (0 or 1)
 Statement->bDate($value, optional boolean $null)<br/>
 Binds a value as a date (string - validated for YYYY-MM-DD), with optional NULL return.
 
-Statement->bDateString($value, optional boolean $null)<br/>
+Statement->bDateTime($value, optional boolean $null)<br/>
 Binds a value as a date time (string - validated for YYYY-MM-DD HH:MM:SS), with optional NULL return.
 
 Statement->bFloat($value, optional integer $decimals, optional boolean $null)<br/>
