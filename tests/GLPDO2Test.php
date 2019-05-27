@@ -125,7 +125,7 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `someDate` = ?;')->bDate('2000-01-02', false);
+                  ->sql('WHERE  `someDate` = ?;')->bDate('2000-01-02');
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
@@ -136,7 +136,7 @@ class GLPDO2Test extends TestCase
         $Statement->reset()
                   ->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `someDate` = ?;')->bDate('', false);
+                  ->sql('WHERE  `someDate` = ?;')->bDate('');
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
@@ -152,7 +152,7 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `someDate` = ?;')->bDateTime('2000-01-02 00:11:22', false);
+                  ->sql('WHERE  `someDate` = ?;')->bDateTime('2000-01-02 00:11:22');
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
@@ -163,7 +163,7 @@ class GLPDO2Test extends TestCase
         $Statement->reset()
                   ->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `someDate` = ?;')->bDateTime('2000-01-02', false);
+                  ->sql('WHERE  `someDate` = ?;')->bDateTime('2000-01-02');
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
@@ -174,7 +174,7 @@ class GLPDO2Test extends TestCase
         $Statement->reset()
                   ->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `someDate` = ?;')->bDateTime('', false);
+                  ->sql('WHERE  `someDate` = ?;')->bDateTime('');
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
@@ -279,7 +279,7 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `name` LIKE ?;')->bLike('nn', true, false);
+                  ->sql('WHERE  `name` LIKE ?;')->bLike('nn', true);
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
@@ -571,15 +571,11 @@ class GLPDO2Test extends TestCase
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `id` = ?;')->bInt(null);
+                  ->sql('WHERE  `id` = ?;')->bInt();
 
         $this->expectException($this->db->selectRows($Statement));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Can not bind NULL in string spot.
-     */
     public function testStringNullException(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -587,13 +583,9 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bStr(null);
 
-        $this->db->selectRows($Statement);
+        $this->expectException($this->db->selectRows($Statement)_;
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Can not bind NULL in boolean spot.
-     */
     public function testBoolNullException(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -601,13 +593,9 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bBool(null);
 
-        $this->db->selectRows($Statement);
+        $this->expectException($this->db->selectRows($Statement));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Can not bind NULL in float spot.
-     */
     public function testFloatNullException(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -615,13 +603,9 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bFloat(null);
 
-        $this->db->selectRows($Statement);
+        $this->expectException($this->db->selectRows($Statement));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedException Exception* @expectedExceptionMessage Can not bind NULL in boolean spot.
-     */
     public function testDateNullException(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -630,13 +614,9 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `someDate` = ?;')->bDate(null, false);
 
-        $this->db->selectRows($Statement);
+        $this->expectException($this->db->selectRows($Statement));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedException Exception* @expectedExceptionMessage Can not bind NULL in boolean spot.
-     */
     public function testDateTimeNullException(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -645,13 +625,9 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `someDate` = ?;')->bDateTime(null, false);
 
-        $this->db->selectRows($Statement);
+        $this->expectException($this->db->selectRows($Statement));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Can not bind an empty array.
-     */
     public function testIntArrayEmptyArrayException(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -659,13 +635,9 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` IN (%%);')->bIntArray(array());
 
-        $this->db->selectRows($Statement);
+        $this->expectException($this->db->selectRows($Statement));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Can not bind "xyz" in float spot.
-     */
     public function testFloatInvalidTypeException(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -673,13 +645,9 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bFloat('xyz');
 
-        $this->db->selectRows($Statement);
+        $this->expectException($this->db->selectRows($Statement));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Can not bind "xyz" in integer spot.
-     */
     public function testIntInvalidTypeException(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -687,14 +655,9 @@ class GLPDO2Test extends TestCase
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bInt('xyz');
 
-        $this->db->selectRows($Statement);
+        $this->expectException($this->db->selectRows($Statement));
     }
 
-    /**
-     * Bad transaction
-     *
-     * @expectedException Exception
-     */
     public function testBadTransaction(): void
     {
         $Statement = new GLPDO2\Statement();
@@ -708,7 +671,7 @@ class GLPDO2Test extends TestCase
 
         try {
             $this->db->beginTransaction();
-            $this->db->queryInsert($Statement);
+            $this->expectException($this->db->queryInsert($Statement));
             $this->db->commit();
         } catch (Exception $e) {
             if ($this->db->inTransaction()) {
