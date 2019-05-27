@@ -206,7 +206,9 @@ class Statement
         }
 
         $format = sprintf('%%0.%df', $decimals);
-        $this->bStr(sprintf($format, $value));
+
+        // Apparently using PDO::PARAM_STR makes this fail!
+        $this->bRaw(sprintf($format, $value));
 
         return $this;
     }
