@@ -201,7 +201,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => '2', 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1']
+            ['id' => '2', 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1', 'someDate' => null]
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
@@ -223,7 +223,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => '1', 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1']
+            ['id' => '1', 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1', 'someDate' => null]
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
@@ -245,9 +245,9 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => '1', 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1'],
-            ['id' => '2', 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1'],
-            ['id' => '3', 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2']
+            ['id' => '1', 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1', 'someDate' => null],
+            ['id' => '2', 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1', 'someDate' => null],
+            ['id' => '3', 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2', 'someDate' => null]
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
@@ -269,7 +269,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => '10', 'name' => 'Drew', 'location' => 'Burundi', 'dp' => '-56.5']
+            ['id' => '10', 'name' => 'Drew', 'location' => 'Burundi', 'dp' => '-56.5', 'someDate' => null]
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
@@ -290,7 +290,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => '3', 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2']
+            ['id' => '3', 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2', 'someDate' => null]
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
@@ -311,7 +311,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => '4', 'name' => 'Julian', 'location' => 'USA', 'dp' => '2']
+            ['id' => '4', 'name' => 'Julian', 'location' => 'USA', 'dp' => '2', 'someDate' => null]
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
@@ -388,7 +388,7 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => '8', 'name' => 'Sarah', 'location' => 'Christmas Island', 'dp' => '-10.5']
+            ['id' => '8', 'name' => 'Sarah', 'location' => 'Christmas Island', 'dp' => '-10.5', 'someDate' => null]
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
@@ -410,10 +410,10 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
 
         $expected = [
-            ['id' => 1, 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1'],
-            ['id' => 2, 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1'],
-            ['id' => 3, 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2'],
-            ['id' => 4, 'name' => 'Julian', 'location' => 'USA', 'dp' => '2']
+            ['id' => 1, 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1', 'someDate' => null],
+            ['id' => 2, 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1', 'someDate' => null],
+            ['id' => 3, 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2', 'someDate' => null],
+            ['id' => 4, 'name' => 'Julian', 'location' => 'USA', 'dp' => '2', 'someDate' => null]
         ];
 
         $this->assertEquals($expected, $this->db->selectRows($Statement));
