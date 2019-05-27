@@ -11,6 +11,12 @@ Easy to use PDO Wrapper for PHP 7.0+
 *    Help prevent injections.
 
 ### What's new / Updated.
+2019-05-27 (1.2.1):
+* bFloat now binds to '%%', instead of '?'.
+* Tests.
+* Docs.
+* More fixes and tweaks.
+
 2019-05-27 (1.2.0):
 *   PHP Requirement set to >=7.2.
 *   PSR Styling.
@@ -91,7 +97,7 @@ Statement->bDateTime($value, optional boolean $null)<br/>
 Binds a value as a date time (string - validated for YYYY-MM-DD HH:MM:SS), with optional NULL return.
 
 Statement->bFloat($value, optional integer $decimals, optional boolean $null)<br/>
-Binds a value aa a float, with decimal place (default of 3) and optional NULL return.
+Binds a value aa a float, with decimal place (default of 3) and optional NULL return. Use '%%' instead of '?'.
 
 Statement->bInt($value, optional boolean $null)<br/>
 Bind a value as an integer, whith optional NULL return.

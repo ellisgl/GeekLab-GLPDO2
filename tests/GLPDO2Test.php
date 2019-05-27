@@ -201,11 +201,11 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `dp` = ?;')->bFloat('1.101', 1); // Making it one decimal point
+                  ->sql('WHERE  `dp` = %%;')->bFloat('1.101', 1); // Making it one decimal point
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
-                    "WHERE  `dp` = '1.1';";
+                    'WHERE  `dp` = 1.1;';
 
         $this->assertEquals($expected, $Statement->getComputed());
 
@@ -437,14 +437,14 @@ class GLPDO2Test extends TestCase
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis')
                   ->sql('    ?,')->bStr('USA')
-                  ->sql('    ?')->bFloat(8.5, 1)
+                  ->sql('    %%')->bFloat(8.5, 1)
                   ->sql(');');
 
         $expected = "INSERT INTO `test` (`name`, `location`, `dp`)\n" .
                     "VALUES (\n" .
                     "    'Ellis',\n" .
                     "    'USA',\n" .
-                    "    '8.5'\n" .
+                    "    8.5\n" .
                     ');';
 
         $this->assertEquals($expected, $Statement->getComputed());
@@ -594,7 +594,7 @@ class GLPDO2Test extends TestCase
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
                   ->sql('    ?,')->bStr('USA')
-                  ->sql('    ?')->bFloat('1.8', 1)
+                  ->sql('    %%')->bFloat('1.8', 1)
                   ->sql(');');
 
         $this->db->beginTransaction();
@@ -614,7 +614,7 @@ class GLPDO2Test extends TestCase
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
                   ->sql('    ?,')->bStr('USA')
-                  ->sql('    ?')->bFloat('1.8', 1)
+                  ->sql('    %%')->bFloat('1.8', 1)
                   ->sql(');');
 
         $this->db->beginTransaction();
@@ -671,7 +671,7 @@ class GLPDO2Test extends TestCase
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `name` = ?;')->bFloat(null);
+                  ->sql('WHERE  `name` = %%;')->bFloat(null);
         $this->db->selectRows($Statement);
     }
 
@@ -715,7 +715,7 @@ class GLPDO2Test extends TestCase
         $Statement = new GLPDO2\Statement();
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `name` = ?;')->bFloat('xyz');
+                  ->sql('WHERE  `name` = %%;')->bFloat('xyz');
         $this->db->selectRows($Statement);
     }
 
