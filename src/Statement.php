@@ -367,7 +367,7 @@ class Statement
             throw new DomainException('Can not bind NULL in string spot.');
         }
 
-        $this->bind($name, $value, $type);
+        $this->bind($name, (string)$value, $type);
         return $this;
     }
 

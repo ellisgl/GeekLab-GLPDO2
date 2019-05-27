@@ -27,7 +27,7 @@ class GLPDO2Test extends TestCase
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $dbConn   = new PDO('mysql:host=127.0.0.1;dbname=glpdo2_test', travis, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $dbConn   = new PDO('mysql:host=127.0.0.1;dbname=glpdo2_test', 'travis', null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
         $this->db = new GLPDO2\GLPDO2($dbConn);
     }
 
@@ -41,11 +41,11 @@ class GLPDO2Test extends TestCase
 
         $Statement->reset()
                   ->sql('CREATE TABLE `test` (')
-                  ->sql('    `id`   INTEGER PRIMARY KEY AUTOINCREMENT,')
-                  ->sql('    `name` TEXT DEFAULT NULL,')
-                  ->sql('    `location` TEXT DEFAULT NULL,')
-                  ->sql('    `dp` NUMERIC DEFAULT "0.0" NOT NULL,')
-                  ->sql('    `someDate` TEXT DEFAULT NULL')
+                  ->sql('    `id`   INTEGER PRIMARY KEY AUTO_INCREMENT,')
+                  ->sql('    `name` VARCHAR(255) DEFAULT NULL,')
+                  ->sql('    `location` VARCHAR(255) DEFAULT NULL,')
+                  ->sql('    `dp` FLOAT(10,1) DEFAULT "0.0" NOT NULL,')
+                  ->sql('    `someDate` DATE DEFAULT NULL')
                   ->sql(');');
         $this->db->queryInsert($Statement);
 
