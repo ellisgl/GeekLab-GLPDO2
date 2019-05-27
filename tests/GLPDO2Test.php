@@ -27,7 +27,7 @@ class GLPDO2Test extends TestCase
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $dbConn   = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $dbConn   = new PDO('mysql:host=127.0.0.1;dbname=glpdo2_test', travis, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
         $this->db = new GLPDO2\GLPDO2($dbConn);
     }
 

@@ -3,10 +3,14 @@ before_script:
   - composer self
   - composer --version
   - composer install -n
+before_install:
+  - mysql -e 'CREATE DATABASE glpdo2_test;'
 language: php
 php:
   - '7.2'
   - '7.3'
+services:
+  - mysql
 script:
   #- phpunit
   - composer test -- --coverage-clover=coverage.xml
