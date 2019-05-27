@@ -10,47 +10,26 @@ use \PDOStatement;
 
 class Statement
 {
-    /**
-     * Position for SQL binds.
-     * @var int
-     */
+    /** @var int $bindPos Position for SQL binds. */
     private $bindPos = 0;
 
-    /**
-     * Named binding values.
-     * @var array
-     */
-    private $named = array();
+    /** @var array $named Named binding values. */
+    private $named = [];
 
-    /**
-     * SQL Statement.
-     * @var array
-     */
-    private $SQL = array();
+    /** @var array $SQL SQL Statement.*/
+    private $SQL = [];
 
-    /**
-     * Position holder for statement processing.
-     * @var int
-     */
+    /** @var int Position holder for statement processing. */
     private $sqlPos = 0;
 
-    /**
-     * Raw Named
-     * @var array
-     */
-    private $rawNamed = array();
+    /** @var array Raw named placeholders. */
+    private $rawNamed = [];
 
-    /**
-     * Position holder for raw statement processing.
-     * @var int
-     */
+    /** @var int $rawPos Position holder for raw statement processing. */
     private $rawPos = 0;
 
-    /**
-     * SQL Statement.
-     * @var array
-     */
-    private $rawSql = array();
+    /** @var array $rawSql SQL Statement. */
+    private $rawSql = [];
 
     /** @const string DATE_REGEX Standard date format YYYY-MM-DD */
     private const DATE_REGEX = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])$%';
@@ -67,7 +46,6 @@ class Statement
     }
 
     // Bind types
-
     /**
      * Bind a boolean value as bool, with NULL option or with integer option.
      *
@@ -232,6 +210,7 @@ class Statement
      *
      * @param       $value
      * @param bool  $null
+     *
      * @return Statement
      * @throws Exception
      */
@@ -294,6 +273,7 @@ class Statement
      * @param string $value
      * @param bool   $ends   Ends with?
      * @param bool   $starts Starts with?
+     *
      * @return Statement
      */
     public function bLike(string $value, bool $ends = false, bool $starts = false): self
@@ -360,6 +340,7 @@ class Statement
      *
      * @param array   $values
      * @param         $default
+     *
      * @return Statement
      */
     public function bStrArr(array $values, $default = null): self
@@ -373,31 +354,6 @@ class Statement
 
 
     // The rest of the helpers
-
-    /**
-     * Convert an array to a comma delimited string, with keys.
-     * Should I remove this?
-     *
-     * @param array $data
-     * @return string
-     * @throws Exception
-     */
-    public static function arrToString(array $data): string
-    {
-        if (empty($data)) {
-            throw new DomainException('Can not bind empty array.');
-        }
-
-        $query_string = array();
-
-        foreach ($data as $k => $v) {
-            $query_string[] = $k . '="' . $v . '"';
-        }
-
-        return implode(',', $query_string);
-
-    }
-
     /**
      * Name the positions for binding in PDO.
      *
@@ -559,6 +515,7 @@ class Statement
      * Builds up the SQL parameterized statement.
      *
      * @param string $text
+     *
      * @return Statement
      */
     public function sql($text): self
