@@ -9,14 +9,13 @@ Easy to use PDO Wrapper for PHP 7.2+
 ### Features
 *    Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
 *    Help prevent injections.
+*    PSR1/2/4 Compliant.
 
 ### Installation
 composer require geeklab/glpdo2
 
 ### Todo
-*    More tests.
 *    More real wold example.
-*    More / Improved data bindings.
 
 ### Basic Usage (Quick-N-Dirty)
 
