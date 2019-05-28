@@ -6,7 +6,7 @@ namespace GeekLab\GLPDO2;
 use \PDO;
 use \Exception;
 
-Class GLPDO2
+class GLPDO2
 {
     /** @var PDO $PDO */
     private $PDO;

@@ -13,6 +13,7 @@ services:
   - mysql
 script:
   #- phpunit
+  - php vendor/bin/phpcs --standard=psr2 src/ -n
   - composer test -- --coverage-clover=coverage.xml
 after_success:
   # Submit coverage report to https://codecov.io

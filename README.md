@@ -28,7 +28,7 @@ ini_set('display_errors', '1');
 define('DS', DIRECTORY_SEPARATOR);
 require_once '..' . DS . '..' . DS . 'vendor' . DS . 'autoload.php';
 
-$dbConn    = new PDO('mysql:host=localhost;dbname=playground', 'root', '');
+$dbConn    = new PDO('mysql:host=localhost;dbname=playground', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 $db        = new \GeekLab\GLPDO2\GLPDO2($dbConn);
 $Statement = new \GeekLab\GLPDO2\Statement();
 $start     = 0;
@@ -68,6 +68,9 @@ Bind a value as an integer, whith optional NULL return.
 
 Statement->bIntArray(array $data, integer $default)<br/>
 Converts an array of integers to a comma separated values. Will output $default (which is 0) if $data is not an array. Used with IN() statements. Use '%%' instead of '?'.
+
+Statement->bJSON($data, optional boolean $null)<br/>
+Binds a JSON object or string as a string, with optional NULL value.
 
 Statement->bLike($value, boolean $ends, boolean $starts)<br/>
 Binds a value as a string for LIKE queries. $ends = "ends with", $starts = "starts with"

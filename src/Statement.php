@@ -35,15 +35,8 @@ class Statement
     private const DATE_REGEX = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])$%';
 
     /** @const string DATE_TIME_REGEX Standard date time format YYYY-MM-DD HH:MM:SS */
-    private const DATE_TIME_REGEX = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$%';
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        // Init
-    }
+    private const DATE_TIME_REGEX = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01]) ' .
+                                    '([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$%';
 
     // Bind types
 
@@ -271,6 +264,43 @@ class Statement
     }
 
     /**
+     * Bind a object or JSON string to a string
+     *
+     * @param      $value
+     * @param bool $null
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bJSON($value, bool $null = false): self
+    {
+        // Use NULL?
+        if ($value === null && $null) {
+            return $this->bStr(null, true);
+        }
+
+        if ($value === null && !$null) {
+            throw new DomainException('Can not bind NULL in JSON spot.');
+        }
+
+        if (is_object($value)) {
+            $value = json_encode($value);
+        } else {
+            $JSON = json_decode($value, false, 255);
+
+            if (json_last_error()) {
+                throw new DomainException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
+            }
+
+            if ((!is_object($JSON) && !is_array($JSON))) {
+                throw new DomainException('Can not bind invalid JSON in JSON spot. (UNKNOWN)');
+            }
+        }
+
+        return $this->bStr($value);
+    }
+
+    /**
      * Create and bind string for LIKE() statements.
      *
      * @param string $value
@@ -422,20 +452,20 @@ class Statement
             // bind named parameters
             foreach ($this->named as $name => $sVal) {
                 switch ($sVal['type']) {
-                    case PDO::PARAM_BOOL :
+                    case PDO::PARAM_BOOL:
                         $stmt->bindValue($name, (bool)$sVal['value'], $sVal['type']);
                         break;
 
-                    case PDO::PARAM_NULL :
+                    case PDO::PARAM_NULL:
                         $stmt->bindValue($name, null);
                         break;
 
-                    case PDO::PARAM_INT :
+                    case PDO::PARAM_INT:
                         $stmt->bindValue($name, (int)$sVal['value'], $sVal['type']);
                         break;
 
-                    case PDO::PARAM_STR :
-                    default :
+                    case PDO::PARAM_STR:
+                    default:
                         $stmt->bindValue($name, (string)$sVal['value'], $sVal['type']);
                         break;
                 }
@@ -446,7 +476,6 @@ class Statement
         } catch (Exception $e) {
             throw new Exception($e);
         }
-
     }
 
     /**
@@ -472,17 +501,17 @@ class Statement
             $sVal = $this->named[$key];
 
             switch ($sVal['type']) {
-                case PDO::PARAM_BOOL :
+                case PDO::PARAM_BOOL:
                     return $sVal['value'] ? 'TRUE' : 'FALSE';
 
-                case PDO::PARAM_NULL :
+                case PDO::PARAM_NULL:
                     return 'NULL';
 
-                case PDO::PARAM_INT :
+                case PDO::PARAM_INT:
                     return (int)$sVal['value'];
 
-                case PDO::PARAM_STR :
-                default :
+                case PDO::PARAM_STR:
+                default:
                     return "'" . $sVal['value'] . "'";
             }
         }

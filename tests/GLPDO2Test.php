@@ -393,6 +393,72 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $this->db->selectRows($Statement));
     }
 
+    // JSON
+    public function testJSON(): void
+    {
+        $Statement = new Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis')
+                  ->sql('    ?,')->bJSON('{"a":123}')
+                  ->sql('    %%,')->bFloat(8.10, 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+
+        $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
+                    "VALUES (\n" .
+                    "    'Ellis',\n" .
+                    "    '{\"a\":123}',\n" .
+                    "    8.1,\n" .
+                    "    '2000-01-12',\n" .
+                    "    '2000-01-12 00:01:02'\n" .
+                    ');';
+
+        $this->assertEquals($expected, $Statement->getComputed());
+
+        $object    = new \stdClass();
+        $object->a = 123;
+
+        $Statement->reset()
+                  ->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis')
+                  ->sql('    ?,')->bJSON($object)
+                  ->sql('    %%,')->bFloat(8.10, 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+
+        $this->assertEquals($expected, $Statement->getComputed());
+    }
+
+    public function testJSONNull(): void
+    {
+        $Statement = new Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis')
+                  ->sql('    ?,')->bJSON(null, true)
+                  ->sql('    %%,')->bFloat(8.10, 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+
+        $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
+                    "VALUES (\n" .
+                    "    'Ellis',\n" .
+                    "    NULL,\n" .
+                    "    8.1,\n" .
+                    "    '2000-01-12',\n" .
+                    "    '2000-01-12 00:01:02'\n" .
+                    ');';
+
+        $this->assertEquals($expected, $Statement->getComputed());
+    }
+
     // Like
     public function testLikeBeginsWith(): void
     {
@@ -730,6 +796,7 @@ class GLPDO2Test extends TestCase
     public function testInjection(): void
     {
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bStr("1' OR 1; --'");
@@ -793,7 +860,9 @@ class GLPDO2Test extends TestCase
     public function testIntNullException(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `id` = ?;')->bInt();
@@ -803,7 +872,9 @@ class GLPDO2Test extends TestCase
     public function testStringNullException(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bStr(null);
@@ -814,7 +885,9 @@ class GLPDO2Test extends TestCase
     public function testBoolNullException(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bBool(null);
@@ -824,7 +897,9 @@ class GLPDO2Test extends TestCase
     public function testFloatNullException(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = %%;')->bFloat(null);
@@ -836,6 +911,7 @@ class GLPDO2Test extends TestCase
         $this->expectException(Exception::class);
 
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `someDate` = ?;')->bDate(null);
@@ -847,6 +923,7 @@ class GLPDO2Test extends TestCase
         $this->expectException(Exception::class);
 
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
@@ -863,6 +940,7 @@ class GLPDO2Test extends TestCase
         $this->expectException(Exception::class);
 
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `someDate` = ?;')->bDateTime(null, false);
@@ -874,6 +952,7 @@ class GLPDO2Test extends TestCase
         $this->expectException(Exception::class);
 
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
@@ -888,7 +967,9 @@ class GLPDO2Test extends TestCase
     public function testIntArrayEmptyArrayException(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` IN (%%);')->bIntArray(array());
@@ -898,7 +979,9 @@ class GLPDO2Test extends TestCase
     public function testFloatInvalidTypeException(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = %%;')->bFloat('xyz');
@@ -908,17 +991,53 @@ class GLPDO2Test extends TestCase
     public function testIntInvalidTypeException(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `name` = ?;')->bInt('xyz');
         $this->db->selectRows($Statement);
     }
 
+    public function testJSONNullException(): void
+    {
+        $this->expectException(Exception::class);
+
+        $Statement = new Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis')
+                  ->sql('    ?,')->bJSON(null, false)
+                  ->sql('    %%,')->bFloat(8.10, 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+    }
+
+    public function testBadJSONException(): void
+    {
+        $this->expectException(Exception::class);
+
+        $Statement = new Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis')
+                  ->sql('    ?,')->bJSON('SDI')
+                  ->sql('    %%,')->bFloat(8.10, 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+    }
+
     public function testBadTransaction(): void
     {
         $this->expectException(Exception::class);
+
         $Statement = new GLPDO2\Statement();
+
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
