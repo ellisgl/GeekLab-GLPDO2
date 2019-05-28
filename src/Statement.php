@@ -69,9 +69,11 @@ class Statement
         }
 
         $name  = $this->getNextName();
-        $value = (boolean)$value;
+        $value = (bool)$value;
+        $value = $int ? (int)$value : $value;
+        $type  = $int ? PDO::PARAM_INT : PDO::PARAM_BOOL;
 
-        $this->bind($name, ($int ? (int)$value : $value), ($int ? PDO::PARAM_INT : PDO::PARAM_BOOL));
+        $this->bind($name, $value, $type);
 
         return $this;
     }
@@ -421,7 +423,7 @@ class Statement
             foreach ($this->named as $name => $sVal) {
                 switch ($sVal['type']) {
                     case PDO::PARAM_BOOL :
-                        $stmt->bindValue($name, (boolean)$sVal['value'], $sVal['type']);
+                        $stmt->bindValue($name, (bool)$sVal['value'], $sVal['type']);
                         break;
 
                     case PDO::PARAM_NULL :

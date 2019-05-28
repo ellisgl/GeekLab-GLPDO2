@@ -184,6 +184,9 @@ class GLPDO2Test extends TestCase
                     ');';
 
         $this->assertEquals($expected, $Statement->getComputed());
+
+        $this->db->queryInsert($Statement);
+
     }
 
     public function testBoolFalse(): void
@@ -209,6 +212,8 @@ class GLPDO2Test extends TestCase
                     ');';
 
         $this->assertEquals($expected, $Statement->getComputed());
+
+        $this->db->queryInsert($Statement);
     }
 
     // Date
@@ -641,7 +646,7 @@ class GLPDO2Test extends TestCase
                     "WHERE  `name` = :pos999\n" .
                     "AND `location` = :raw999;";
 
-            $this->assertSame($expected, $Statement->getComputed());
+        $this->assertSame($expected, $Statement->getComputed());
     }
 
     // Delete
