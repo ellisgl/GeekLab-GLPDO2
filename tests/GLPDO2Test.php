@@ -1032,6 +1032,22 @@ class GLPDO2Test extends TestCase
                   ->sql(');');
     }
 
+    public function testBadJSONException2(): void
+    {
+        $this->expectException(Exception::class);
+
+        $Statement = new Statement();
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('VALUES (')
+                  ->sql('    ?,')->bStr('Ellis')
+                  ->sql('    ?,')->bJSON(123)
+                  ->sql('    %%,')->bFloat(8.10, 1)
+                  ->sql('    ?,')->bDate('2000-01-12')
+                  ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+                  ->sql(');');
+    }
+
     public function testBadTransaction(): void
     {
         $this->expectException(Exception::class);
