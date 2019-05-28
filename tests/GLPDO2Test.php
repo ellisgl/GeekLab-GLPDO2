@@ -13,16 +13,16 @@ class GLPDO2Test extends TestCase
 {
     private $db;
     private const SAMPLE_DATA = [
-        ['id' => '1',  'name' => 'Davis',    'location' => 'Germany',          'dp' => '10.1',  'someDate' => '2000-01-01', 'someDateTime' => '2000-01-01 00:01:02'],
-        ['id' => '2',  'name' => 'Hyacinth', 'location' => 'Germany',          'dp' => '1.1',   'someDate' => '2000-01-02', 'someDateTime' => '2000-01-02 00:01:02'],
-        ['id' => '3',  'name' => 'Quynn',    'location' => 'USA',              'dp' => '5.2',   'someDate' => '2000-01-03', 'someDateTime' => '2000-01-03 00:01:02'],
-        ['id' => '4',  'name' => 'Julian',   'location' => 'USA',              'dp' => '2.0',   'someDate' => '2000-01-04', 'someDateTime' => '2000-01-04 00:01:02'],
-        ['id' => '5',  'name' => 'Kieran',   'location' => 'Canada',           'dp' => '100.5', 'someDate' => '2000-01-05', 'someDateTime' => '2000-01-05 00:01:02'],
-        ['id' => '6',  'name' => 'Ryder',    'location' => 'El Salvador',      'dp' => '60.0',  'someDate' => '2000-01-06', 'someDateTime' => '2000-01-06 00:01:02'],
-        ['id' => '7',  'name' => 'Reese',    'location' => 'Estonia',          'dp' => '15.2',  'someDate' => '2000-01-07', 'someDateTime' => '2000-01-07 00:01:02'],
-        ['id' => '8',  'name' => 'Sarah',    'location' => 'Christmas Island', 'dp' => '-10.5', 'someDate' => '2000-01-08', 'someDateTime' => '2000-01-08 00:01:02'],
-        ['id' => '9',  'name' => 'Nadine',   'location' => 'Gabon',            'dp' => '-56.9', 'someDate' => '2000-01-09', 'someDateTime' => '2000-01-09 00:01:02'],
-        ['id' => '10', 'name' => 'Drew',     'location' => 'Burundi',          'dp' => '-56.5', 'someDate' => '2000-01-10', 'someDateTime' => '2000-01-10 00:01:02'],
+        ['id' => '1', 'name' => 'Davis', 'location' => 'Germany', 'dp' => '10.1', 'someDate' => '2000-01-01', 'someDateTime' => '2000-01-01 00:01:02'],
+        ['id' => '2', 'name' => 'Hyacinth', 'location' => 'Germany', 'dp' => '1.1', 'someDate' => '2000-01-02', 'someDateTime' => '2000-01-02 00:01:02'],
+        ['id' => '3', 'name' => 'Quynn', 'location' => 'USA', 'dp' => '5.2', 'someDate' => '2000-01-03', 'someDateTime' => '2000-01-03 00:01:02'],
+        ['id' => '4', 'name' => 'Julian', 'location' => 'USA', 'dp' => '2.0', 'someDate' => '2000-01-04', 'someDateTime' => '2000-01-04 00:01:02'],
+        ['id' => '5', 'name' => 'Kieran', 'location' => 'Canada', 'dp' => '100.5', 'someDate' => '2000-01-05', 'someDateTime' => '2000-01-05 00:01:02'],
+        ['id' => '6', 'name' => 'Ryder', 'location' => 'El Salvador', 'dp' => '60.0', 'someDate' => '2000-01-06', 'someDateTime' => '2000-01-06 00:01:02'],
+        ['id' => '7', 'name' => 'Reese', 'location' => 'Estonia', 'dp' => '15.2', 'someDate' => '2000-01-07', 'someDateTime' => '2000-01-07 00:01:02'],
+        ['id' => '8', 'name' => 'Sarah', 'location' => 'Christmas Island', 'dp' => '-10.5', 'someDate' => '2000-01-08', 'someDateTime' => '2000-01-08 00:01:02'],
+        ['id' => '9', 'name' => 'Nadine', 'location' => 'Gabon', 'dp' => '-56.9', 'someDate' => '2000-01-09', 'someDateTime' => '2000-01-09 00:01:02'],
+        ['id' => '10', 'name' => 'Drew', 'location' => 'Burundi', 'dp' => '-56.5', 'someDate' => '2000-01-10', 'someDateTime' => '2000-01-10 00:01:02'],
     ];
 
     public function __construct($name = null, array $data = [], $dataName = '')
@@ -625,6 +625,23 @@ class GLPDO2Test extends TestCase
                   ->sql('WHERE  `name` = \'Drew\';');
         $this->assertNotEquals('Drew', $this->db->selectValue($Statement, 'NAMe', true));
         $this->assertEquals('Drew', $this->db->selectValue($Statement, 'name', true));
+    }
+
+    public function testSelectBadPlaceHolders(): void
+    {
+        $Statement = new GLPDO2\Statement();
+
+        $Statement->sql('SELECT *')
+                  ->sql('FROM   `test`')
+                  ->sql('WHERE  `name` = :pos999')
+                  ->sql('AND `location` = :raw999;');
+
+        $expected = "SELECT *\n" .
+                    "FROM   `test`\n" .
+                    "WHERE  `name` = :pos999\n" .
+                    "AND `location` = :raw999;";
+
+            $this->assertSame($expected, $Statement->getComputed());
     }
 
     // Delete

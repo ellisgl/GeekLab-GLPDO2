@@ -16,7 +16,7 @@ class Statement
     /** @var array $named Named binding values. */
     private $named = [];
 
-    /** @var array $SQL SQL Statement.*/
+    /** @var array $SQL SQL Statement. */
     private $SQL = [];
 
     /** @var int Position holder for statement processing. */
@@ -46,6 +46,7 @@ class Statement
     }
 
     // Bind types
+
     /**
      * Bind a boolean value as bool, with NULL option or with integer option.
      *
@@ -354,6 +355,7 @@ class Statement
 
 
     // The rest of the helpers
+
     /**
      * Name the positions for binding in PDO.
      *
@@ -456,10 +458,6 @@ class Statement
      */
     private function placeholderFill(array $matches)
     {
-        if (empty($matches)) {
-            throw new DomainException('Can not fill placeholders with empty array.');
-        }
-
         $key = $matches[0];
 
         // Can't fill this param.
@@ -521,19 +519,9 @@ class Statement
     public function sql($text): self
     {
         // Replace positioned placeholders with named placeholders (first value).
-        $text = preg_replace_callback('/\?/m', array($this, 'placeholderGetName'), $text);
-        $text = preg_replace_callback('/%%/m', array($this, 'rawPlaceholderGetName'), $text);
-
-        // Just add the text as-is.
-        if (func_num_args() === 1) {
-            $this->SQL[] = $text;
-        } else {
-            // Treat as an sprintf statement.
-            $args    = func_get_args();
-            $args[0] = $text;
-            // Use argument unpacking, instead of call_user_func_array().
-            $this->SQL[] = sprintf(...$args);
-        }
+        $text        = preg_replace_callback('/\?/m', array($this, 'placeholderGetName'), $text);
+        $text        = preg_replace_callback('/%%/m', array($this, 'rawPlaceholderGetName'), $text);
+        $this->SQL[] = $text;
 
         return $this;
     }
@@ -545,13 +533,13 @@ class Statement
      */
     public function reset(): self
     {
-        $this->bindPos   = 0;
-        $this->named     = array();
-        $this->SQL       = array();
-        $this->sqlPos    = 0;
-        $this->rawNamed  = array();
-        $this->rawPos    = 0;
-        $this->rawSql    = array();
+        $this->bindPos  = 0;
+        $this->named    = array();
+        $this->SQL      = array();
+        $this->sqlPos   = 0;
+        $this->rawNamed = array();
+        $this->rawPos   = 0;
+        $this->rawSql   = array();
 
         return $this;
     }
