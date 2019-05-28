@@ -94,8 +94,8 @@ Runs an insert query and returns the primary ID.
 GLPDO->queryUpdate(Statement $SQL)<br/>
 Runs an update query and returns number of affect rows
 
-GLPDO->selectRows(Statement $SQL, $kKey, $vKey)<br/>
-Run a normal query, returns multiple rows as an array of associative arrays, with key & value selection.
+GLPDO->selectRows(Statement $SQL)<br/>
+Run a normal query, returns multiple rows as an array of associative arrays.
 
 GLPDO->selectRow(Statement $SQL)<br/>
 Runs a normal query, returns a single row as an array.

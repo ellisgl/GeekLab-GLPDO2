@@ -138,18 +138,7 @@ Class GLPDO2
         // Execute the statement
         $sth = $SQL->execute($this->PDO);
 
-        // Reform the results
-        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-            // No kKey or vKey. Save enumerated row
-            if (!$kKey) {
-                $data[] = $row;
-            } else {
-                // kKey exists, save without vKey or with?
-                $data[$row[$kKey]] = (!$vKey) ? $row : $row[$vKey];
-            }
-        }
-
-        return $data;
+        return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
