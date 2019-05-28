@@ -298,9 +298,9 @@ class GLPDO2Test extends TestCase
         $this->assertEquals($expected, $this->db->selectRows($Statement));
 
         $Statement->reset()
-                  ->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+                  ->sql('INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')
                   ->sql('VALUES (')
-                  ->sql('    ?,')->bStr('Ellis')
+                  ->sql('    ?,')->bStr('Ellis2')
                   ->sql('    ?,')->bStr('USA')
                   ->sql('    %%,')->bFloat(null, 1, true)
                   ->sql('    ?,')->bDate('2000-01-12')
@@ -309,7 +309,7 @@ class GLPDO2Test extends TestCase
 
         $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
                     "VALUES (\n" .
-                    "    'Ellis',\n" .
+                    "    'Ellis2',\n" .
                     "    'USA',\n" .
                     "    NULL,\n" .
                     "    '2000-01-12',\n" .

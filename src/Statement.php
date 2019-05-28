@@ -153,7 +153,7 @@ class Statement
     {
         // Use NULL?
         if ($value === null && $null) {
-            return $this->bStr(null, true);
+            return $this->bRaw('NULL');
         }
 
         if ($value === null && !$null) {
