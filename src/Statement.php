@@ -304,10 +304,6 @@ class Statement
                 throw new DomainException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
             }
 
-            if (!is_object($JSON) && !is_array($JSON)) {
-                throw new DomainException('Can not bind invalid JSON in JSON spot. (UNKNOWN)');
-            }
-
             $value = json_encode($JSON);
         } else {
             throw new DomainException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
