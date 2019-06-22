@@ -62,8 +62,8 @@ class Statement
         }
 
         $name  = $this->getNextName();
-        $value = (bool)$value;
-        $value = $int ? (int)$value : $value;
+        $value = (bool) $value;
+        $value = $int ? (int) $value : $value;
         $type  = $int ? PDO::PARAM_INT : PDO::PARAM_BOOL;
 
         $this->bind($name, $value, $type);
@@ -236,7 +236,7 @@ class Statement
         $name  = $this->getNextName();
         $value = sprintf('%u', $value);
 
-        $this->bind($name, (int)$value, PDO::PARAM_INT);
+        $this->bind($name, (int) $value, PDO::PARAM_INT);
         return $this;
     }
 
@@ -260,7 +260,7 @@ class Statement
         $numbers = array();
 
         foreach ($data as $value) {
-            $numbers[(int)$value] = true;
+            $numbers[(int) $value] = true;
         }
 
         $numbers = array_keys($numbers);
@@ -375,7 +375,7 @@ class Statement
             throw new DomainException('Can not bind NULL in string spot.');
         }
 
-        $this->bind($name, (string)$value, $type);
+        $this->bind($name, (string) $value, $type);
         return $this;
     }
 
@@ -451,11 +451,11 @@ class Statement
     public function execute(PDO $PDO): PDOStatement
     {
         // Prepare the SQL, force to string in case of null.
-        $sql = (string)implode(' ', $this->SQL);
+        $sql = (string) implode(' ', $this->SQL);
 
         // Replace raw placements with raw values.
         foreach ($this->rawNamed as $name => $rVal) {
-            $sql = (string)preg_replace('/' . $name . '\b/', $rVal, $sql);
+            $sql = (string) preg_replace('/' . $name . '\b/', $rVal, $sql);
         }
 
         $stmt = $PDO->prepare($sql);
@@ -464,7 +464,7 @@ class Statement
         foreach ($this->named as $name => $sVal) {
             switch ($sVal['type']) {
                 case PDO::PARAM_BOOL:
-                    $stmt->bindValue($name, (bool)$sVal['value'], $sVal['type']);
+                    $stmt->bindValue($name, (bool) $sVal['value'], $sVal['type']);
                     break;
 
                 case PDO::PARAM_NULL:
@@ -472,12 +472,12 @@ class Statement
                     break;
 
                 case PDO::PARAM_INT:
-                    $stmt->bindValue($name, (int)$sVal['value'], $sVal['type']);
+                    $stmt->bindValue($name, (int) $sVal['value'], $sVal['type']);
                     break;
 
                 case PDO::PARAM_STR:
                 default:
-                    $stmt->bindValue($name, (string)$sVal['value'], $sVal['type']);
+                    $stmt->bindValue($name, (string) $sVal['value'], $sVal['type']);
                     break;
             }
         }
@@ -516,7 +516,7 @@ class Statement
                     return 'NULL';
 
                 case PDO::PARAM_INT:
-                    return (int)$sVal['value'];
+                    return (int) $sVal['value'];
 
                 case PDO::PARAM_STR:
                 default:
@@ -559,8 +559,8 @@ class Statement
     {
         // Replace positioned placeholders with named placeholders (first value).
         // Force to string, in the case of null.
-        $text        = (string)preg_replace_callback('/\?/m', array($this, 'placeholderGetName'), $text);
-        $text        = (string)preg_replace_callback('/%%/m', array($this, 'rawPlaceholderGetName'), $text);
+        $text        = (string) preg_replace_callback('/\?/m', array($this, 'placeholderGetName'), $text);
+        $text        = (string) preg_replace_callback('/%%/m', array($this, 'rawPlaceholderGetName'), $text);
         $this->SQL[] = $text;
 
         return $this;
@@ -597,7 +597,7 @@ class Statement
 
         // Replace positioned placeholders with named placeholders (first value).
         // Force to string, in the case of null.
-        $sql = (string)preg_replace_callback('/:[a-z0-9_]+/m', array($this, 'placeholderFill'), $sql);
+        $sql = (string) preg_replace_callback('/:[a-z0-9_]+/m', array($this, 'placeholderFill'), $sql);
 
         return $sql;
     }
