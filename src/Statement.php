@@ -121,7 +121,7 @@ class Statement
 
         $dt = false;
 
-        if($value !== null) {
+        if ($value !== null) {
             $value = trim($value);
             $dt    = preg_match(self::DATE_TIME_REGEX, $value);
         }
