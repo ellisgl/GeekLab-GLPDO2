@@ -324,7 +324,7 @@ class Statement
      */
     public function bLike(string $value, bool $ends = false, bool $starts = false): self
     {
-        //$value = mysql_real_escape_string($value);
+        // Get the next placeholder name.
         $name = $this->getNextName();
 
         // Starts with.
