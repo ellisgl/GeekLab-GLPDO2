@@ -1,3 +1,6 @@
+2019-06-22 (1.3.1):
+* Improving on code quality.
+
 2019-05-27 (1.3.0):
 * Added bJSON for JSON stuff.
 * Updated PHP unit to 8.1.5 

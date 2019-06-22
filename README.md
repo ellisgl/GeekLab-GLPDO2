@@ -6,6 +6,9 @@ GeekLab\GLPDO2
 
 Easy to use PDO Wrapper for PHP 7.2+
 
+### Latest
+2019-06-22 (1.3.1): Improving on code quality.
+
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
 * Help prevent injections.
