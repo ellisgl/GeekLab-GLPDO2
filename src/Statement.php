@@ -43,9 +43,9 @@ class Statement
     /**
      * Bind a boolean value as bool, with NULL option or with integer option.
      *
-     * @param       $value
-     * @param bool  $null
-     * @param bool  $int
+     * @param string|int|bool|null $value
+     * @param bool                 $null
+     * @param bool                 $int
      *
      * @return Statement
      * @throws Exception
@@ -75,8 +75,8 @@ class Statement
      * Bind a date value as date or optional NULL.
      * YYYY-MM-DD is the proper date format.
      *
-     * @param string $value
-     * @param bool   $null
+     * @param string|null $value
+     * @param bool        $null
      *
      * @return Statement
      * @throws Exception
@@ -87,8 +87,12 @@ class Statement
             throw new DomainException('Can not bind NULL in date spot.');
         }
 
-        $value = trim($value);
-        $d     = preg_match(self::DATE_REGEX, $value);
+        $d = null;
+
+        if ($value !== null) {
+            $value = trim($value);
+            $d     = preg_match(self::DATE_REGEX, $value);
+        }
 
         // Use NULL?
         if (!$d && $null) {
@@ -103,8 +107,8 @@ class Statement
      * Bind a date value as date time or optional NULL.
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
-     * @param string $value
-     * @param bool   $null
+     * @param string|null $value
+     * @param bool        $null
      *
      * @return Statement
      * @throws Exception
@@ -115,8 +119,12 @@ class Statement
             throw new DomainException('Can not bind NULL in date time spot.');
         }
 
-        $value = trim($value);
-        $dt    = preg_match(self::DATE_TIME_REGEX, $value);
+        $dt = null;
+
+        if ($value !== null) {
+            $value = trim($value);
+            $dt    = preg_match(self::DATE_TIME_REGEX, $value);
+        }
 
         // Use NULL?
         if (!$dt && $null) {
@@ -124,7 +132,7 @@ class Statement
         }
 
         if (!$dt) {
-            if (!preg_match(self::DATE_REGEX, $value)) {
+            if ($value !== null && !preg_match(self::DATE_REGEX, $value)) {
                 $value = '1970-01-01 00:00:00';
             } else {
                 $value .= ' 00:00:00';
@@ -138,9 +146,9 @@ class Statement
     /**
      * Bind a float.
      *
-     * @param      $value
-     * @param int  $decimals
-     * @param bool $null
+     * @param string|int|float|null $value
+     * @param int                   $decimals
+     * @param bool                  $null
      *
      * @return Statement
      * @throws Exception
@@ -171,13 +179,13 @@ class Statement
     /**
      * Bind a value to a named parameter.
      *
-     * @param string  $name
-     * @param         $value
-     * @param         $type
+     * @param string                     $name
+     * @param string|int|float|bool|null $value
+     * @param int                        $type
      *
      * @return Statement
      */
-    public function bind(string $name, $value, $type = PDO::PARAM_STR): self
+    public function bind(string $name, $value, int $type = PDO::PARAM_STR): self
     {
         $this->named[$name] = array(
             'type'  => $type,
@@ -190,11 +198,11 @@ class Statement
     /**
      * Bind a raw value to a named parameter.
      *
-     * @param  $name
-     * @param  $value
+     * @param string                $name
+     * @param string|int|float|bool $value
      * @return Statement
      */
-    public function rawBind($name, $value): self
+    public function rawBind(string $name, $value): self
     {
         $this->rawNamed[$name] = $value;
 
@@ -204,8 +212,8 @@ class Statement
     /**
      * Bind an integer with optional NULL.
      *
-     * @param       $value
-     * @param bool  $null
+     * @param string|int|float|bool|null $value
+     * @param bool                       $null
      *
      * @return Statement
      * @throws Exception
@@ -242,7 +250,7 @@ class Statement
      * @return int|string
      * @throws Exception
      */
-    public function bIntArray(array $data, $default = 0)
+    public function bIntArray(array $data, int $default = 0)
     {
         if (empty($data)) {
             throw new DomainException('Can not bind an empty array.');
@@ -266,8 +274,8 @@ class Statement
     /**
      * Bind a object or JSON string to a string
      *
-     * @param      $value
-     * @param bool $null
+     * @param string|object|null $value
+     * @param bool               $null
      *
      * @return Statement
      * @throws Exception
@@ -285,7 +293,7 @@ class Statement
 
         if (is_object($value)) {
             $value = json_encode($value);
-        } else {
+        } elseif (is_string($value)) {
             $JSON = json_decode($value, false, 255);
 
             if (json_last_error()) {
@@ -295,6 +303,10 @@ class Statement
             if (!is_object($JSON) && !is_array($JSON)) {
                 throw new DomainException('Can not bind invalid JSON in JSON spot. (UNKNOWN)');
             }
+
+            $value = json_encode($JSON);
+        } else {
+            throw new DomainException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
         }
 
         return $this->bStr($value);
@@ -331,11 +343,11 @@ class Statement
      * !!!DANGER!!!
      * Bind a raw value.
      *
-     * @param string $value
+     * @param string|int|float|bool $value
      *
      * @return Statement
      */
-    public function bRaw(string $value): self
+    public function bRaw($value): self
     {
         $name = $this->getNextName('raw');
 
@@ -346,14 +358,14 @@ class Statement
     /**
      * Bind a string value.
      *
-     * @param       $value
-     * @param bool  $null
-     * @param       $type
+     * @param string|int|float|bool|null $value
+     * @param bool                       $null
+     * @param int                        $type
      *
      * @return Statement
      * @throws Exception
      */
-    public function bStr($value, bool $null = false, $type = PDO::PARAM_STR): self
+    public function bStr($value, bool $null = false, int $type = PDO::PARAM_STR): self
     {
         $name = $this->getNextName();
 
@@ -371,15 +383,15 @@ class Statement
      * Convert an array into a string and bind it.
      * Great for IN() statements.
      *
-     * @param array   $values
-     * @param         $default
+     * @param array                 $values
+     * @param string|int|float|bool $default
      *
      * @return Statement
      */
-    public function bStrArr(array $values, $default = null): self
+    public function bStrArr(array $values, $default = ''): self
     {
         //  No array elements?
-        $aStr = (!is_array($values)) ? $default : '\'' . implode("', '", $values) . '\'';
+        $aStr = empty($values) ? $default : '\'' . implode("', '", $values) . '\'';
 
         $this->bRaw($aStr);
         return $this;
@@ -438,17 +450,17 @@ class Statement
      */
     public function execute(PDO $PDO): PDOStatement
     {
-        // prepare the SQL
-        $sql = implode(' ', $this->SQL);
+        // Prepare the SQL, force to string in case of null.
+        $sql = (string)implode(' ', $this->SQL);
 
-        // Replace raw placements with raw values
+        // Replace raw placements with raw values.
         foreach ($this->rawNamed as $name => $rVal) {
-            $sql = preg_replace('/' . $name . '\b/', $rVal, $sql);
+            $sql = (string)preg_replace('/' . $name . '\b/', $rVal, $sql);
         }
 
         $stmt = $PDO->prepare($sql);
 
-        // bind named parameters
+        // Bind named parameters.
         foreach ($this->named as $name => $sVal) {
             switch ($sVal['type']) {
                 case PDO::PARAM_BOOL:
@@ -543,11 +555,12 @@ class Statement
      *
      * @return Statement
      */
-    public function sql($text): self
+    public function sql(string $text): self
     {
         // Replace positioned placeholders with named placeholders (first value).
-        $text        = preg_replace_callback('/\?/m', array($this, 'placeholderGetName'), $text);
-        $text        = preg_replace_callback('/%%/m', array($this, 'rawPlaceholderGetName'), $text);
+        // Force to string, in the case of null.
+        $text        = (string)preg_replace_callback('/\?/m', array($this, 'placeholderGetName'), $text);
+        $text        = (string)preg_replace_callback('/%%/m', array($this, 'rawPlaceholderGetName'), $text);
         $this->SQL[] = $text;
 
         return $this;
@@ -583,7 +596,8 @@ class Statement
         $sql = implode("\n", $this->SQL);
 
         // Replace positioned placeholders with named placeholders (first value).
-        $sql = preg_replace_callback('/:[a-z0-9_]+/m', array($this, 'placeholderFill'), $sql);
+        // Force to string, in the case of null.
+        $sql = (string)preg_replace_callback('/:[a-z0-9_]+/m', array($this, 'placeholderFill'), $sql);
 
         return $sql;
     }

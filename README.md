@@ -100,10 +100,10 @@ GLPDO->queryUpdate(Statement $SQL)<br/>
 Runs an update query and returns number of affect rows
 
 GLPDO->selectRows(Statement $SQL)<br/>
-Run a normal query, returns multiple rows as an array of associative arrays.
+Run a normal query, returns multiple rows as an array of associative arrays, or false.
 
 GLPDO->selectRow(Statement $SQL)<br/>
-Runs a normal query, returns a single row as an array.
+Runs a normal query, returns a single row as an array, or false.
 
 GLPDO->selectValue(Statement $SQL, $column, $default)<br/>
 Runs a normal query, returns a single column ($column) and can return a default ($default = false) value is no value is in the column.
