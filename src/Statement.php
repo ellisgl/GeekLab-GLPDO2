@@ -119,20 +119,20 @@ class Statement
             throw new DomainException('Can not bind NULL in date time spot.');
         }
 
-        $dt = null;
+        $dt = false;
 
-        if ($value !== null) {
+        if($value !== null) {
             $value = trim($value);
             $dt    = preg_match(self::DATE_TIME_REGEX, $value);
         }
 
         // Use NULL?
-        if ($dt === null && $null) {
+        if (!$dt && $null) {
             return $this->bStr(null, true);
         }
 
-        if ($dt === null) {
-            if ($value !== null && !preg_match(self::DATE_REGEX, $value)) {
+        if (!$dt && $value !== null) {
+            if (!preg_match(self::DATE_REGEX, $value)) {
                 $value = '1970-01-01 00:00:00';
             } else {
                 $value .= ' 00:00:00';
@@ -140,6 +140,7 @@ class Statement
         }
 
         $this->bStr($value);
+
         return $this;
     }
 
