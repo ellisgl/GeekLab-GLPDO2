@@ -306,7 +306,7 @@ class Statement
 
             $value = json_encode($JSON);
         } else {
-            throw new DomainException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
+            throw new DomainException('Can not bind invalid JSON in JSON spot. (' . $value . ')');
         }
 
         return $this->bStr($value);
