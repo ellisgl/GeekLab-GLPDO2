@@ -4,13 +4,15 @@ namespace GeekLab\GLPDO2;
 
 // Make EA inspection stop complaining.
 use \Exception;
-use \DomainException;
-use \JsonException;
+use GeekLab\GLPDO2\Bindings\BindingsInterface;
 use \PDO;
 use \PDOStatement;
 
 class Statement
 {
+    /** @var BindingsInterface $bindings */
+    private $bindings;
+
     /** @var int $bindPos Position for SQL binds. */
     private $bindPos = 0;
 
@@ -32,153 +34,9 @@ class Statement
     /** @var array $rawSql SQL Statement. */
     private $rawSql = [];
 
-    /** @const string DATE_REGEX Standard date format YYYY-MM-DD */
-    private const DATE_REGEX = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])$%';
-
-    /** @const string DATE_TIME_REGEX Standard date time format YYYY-MM-DD HH:MM:SS */
-    private const DATE_TIME_REGEX = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01]) ' .
-    '([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$%';
-
-    // Bind types
-
-    /**
-     * Bind a boolean value as bool, with NULL option or with integer option.
-     *
-     * @param string|int|bool|null $value
-     * @param bool $null
-     * @param bool $int
-     *
-     * @return Statement
-     * @throws Exception
-     */
-    public function bBool($value = null, bool $null = false, bool $int = false): self
+    public function __construct(BindingsInterface $bindings)
     {
-        // use NULL
-        if ($value === null && $null) {
-            return $this->bStr(null, true);
-        }
-
-        if ($value === null && $null === false) {
-            throw new DomainException('Can not bind NULL in boolean spot.');
-        }
-
-        $name = $this->getNextName();
-        $value = (bool) $value;
-        $value = $int ? (int) $value : $value;
-        $type = $int ? PDO::PARAM_INT : PDO::PARAM_BOOL;
-
-        $this->bind($name, $value, $type);
-
-        return $this;
-    }
-
-    /**
-     * Bind a date value as date or optional NULL.
-     * YYYY-MM-DD is the proper date format.
-     *
-     * @param string|null $value
-     * @param bool $null
-     *
-     * @return Statement
-     * @throws Exception
-     */
-    public function bDate($value = null, bool $null = false): self
-    {
-        if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in date spot.');
-        }
-
-        $d = null;
-
-        if ($value !== null) {
-            $value = trim($value);
-            $d = preg_match(self::DATE_REGEX, $value);
-        }
-
-        // Use NULL?
-        if ($d === null && $null) {
-            return $this->bStr(null, true);
-        }
-
-        $this->bStr($d ? $value : '1970-01-01');
-        return $this;
-    }
-
-    /**
-     * Bind a date value as date time or optional NULL.
-     * YYYY-MM-DD HH:MM:SS is the proper date format.
-     *
-     * @param string|null $value
-     * @param bool $null
-     *
-     * @return Statement
-     * @throws Exception
-     */
-    public function bDateTime($value = null, bool $null = false): self
-    {
-        if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in date time spot.');
-        }
-
-        $dt = 0;
-
-        if ($value !== null) {
-            // Trim $value and see if it matches full date time string format.
-            $dt = preg_match(self::DATE_TIME_REGEX, trim($value));
-        }
-
-        // Use NULL?
-        if ($dt === 0 && $null) {
-            return $this->bStr(null, true);
-        }
-
-        if ($dt === 0 && $value !== null) {
-            if (preg_match(self::DATE_REGEX, $value) === 0) {
-                // $value is not a valid date string, set to earliest date time available (GMT).
-                $value = '1970-01-01 00:00:00';
-            } else {
-                // $value is a valid date string, add midnight time.
-                $value .= ' 00:00:00';
-            }
-        }
-
-        // DateTimes are really strings.
-        $this->bStr($value);
-
-        return $this;
-    }
-
-    /**
-     * Bind a float.
-     *
-     * @param string|int|float|null $value
-     * @param int $decimals
-     * @param bool $null
-     *
-     * @return Statement
-     * @throws Exception
-     */
-    public function bFloat($value = null, $decimals = 3, $null = false): self
-    {
-        // Use NULL?
-        if ($value === null && $null) {
-            return $this->bRaw('NULL');
-        }
-
-        if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in float spot.');
-        }
-
-        if (!is_numeric($value)) {
-            throw new DomainException('Can not bind "' . $value . '" in float spot.');
-        }
-
-        $format = sprintf('%%0.%df', $decimals);
-
-        // Apparently using PDO::PARAM_STR makes this fail!
-        $this->bRaw(sprintf($format, $value));
-
-        return $this;
+        $this->bindings = $bindings;
     }
 
     /**
@@ -214,6 +72,73 @@ class Statement
         return $this;
     }
 
+    // Bind types
+
+    /**
+     * Bind a boolean value as bool, with NULL option or with integer option.
+     *
+     * @param string|int|bool|null $value
+     * @param bool $null
+     * @param bool $int
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bBool($value = null, bool $null = false, bool $int = false): self
+    {
+        $this->bind($this->getNextName(), ...$this->bindings->bBool($value, $null, $int));
+        return $this;
+    }
+
+    /**
+     * Bind a date value as date or optional NULL.
+     * YYYY-MM-DD is the proper date format.
+     *
+     * @param string|null $value
+     * @param bool $null
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bDate($value = null, bool $null = false): self
+    {
+        $this->bind($this->getNextName(), ...$this->bindings->bDate($value, $null));
+        return $this;
+    }
+
+    /**
+     * Bind a date value as date time or optional NULL.
+     * YYYY-MM-DD HH:MM:SS is the proper date format.
+     *
+     * @param string|null $value
+     * @param bool $null
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bDateTime($value = null, bool $null = false): self
+    {
+        $this->bind($this->getNextName(), ...$this->bindings->bDateTime($value, $null));
+        return $this;
+    }
+
+    /**
+     * Bind a float.
+     *
+     * @param string|int|float|null $value
+     * @param int $decimals
+     * @param bool $null
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bFloat($value = null, $decimals = 3, $null = false): self
+    {
+        $this->rawBind($this->getNextName('raw'), ...$this->bindings->bFloat($value, $decimals, $null));
+        return $this;
+    }
+
+
     /**
      * Bind an integer with optional NULL.
      *
@@ -225,23 +150,7 @@ class Statement
      */
     public function bInt($value = null, bool $null = false): self
     {
-        // Use NULL?
-        if ($value === null && $null) {
-            return $this->bStr(null, true);
-        }
-
-        if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in integer spot.');
-        }
-
-        if (!is_numeric($value)) {
-            throw new DomainException('Can not bind "' . $value . '" in integer spot.');
-        }
-
-        $name = $this->getNextName();
-        $value = sprintf('%u', $value);
-
-        $this->bind($name, (int) $value, PDO::PARAM_INT);
+        $this->bind($this->getNextName(), ...$this->bindings->bInt($value, $null));
         return $this;
     }
 
@@ -252,28 +161,13 @@ class Statement
      * @param array $data
      * @param int $default
      *
-     * @return int|string
+     * @return Statement
      * @throws Exception
      */
-    public function bIntArray(array $data, int $default = 0)
+    public function bIntArray(array $data, int $default = 0): self
     {
-        if (empty($data)) {
-            throw new DomainException('Can not bind an empty array.');
-        }
-
-        // Make unique integer array
-        $numbers = array();
-
-        foreach ($data as $value) {
-            $numbers[(int) $value] = true;
-        }
-
-        $numbers = array_keys($numbers);
-
-        // turn into a string
-        $result = implode(', ', $numbers);
-
-        return $this->bRaw($result ?: $default);
+        $this->rawBind($this->getNextName('raw'), ...$this->bindings->bIntArray($data, $default));
+        return $this;
     }
 
     /**
@@ -287,30 +181,8 @@ class Statement
      */
     public function bJSON($value, bool $null = false): self
     {
-        // Use NULL?
-        if ($value === null && $null) {
-            return $this->bStr(null, true);
-        }
-
-        if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in JSON spot.');
-        }
-
-        if (is_object($value)) {
-            $value = json_encode($value);
-        } elseif (is_string($value)) {
-            $JSON = json_decode($value, false, 255);
-
-            if (json_last_error()) {
-                throw new JsonException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
-            }
-
-            $value = json_encode($JSON);
-        } else {
-            throw new JsonException('Can not bind invalid JSON in JSON spot. (' . $value . ')');
-        }
-
-        return $this->bStr($value);
+        $this->bind($this->getNextName(), ...$this->bindings->bJSON($value, $null));
+        return $this;
     }
 
     /**
@@ -324,21 +196,7 @@ class Statement
      */
     public function bLike(string $value, bool $ends = false, bool $starts = false): self
     {
-        // Get the next placeholder name.
-        $name = $this->getNextName();
-
-        if ($starts && !$ends) {
-            // Starts with.
-            $value .= '%';
-        } elseif (!$starts && $ends) {
-            // Ends with.
-            $value = '%' . $value;
-        } elseif (!$starts && !$ends) {
-            // Is somewhere...
-            $value = '%' . $value . '%';
-        }
-
-        $this->bind($name, $value);
+        $this->bind($this->getNextName(), ...$this->bindings->bLike($value, $ends, $starts));
         return $this;
     }
 
@@ -352,9 +210,7 @@ class Statement
      */
     public function bRaw($value): self
     {
-        $name = $this->getNextName('raw');
-
-        $this->rawBind($name, $value);
+        $this->rawBind($this->getNextName('raw'), ...$this->bindings->bRaw($value));
         return $this;
     }
 
@@ -370,15 +226,7 @@ class Statement
      */
     public function bStr($value, bool $null = false, int $type = PDO::PARAM_STR): self
     {
-        $name = $this->getNextName();
-
-        if ($value === null && $null) {
-            $type = PDO::PARAM_NULL;
-        } elseif ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in string spot.');
-        }
-
-        $this->bind($name, (string) $value, $type);
+        $this->bind($this->getNextName(), ...$this->bindings->bStr($value, $null, $type));
         return $this;
     }
 
@@ -393,10 +241,7 @@ class Statement
      */
     public function bStrArr(array $values, $default = ''): self
     {
-        //  No array elements?
-        $aStr = empty($values) ? $default : '\'' . implode("', '", $values) . '\'';
-
-        $this->bRaw($aStr);
+        $this->rawBind($this->getNextName('raw'), ...$this->bindings->bStrArr($values, $default));
         return $this;
     }
 
