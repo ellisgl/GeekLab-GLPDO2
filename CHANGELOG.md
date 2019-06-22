@@ -1,3 +1,6 @@
+2019-06-22 (1.3.2):
+* Improving on code quality.
+
 2019-06-22 (1.3.1):
 * Improving on code quality.
 
