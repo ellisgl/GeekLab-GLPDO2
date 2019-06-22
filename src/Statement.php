@@ -333,7 +333,7 @@ class Statement
         } elseif (!$starts && $ends) {
             // Ends with.
             $value = '%' . $value;
-        } elseif (!$$starts && !$ends) {
+        } elseif (!$starts && !$ends) {
             // Is somewhere...
             $value = '%' . $value . '%';
         }
