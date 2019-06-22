@@ -3,8 +3,9 @@
 namespace GeekLab\GLPDO2;
 
 // Make EA inspection stop complaining.
-use \DomainException;
 use \Exception;
+use \DomainException;
+use \JsonException;
 use \PDO;
 use \PDOStatement;
 
@@ -301,12 +302,12 @@ class Statement
             $JSON = json_decode($value, false, 255);
 
             if (json_last_error()) {
-                throw new DomainException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
+                throw new JsonException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
             }
 
             $value = json_encode($JSON);
         } else {
-            throw new DomainException('Can not bind invalid JSON in JSON spot. (' . $value . ')');
+            throw new JsonException('Can not bind invalid JSON in JSON spot. (' . $value . ')');
         }
 
         return $this->bStr($value);

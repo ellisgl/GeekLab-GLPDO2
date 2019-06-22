@@ -1018,7 +1018,7 @@ class GLPDO2Test extends TestCase
 
     public function testBadJSONException(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\JsonException::class);
 
         $Statement = new Statement();
 
@@ -1034,7 +1034,7 @@ class GLPDO2Test extends TestCase
 
     public function testBadJSONException2(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\JsonException::class);
 
         $Statement = new Statement();
 
