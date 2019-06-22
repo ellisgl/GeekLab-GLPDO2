@@ -10,7 +10,7 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP 7.2+
 
 ### Latest
-2019-06-22 (1.3.2): Improving on code quality.
+2019-06-22 (1.3.3): Correct exception throwing for JSON binding.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
@@ -79,7 +79,7 @@ Statement->bIntArray(array $data, integer $default)<br/>
 Converts an array of integers to a comma separated values. Will output $default (which is 0) if $data is not an array. Used with IN() statements. Use '%%' instead of '?'.
 
 Statement->bJSON($data, optional boolean $null)<br/>
-Binds a JSON object or string as a string, with optional NULL value.
+Binds a JSON object or string as a string, with optional NULL value. Throws JsonException.
 
 Statement->bLike($value, boolean $ends, boolean $starts)<br/>
 Binds a value as a string for LIKE queries. $ends = "ends with", $starts = "starts with"
