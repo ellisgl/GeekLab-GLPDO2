@@ -37,7 +37,7 @@ class Statement
 
     /** @const string DATE_TIME_REGEX Standard date time format YYYY-MM-DD HH:MM:SS */
     private const DATE_TIME_REGEX = '%^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01]) ' .
-                                    '([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$%';
+    '([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$%';
 
     // Bind types
 
@@ -45,8 +45,8 @@ class Statement
      * Bind a boolean value as bool, with NULL option or with integer option.
      *
      * @param string|int|bool|null $value
-     * @param bool                 $null
-     * @param bool                 $int
+     * @param bool $null
+     * @param bool $int
      *
      * @return Statement
      * @throws Exception
@@ -62,10 +62,10 @@ class Statement
             throw new DomainException('Can not bind NULL in boolean spot.');
         }
 
-        $name  = $this->getNextName();
-        $value = (bool) $value;
-        $value = $int ? (int) $value : $value;
-        $type  = $int ? PDO::PARAM_INT : PDO::PARAM_BOOL;
+        $name = $this->getNextName();
+        $value = (bool)$value;
+        $value = $int ? (int)$value : $value;
+        $type = $int ? PDO::PARAM_INT : PDO::PARAM_BOOL;
 
         $this->bind($name, $value, $type);
 
@@ -77,7 +77,7 @@ class Statement
      * YYYY-MM-DD is the proper date format.
      *
      * @param string|null $value
-     * @param bool        $null
+     * @param bool $null
      *
      * @return Statement
      * @throws Exception
@@ -92,7 +92,7 @@ class Statement
 
         if ($value !== null) {
             $value = trim($value);
-            $d     = preg_match(self::DATE_REGEX, $value);
+            $d = preg_match(self::DATE_REGEX, $value);
         }
 
         // Use NULL?
@@ -109,7 +109,7 @@ class Statement
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
      * @param string|null $value
-     * @param bool        $null
+     * @param bool $null
      *
      * @return Statement
      * @throws Exception
@@ -124,7 +124,7 @@ class Statement
 
         if ($value !== null) {
             // Trim $value and see if it matches full date time string format.
-            $dt    = preg_match(self::DATE_TIME_REGEX, trim($value));
+            $dt = preg_match(self::DATE_TIME_REGEX, trim($value));
         }
 
         // Use NULL?
@@ -152,8 +152,8 @@ class Statement
      * Bind a float.
      *
      * @param string|int|float|null $value
-     * @param int                   $decimals
-     * @param bool                  $null
+     * @param int $decimals
+     * @param bool $null
      *
      * @return Statement
      * @throws Exception
@@ -184,16 +184,16 @@ class Statement
     /**
      * Bind a value to a named parameter.
      *
-     * @param string                     $name
+     * @param string $name
      * @param string|int|float|bool|null $value
-     * @param int                        $type
+     * @param int $type
      *
      * @return Statement
      */
     public function bind(string $name, $value, int $type = PDO::PARAM_STR): self
     {
         $this->named[$name] = array(
-            'type'  => $type,
+            'type' => $type,
             'value' => $value
         );
 
@@ -203,7 +203,7 @@ class Statement
     /**
      * Bind a raw value to a named parameter.
      *
-     * @param string                $name
+     * @param string $name
      * @param string|int|float|bool $value
      * @return Statement
      */
@@ -218,7 +218,7 @@ class Statement
      * Bind an integer with optional NULL.
      *
      * @param string|int|float|bool|null $value
-     * @param bool                       $null
+     * @param bool $null
      *
      * @return Statement
      * @throws Exception
@@ -238,10 +238,10 @@ class Statement
             throw new DomainException('Can not bind "' . $value . '" in integer spot.');
         }
 
-        $name  = $this->getNextName();
+        $name = $this->getNextName();
         $value = sprintf('%u', $value);
 
-        $this->bind($name, (int) $value, PDO::PARAM_INT);
+        $this->bind($name, (int)$value, PDO::PARAM_INT);
         return $this;
     }
 
@@ -250,7 +250,7 @@ class Statement
      * Great for IN() statements.
      *
      * @param array $data
-     * @param int   $default
+     * @param int $default
      *
      * @return int|string
      * @throws Exception
@@ -265,7 +265,7 @@ class Statement
         $numbers = array();
 
         foreach ($data as $value) {
-            $numbers[(int) $value] = true;
+            $numbers[(int)$value] = true;
         }
 
         $numbers = array_keys($numbers);
@@ -280,7 +280,7 @@ class Statement
      * Bind a object or JSON string to a string
      *
      * @param string|object|null $value
-     * @param bool               $null
+     * @param bool $null
      *
      * @return Statement
      * @throws Exception
@@ -317,8 +317,8 @@ class Statement
      * Create and bind string for LIKE() statements.
      *
      * @param string $value
-     * @param bool   $ends   Ends with?
-     * @param bool   $starts Starts with?
+     * @param bool $ends Ends with?
+     * @param bool $starts Starts with?
      *
      * @return Statement
      */
@@ -362,8 +362,8 @@ class Statement
      * Bind a string value.
      *
      * @param string|int|float|bool|null $value
-     * @param bool                       $null
-     * @param int                        $type
+     * @param bool $null
+     * @param int $type
      *
      * @return Statement
      * @throws Exception
@@ -378,7 +378,7 @@ class Statement
             throw new DomainException('Can not bind NULL in string spot.');
         }
 
-        $this->bind($name, (string) $value, $type);
+        $this->bind($name, (string)$value, $type);
         return $this;
     }
 
@@ -386,7 +386,7 @@ class Statement
      * Convert an array into a string and bind it.
      * Great for IN() statements.
      *
-     * @param array                 $values
+     * @param array $values
      * @param string|int|float|bool $default
      *
      * @return Statement
@@ -451,11 +451,11 @@ class Statement
     public function execute(PDO $PDO): PDOStatement
     {
         // Prepare the SQL, force to string in case of null.
-        $sql = (string) implode(' ', $this->SQL);
+        $sql = (string)implode(' ', $this->SQL);
 
         // Replace raw placements with raw values.
         foreach ($this->rawNamed as $name => $rVal) {
-            $sql = (string) preg_replace('/' . $name . '\b/', $rVal, $sql);
+            $sql = (string)preg_replace('/' . $name . '\b/', $rVal, $sql);
         }
 
         /** @var PDOStatement $stmt */
@@ -465,7 +465,7 @@ class Statement
         foreach ($this->named as $name => $sVal) {
             switch ($sVal['type']) {
                 case PDO::PARAM_BOOL:
-                    $stmt->bindValue($name, (bool) $sVal['value'], $sVal['type']);
+                    $stmt->bindValue($name, (bool)$sVal['value'], $sVal['type']);
                     break;
 
                 case PDO::PARAM_NULL:
@@ -473,12 +473,12 @@ class Statement
                     break;
 
                 case PDO::PARAM_INT:
-                    $stmt->bindValue($name, (int) $sVal['value'], $sVal['type']);
+                    $stmt->bindValue($name, (int)$sVal['value'], $sVal['type']);
                     break;
 
                 case PDO::PARAM_STR:
                 default:
-                    $stmt->bindValue($name, (string) $sVal['value'], $sVal['type']);
+                    $stmt->bindValue($name, (string)$sVal['value'], $sVal['type']);
                     break;
             }
         }
@@ -517,7 +517,7 @@ class Statement
                     return 'NULL';
 
                 case PDO::PARAM_INT:
-                    return (int) $sVal['value'];
+                    return (int)$sVal['value'];
 
                 case PDO::PARAM_STR:
                 default:
@@ -560,8 +560,14 @@ class Statement
     {
         // Replace positioned placeholders with named placeholders (first value).
         // Force to string, in the case of null.
-        $text        = (string) preg_replace_callback('/\?/m', array($this, 'placeholderGetName'), $text);
-        $text        = (string) preg_replace_callback('/%%/m', array($this, 'rawPlaceholderGetName'), $text);
+        $text = (string)preg_replace_callback('/\?/m', function () {
+            return $this->placeholderGetName();
+        }, $text);
+
+        $text = (string)preg_replace_callback('/%%/m', function () {
+            return $this->rawPlaceholderGetName();
+        }, $text);
+
         $this->SQL[] = $text;
 
         return $this;
@@ -574,13 +580,13 @@ class Statement
      */
     public function reset(): self
     {
-        $this->bindPos  = 0;
-        $this->named    = array();
-        $this->SQL      = array();
-        $this->sqlPos   = 0;
+        $this->bindPos = 0;
+        $this->named = [];
+        $this->SQL = [];
+        $this->sqlPos = 0;
         $this->rawNamed = array();
-        $this->rawPos   = 0;
-        $this->rawSql   = array();
+        $this->rawPos = 0;
+        $this->rawSql = array();
 
         return $this;
     }
@@ -598,7 +604,7 @@ class Statement
 
         // Replace positioned placeholders with named placeholders (first value).
         // Force to string, in the case of null.
-        $sql = (string) preg_replace_callback('/:[a-z0-9_]+/m', array($this, 'placeholderFill'), $sql);
+        $sql = (string)preg_replace_callback('/:[a-z0-9_]+/m', array($this, 'placeholderFill'), $sql);
 
         return $sql;
     }
@@ -622,8 +628,8 @@ class Statement
     {
         return [
             'Named Positions' => $this->named,
-            'Unbound SQL'     => $this->SQL,
-            'Bound SQL'       => $this->getComputed()
+            'Unbound SQL' => $this->SQL,
+            'Bound SQL' => $this->getComputed()
         ];
     }
 }
