@@ -13,7 +13,6 @@ class MySQLBindings implements BindingsInterface, Constants
     /**
      * Bind a boolean value as bool, with NULL option or with integer option.
      *
-     * @param string $name
      * @param string|int|bool|null $value
      * @param bool $null
      * @param bool $int
@@ -37,7 +36,6 @@ class MySQLBindings implements BindingsInterface, Constants
         $type = $int ? PDO::PARAM_INT : PDO::PARAM_BOOL;
 
         return [$value, $type];
-
     }
 
     /**

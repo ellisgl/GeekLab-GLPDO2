@@ -39,7 +39,7 @@ class GLPDO2Test extends TestCase
         $this->db->queryDelete($Statement);
 
         $Statement->reset()
-                  ->sql("CREATE TABLE `test` (")
+                  ->sql('CREATE TABLE `test` (')
                   ->sql('    `id`   INTEGER PRIMARY KEY AUTO_INCREMENT,')
                   ->sql('    `name` VARCHAR(255) DEFAULT NULL,')
                   ->sql('    `location` VARCHAR(255) DEFAULT NULL,')

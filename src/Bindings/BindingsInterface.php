@@ -11,7 +11,6 @@ interface BindingsInterface
     /**
      * Bind a boolean value as bool, with NULL option or with integer option.
      *
-     * @param string $name
      * @param string|int|bool|null $value
      * @param bool $null
      * @param bool $int
