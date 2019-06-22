@@ -1,8 +1,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![phpstan enabled](https://img.shields.io/badge/phpstan-enabled-green.svg)](https://github.com/phpstan/phpstan)
-[![Build Status](https://travis-ci.com/ellisgl/GeekLab-GLPDO2.svg?branch=2.0.0-Dev)](https://travis-ci.com/ellisgl/GeekLab-GLPDO2)
-[![Coverage](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2/branch/2.0.0-Dev/graph/badge.svg)](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/quality-score.png?b=2.0.0-Dev)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=master)
+[![Build Status](https://travis-ci.com/ellisgl/GeekLab-GLPDO2.svg?branch=develop)](https://travis-ci.com/ellisgl/GeekLab-GLPDO2)
+[![Coverage](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2/branch/develop/graph/badge.svg)](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=master)
 
 GeekLab\GLPDO2
 ============
