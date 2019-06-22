@@ -327,14 +327,16 @@ class Statement
         // Get the next placeholder name.
         $name = $this->getNextName();
 
-        // Starts with.
-        $value = ($starts && !$ends) ? $value . '%' : $value;
-
-        // Ends with.
-        $value = (!$starts && $ends) ? '%' . $value : $value;
-
-        // Is somewhere...
-        $value = (!$starts && !$ends) ? '%' . $value . '%' : $value;
+        if ($starts && !$ends) {
+            // Starts with.
+            $value .= '%';
+        } elseif (!$starts && $ends) {
+            // Ends with.
+            $value = '%' . $value;
+        } elseif (!$$starts && !$ends) {
+            // Is somewhere...
+            $value = '%' . $value . '%';
+        }
 
         $this->bind($name, $value);
         return $this;
