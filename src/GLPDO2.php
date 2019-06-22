@@ -126,10 +126,10 @@ class GLPDO2
      *
      * @param Statement $SQL
      *
-     * @return array
+     * @return array|false
      * @throws Exception
      */
-    public function selectRows(Statement $SQL): array
+    public function selectRows(Statement $SQL)
     {
         // Execute the statement
         $sth = $SQL->execute($this->PDO);
@@ -158,14 +158,14 @@ class GLPDO2
      * Executes statement and return a specific column from the first row of results.
      *
      * @param Statement $SQL
-     * @param           $column
+     * @param string    $column
      * @param bool      $caseSensitive
      * @param bool      $default
      *
      * @return string
      * @throws Exception
      */
-    public function selectValue(Statement $SQL, $column, bool $caseSensitive = false, bool $default = false): string
+    public function selectValue(Statement $SQL, string $column, bool $caseSensitive = false, bool $default = false): string
     {
         $row = $this->selectRow($SQL);
 
