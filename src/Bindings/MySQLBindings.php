@@ -31,8 +31,8 @@ class MySQLBindings implements BindingsInterface, Constants
             throw new DomainException('Can not bind NULL in boolean spot.');
         }
 
-        $value = (bool)$value;
-        $value = $int ? (int)$value : $value;
+        $value = (bool) $value;
+        $value = $int ? (int) $value : $value;
         $type = $int ? PDO::PARAM_INT : PDO::PARAM_BOOL;
 
         return [$value, $type];
@@ -168,7 +168,7 @@ class MySQLBindings implements BindingsInterface, Constants
 
         $value = sprintf('%u', $value);
 
-        return [(int)$value, PDO::PARAM_INT];
+        return [(int) $value, PDO::PARAM_INT];
     }
 
     /**
@@ -191,7 +191,7 @@ class MySQLBindings implements BindingsInterface, Constants
         $numbers = array();
 
         foreach ($data as $value) {
-            $numbers[(int)$value] = true;
+            $numbers[(int) $value] = true;
         }
 
         $numbers = array_keys($numbers);
@@ -298,7 +298,7 @@ class MySQLBindings implements BindingsInterface, Constants
             throw new DomainException('Can not bind NULL in string spot.');
         }
 
-        return [(string)$value, $type];
+        return [(string) $value, $type];
     }
 
     /**
