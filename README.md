@@ -1,5 +1,8 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![phpstan enabled](https://img.shields.io/badge/phpstan-enabled-green.svg)](https://github.com/phpstan/phpstan)
 [![Build Status](https://travis-ci.com/ellisgl/GeekLab-GLPDO2.svg?branch=master)](https://travis-ci.com/ellisgl/GeekLab-GLPDO2)
 [![Coverage](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2/branch/master/graph/badge.svg)](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=master)
 
 GeekLab\GLPDO2
 ============
@@ -25,7 +28,7 @@ composer require geeklab/glpdo2
 
 ### Basic Usage (Quick-N-Dirty)
 
-```php
+```
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
