@@ -95,7 +95,7 @@ class Statement
         }
 
         // Use NULL?
-        if (!$d && $null) {
+        if ($d === null && $null) {
             return $this->bStr(null, true);
         }
 
@@ -127,11 +127,11 @@ class Statement
         }
 
         // Use NULL?
-        if (!$dt && $null) {
+        if ($dt === null && $null) {
             return $this->bStr(null, true);
         }
 
-        if (!$dt) {
+        if ($dt === null) {
             if ($value !== null && !preg_match(self::DATE_REGEX, $value)) {
                 $value = '1970-01-01 00:00:00';
             } else {
@@ -415,21 +415,18 @@ class Statement
                 $ret = sprintf(':pos%d', $this->sqlPos++);
 
                 return $ret;
-                break;
 
             case 'rawSql':
                 //$ret = sprintf(':raw%d', $this->_rawSql++);
                 $ret = sprintf(':raw%d', $this->rawPos);
 
                 return $ret;
-                break;
 
             case 'raw':
                 // raw statement syntax
                 $ret = sprintf(':raw%d', $this->rawPos++);
 
                 return $ret;
-                break;
 
             case 'bind':
             default:
@@ -458,6 +455,7 @@ class Statement
             $sql = (string)preg_replace('/' . $name . '\b/', $rVal, $sql);
         }
 
+        /** @var PDOStatement $stmt */
         $stmt = $PDO->prepare($sql);
 
         // Bind named parameters.
