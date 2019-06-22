@@ -139,3 +139,6 @@ Prepares and executes the statement
 
 Statement->getComputed()<br/>
 Returns what the compiled SQL query string might look like for debugging purposes.
+
+### Alternative Packages
+* https://github.com/nkt/flame
