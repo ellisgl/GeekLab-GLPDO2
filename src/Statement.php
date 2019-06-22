@@ -127,11 +127,11 @@ class Statement
         }
 
         // Use NULL?
-        if (!$dt && $null) {
+        if ($dt === false && $null) {
             return $this->bStr(null, true);
         }
 
-        if (!$dt && $value !== null) {
+        if ($dt === false && $value !== null) {
             if (!preg_match(self::DATE_REGEX, $value)) {
                 $value = '1970-01-01 00:00:00';
             } else {
