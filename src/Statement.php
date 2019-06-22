@@ -292,7 +292,7 @@ class Statement
                 throw new DomainException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
             }
 
-            if ((!is_object($JSON) && !is_array($JSON))) {
+            if (!is_object($JSON) && !is_array($JSON)) {
                 throw new DomainException('Can not bind invalid JSON in JSON spot. (UNKNOWN)');
             }
         }
@@ -438,44 +438,40 @@ class Statement
      */
     public function execute(PDO $PDO): PDOStatement
     {
-        try {
-            // prepare the SQL
-            $sql = implode(' ', $this->SQL);
+        // prepare the SQL
+        $sql = implode(' ', $this->SQL);
 
-            // Replace raw placements with raw values
-            foreach ($this->rawNamed as $name => $rVal) {
-                $sql = preg_replace('/' . $name . '\b/', $rVal, $sql);
-            }
-
-            $stmt = $PDO->prepare($sql);
-
-            // bind named parameters
-            foreach ($this->named as $name => $sVal) {
-                switch ($sVal['type']) {
-                    case PDO::PARAM_BOOL:
-                        $stmt->bindValue($name, (bool)$sVal['value'], $sVal['type']);
-                        break;
-
-                    case PDO::PARAM_NULL:
-                        $stmt->bindValue($name, null);
-                        break;
-
-                    case PDO::PARAM_INT:
-                        $stmt->bindValue($name, (int)$sVal['value'], $sVal['type']);
-                        break;
-
-                    case PDO::PARAM_STR:
-                    default:
-                        $stmt->bindValue($name, (string)$sVal['value'], $sVal['type']);
-                        break;
-                }
-            }
-
-            $stmt->execute();
-            return $stmt;
-        } catch (Exception $e) {
-            throw new Exception($e);
+        // Replace raw placements with raw values
+        foreach ($this->rawNamed as $name => $rVal) {
+            $sql = preg_replace('/' . $name . '\b/', $rVal, $sql);
         }
+
+        $stmt = $PDO->prepare($sql);
+
+        // bind named parameters
+        foreach ($this->named as $name => $sVal) {
+            switch ($sVal['type']) {
+                case PDO::PARAM_BOOL:
+                    $stmt->bindValue($name, (bool)$sVal['value'], $sVal['type']);
+                    break;
+
+                case PDO::PARAM_NULL:
+                    $stmt->bindValue($name, null);
+                    break;
+
+                case PDO::PARAM_INT:
+                    $stmt->bindValue($name, (int)$sVal['value'], $sVal['type']);
+                    break;
+
+                case PDO::PARAM_STR:
+                default:
+                    $stmt->bindValue($name, (string)$sVal['value'], $sVal['type']);
+                    break;
+            }
+        }
+
+        $stmt->execute();
+        return $stmt;
     }
 
     /**
