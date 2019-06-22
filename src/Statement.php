@@ -122,8 +122,8 @@ class Statement
         $dt = 0;
 
         if ($value !== null) {
-            $value = trim($value);
-            $dt    = preg_match(self::DATE_TIME_REGEX, $value);
+            // Trim $value and see if it matches full date time string format.
+            $dt    = preg_match(self::DATE_TIME_REGEX, trim($value));
         }
 
         // Use NULL?
@@ -133,12 +133,15 @@ class Statement
 
         if ($dt === 0 && $value !== null) {
             if (preg_match(self::DATE_REGEX, $value) === 0) {
+                // $value is not a valid date string, set to earliest date time available (GMT).
                 $value = '1970-01-01 00:00:00';
             } else {
+                // $value is a valid date string, add midnight time.
                 $value .= ' 00:00:00';
             }
         }
 
+        // DateTimes are really strings.
         $this->bStr($value);
 
         return $this;
