@@ -125,16 +125,12 @@ class GLPDO2
      * Return multiple rows result as an array
      *
      * @param Statement $SQL
-     * @param string    $kKey
-     * @param string    $vKey
      *
      * @return array
      * @throws Exception
      */
-    public function selectRows(Statement $SQL, string $kKey = '', string $vKey = ''): array
+    public function selectRows(Statement $SQL): array
     {
-        $data = array();
-
         // Execute the statement
         $sth = $SQL->execute($this->PDO);
 
