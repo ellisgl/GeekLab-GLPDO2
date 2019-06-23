@@ -267,15 +267,15 @@ class MySQLBindings implements BindingsInterface, Constants
 
         if ($starts) {
             // Starts with.
-            array_pop($arr);
+            array_shift($arr);
         }
 
         if ($ends) {
             // Ends with.
-            array_shift($arr);
+            array_pop($arr);
         }
 
-        return [$value];
+        return [implode('', $arr)];
     }
 
     /**
