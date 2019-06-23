@@ -10,7 +10,7 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP 7.2+
 
 ### Latest
-2019-06-22 (2.0.1): bBool should only use PDO::PARAM_BOOL.
+2019-06-22 (2.0.1): bBool should only use PDO::PARAM_BOOL. Added bBoolInt. Doc updates.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
@@ -61,8 +61,11 @@ print_r($res);
 ```
 
 ### Data Binding Methods
-Statement->bBool($value, optional boolean $null, optional boolean $int)<br/>
-Binds a value as bool(true, false, 0, 1), with optional NULL or integer (0 or 1) value return.
+Statement->bBool($value, optional boolean $null)<br/>
+Binds a value as bool(true, false), with optional NULL value return.
+
+Statement->bBoolInt($value, optional boolean $null)<br/>
+Binds a value as int(0, 1), with optional NULL value return.
 
 Statement->bDate($value, optional boolean $null)<br/>
 Binds a value as a date (string - validated for YYYY-MM-DD), with optional NULL return.
