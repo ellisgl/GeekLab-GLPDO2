@@ -10,7 +10,7 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP 7.2+
 
 ### Latest
-2019-06-22 (2.0.2): More simplification.
+2019-06-23 (3.0.0): Mass refactoring.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
@@ -22,7 +22,7 @@ Easy to use PDO Wrapper for PHP 7.2+
 composer require geeklab/glpdo2
 
 ### Todo
-* DB Specific testing (Not just MySQL).
+* More tests, since we can test at many levels and implementations.
 * Better schema for testing.
 * Better docs.
 * More of a real wold example.
@@ -40,7 +40,7 @@ require_once '..' . DS . '..' . DS . 'vendor' . DS . 'autoload.php';
 
 $dbConn    = new PDO('mysql:host=localhost;dbname=playground', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 $db        = new \GeekLab\GLPDO2\GLPDO2($dbConn);
-$Statement = new \GeekLab\GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+$Statement = new \GeekLab\GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 $start     = 0;
 $limit     = 5;
 

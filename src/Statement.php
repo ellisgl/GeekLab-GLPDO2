@@ -3,14 +3,14 @@
 namespace GeekLab\GLPDO2;
 
 // Make EA inspection stop complaining.
-use \Exception;
-use GeekLab\GLPDO2\Bindings\BindingsInterface;
 use \PDO;
 use \PDOStatement;
+use \Exception;
+use GeekLab\GLPDO2\Bindings\Bindings;
 
 class Statement
 {
-    /** @var BindingsInterface $bindings */
+    /** @var Bindings $bindings */
     private $bindings;
 
     /** @var int $bindPos Position for SQL binds. */
@@ -34,7 +34,7 @@ class Statement
     /** @var array $rawSql SQL Statement. */
     private $rawSql = [];
 
-    public function __construct(BindingsInterface $bindings)
+    public function __construct(Bindings $bindings)
     {
         $this->bindings = $bindings;
     }

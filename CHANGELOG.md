@@ -1,5 +1,7 @@
 2019-06-22 (2.0.2):
 * More simplification.
+2019-06-23 (3.0.0):
+* Mass refactoring, which split the bindings into multiple classes based loosely on the type. Also using a factory to fill a "package".
 
 2019-06-22 (2.0.1):
 * bBool should only use PDO::PARAM_BOOL.

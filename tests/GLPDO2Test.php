@@ -34,7 +34,7 @@ class GLPDO2Test extends TestCase
 
     protected function setUp(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('DROP TABLE IF EXISTS `test`');
 
@@ -75,7 +75,7 @@ class GLPDO2Test extends TestCase
     // Basic Select
     public function testBasicSelect(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT * FROM `test`;');
 
@@ -102,7 +102,7 @@ class GLPDO2Test extends TestCase
     // Bool
     public function testBoolIntNull(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
@@ -128,7 +128,7 @@ class GLPDO2Test extends TestCase
     // Bool
     public function testBoolFalseInt(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -148,7 +148,7 @@ class GLPDO2Test extends TestCase
     // Bool
     public function testBoolTrueInt(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -164,7 +164,7 @@ class GLPDO2Test extends TestCase
 
     public function testBoolNull(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -189,7 +189,7 @@ class GLPDO2Test extends TestCase
 
     public function testBoolTrue(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -217,7 +217,7 @@ class GLPDO2Test extends TestCase
 
     public function testBoolFalse(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -245,7 +245,7 @@ class GLPDO2Test extends TestCase
     // Date
     public function testDate(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -272,7 +272,7 @@ class GLPDO2Test extends TestCase
     // Date Time
     public function testDateTime(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -310,7 +310,7 @@ class GLPDO2Test extends TestCase
     // Float
     public function testFloat(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -353,7 +353,7 @@ class GLPDO2Test extends TestCase
     // Int
     public function testInt(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -398,7 +398,7 @@ class GLPDO2Test extends TestCase
     // Int array
     public function testIntArray(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM `test`')
@@ -422,7 +422,7 @@ class GLPDO2Test extends TestCase
     // JSON
     public function testJSON(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -462,7 +462,7 @@ class GLPDO2Test extends TestCase
 
     public function testJSONNull(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -488,7 +488,7 @@ class GLPDO2Test extends TestCase
     // Like
     public function testLikeBeginsWith(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -509,7 +509,7 @@ class GLPDO2Test extends TestCase
 
     public function testLikeEndsWith(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -530,7 +530,7 @@ class GLPDO2Test extends TestCase
 
     public function testLikeSomewhere(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -551,7 +551,7 @@ class GLPDO2Test extends TestCase
 
     public function testLikeNowhere(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -568,7 +568,7 @@ class GLPDO2Test extends TestCase
     // Raw
     public function testRaw(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT * FROM `%%` ')->bRaw('test')
                   ->sql('WHERE ')
@@ -607,7 +607,7 @@ class GLPDO2Test extends TestCase
     // String
     public function testString(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -629,7 +629,7 @@ class GLPDO2Test extends TestCase
     // String Array
     public function testStringArray(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -654,7 +654,7 @@ class GLPDO2Test extends TestCase
     // Insert
     public function testInsert(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -682,7 +682,7 @@ class GLPDO2Test extends TestCase
     // Update
     public function testUpdate(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('UPDATE `test`')
                   ->sql('SET    `location` = ?')->bStr('Mexico')
@@ -705,7 +705,7 @@ class GLPDO2Test extends TestCase
     // selectValue tests
     public function testSelectValueCaseInsensitive(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -715,7 +715,7 @@ class GLPDO2Test extends TestCase
 
     public function testSelectValueCaseSensitive(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -726,7 +726,7 @@ class GLPDO2Test extends TestCase
 
     public function testSelectBadPlaceHolders(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -744,7 +744,7 @@ class GLPDO2Test extends TestCase
     // Delete
     public function testDelete(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
         $Statement->sql('DELETE FROM `test`')
                   ->sql('WHERE       `name` = ?;')->bStr('Drew');
 
@@ -773,7 +773,7 @@ class GLPDO2Test extends TestCase
 
     public function testToString(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('UPDATE `test`')
                   ->sql('SET    `location` = ?')->bStr('Mexico')
@@ -788,7 +788,7 @@ class GLPDO2Test extends TestCase
 
     public function testDebugInfo(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('UPDATE `test`')
                   ->sql('SET    `location` = ?')->bStr('Mexico')
@@ -821,7 +821,7 @@ class GLPDO2Test extends TestCase
     // Injection Test
     public function testInjection(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -833,7 +833,7 @@ class GLPDO2Test extends TestCase
     // Good transaction
     public function testGoodTransaction(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -855,7 +855,7 @@ class GLPDO2Test extends TestCase
 
     public function testRollback(): void
     {
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -887,7 +887,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -899,7 +899,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -912,7 +912,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
             ->sql('FROM   `test`')
@@ -924,7 +924,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
             ->sql('FROM   `test`')
@@ -936,7 +936,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -948,7 +948,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -960,7 +960,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -977,7 +977,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -989,7 +989,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -1006,7 +1006,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -1018,7 +1018,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -1030,7 +1030,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
@@ -1042,7 +1042,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -1058,7 +1058,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(JsonException::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -1074,7 +1074,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(JsonException::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
@@ -1090,7 +1090,7 @@ class GLPDO2Test extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`)')->bRaw('test')
                   ->sql('VALUES (')
