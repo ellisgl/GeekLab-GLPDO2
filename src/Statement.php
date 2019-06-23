@@ -40,6 +40,22 @@ class Statement
     }
 
     /**
+     * Replace the raw placeholder with raw values.
+     *
+     * @param string $sql
+     *
+     * @return string
+     */
+    private function rawPlaceholderFill(string $sql): string
+    {
+        foreach ($this->rawNamed as $name => $rVal) {
+            $sql = (string) preg_replace('/' . $name . '\b/', $rVal, $sql);
+        }
+
+        return $sql;
+    }
+
+    /**
      * Bind a value to a named parameter.
      *
      * @param string $name
@@ -310,6 +326,7 @@ class Statement
         }
     }
 
+
     /**
      * Prepare and Execute the SQL statement.
      *
@@ -321,12 +338,8 @@ class Statement
     public function execute(PDO $PDO): PDOStatement
     {
         // Prepare the SQL, force to string in case of null.
-        $sql = (string) implode(' ', $this->SQL);
-
-        // Replace raw placements with raw values.
-        foreach ($this->rawNamed as $name => $rVal) {
-            $sql = (string) preg_replace('/' . $name . '\b/', $rVal, $sql);
-        }
+        // Then replace raw placements with raw values.
+        $sql = $this->rawPlaceholderFill((string) implode(' ', $this->SQL));
 
         /** @var PDOStatement $stmt */
         $stmt = $PDO->prepare($sql);
