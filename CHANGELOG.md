@@ -1,3 +1,6 @@
+2019-06-22 (2.0.0):
+* Making it more S.O.L.I.D.
+
 2019-06-22 (1.3.3):
 * Correct exception throwing for JSON binding.
 

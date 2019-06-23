@@ -25,7 +25,7 @@ after_success:
 branches:
   only:
     - master
-    - dev
+    - develop
 
 # You can delete the cache using travis-ci web interface
 cache:

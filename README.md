@@ -1,8 +1,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![phpstan enabled](https://img.shields.io/badge/phpstan-enabled-green.svg)](https://github.com/phpstan/phpstan)
-[![Build Status](https://travis-ci.com/ellisgl/GeekLab-GLPDO2.svg?branch=master)](https://travis-ci.com/ellisgl/GeekLab-GLPDO2)
-[![Coverage](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2/branch/master/graph/badge.svg)](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=master)
+[![Build Status](https://travis-ci.com/ellisgl/GeekLab-GLPDO2.svg?branch=develop)](https://travis-ci.com/ellisgl/GeekLab-GLPDO2)
+[![Coverage](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2/branch/develop/graph/badge.svg)](https://codecov.io/gh/ellisgl/GeekLab-GLPDO2)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=master)
 
 GeekLab\GLPDO2
 ============
@@ -10,7 +10,7 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP 7.2+
 
 ### Latest
-2019-06-22 (1.3.3): Correct exception throwing for JSON binding.
+2019-06-22 (2.0.0): Making it more S.O.L.I.D.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
@@ -39,7 +39,7 @@ require_once '..' . DS . '..' . DS . 'vendor' . DS . 'autoload.php';
 
 $dbConn    = new PDO('mysql:host=localhost;dbname=playground', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 $db        = new \GeekLab\GLPDO2\GLPDO2($dbConn);
-$Statement = new \GeekLab\GLPDO2\Statement();
+$Statement = new \GeekLab\GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
 $start     = 0;
 $limit     = 5;
 
