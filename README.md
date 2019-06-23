@@ -10,7 +10,7 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP 7.2+
 
 ### Latest
-2019-06-22 (1.3.3): Correct exception throwing for JSON binding.
+2019-06-22 (2.0.0): Making it more S.O.L.I.D.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
@@ -39,7 +39,7 @@ require_once '..' . DS . '..' . DS . 'vendor' . DS . 'autoload.php';
 
 $dbConn    = new PDO('mysql:host=localhost;dbname=playground', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 $db        = new \GeekLab\GLPDO2\GLPDO2($dbConn);
-$Statement = new \GeekLab\GLPDO2\Statement();
+$Statement = new \GeekLab\GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
 $start     = 0;
 $limit     = 5;
 
