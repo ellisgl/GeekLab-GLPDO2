@@ -1,3 +1,6 @@
+2019-06-22 (2.0.2):
+* More simplification.
+
 2019-06-22 (2.0.1):
 * bBool should only use PDO::PARAM_BOOL.
 * Added bBoolInt.

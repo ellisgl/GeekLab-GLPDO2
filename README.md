@@ -10,7 +10,7 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP 7.2+
 
 ### Latest
-2019-06-22 (2.0.1): bBool should only use PDO::PARAM_BOOL. Added bBoolInt. Doc updates.
+2019-06-22 (2.0.2): More simplification.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
