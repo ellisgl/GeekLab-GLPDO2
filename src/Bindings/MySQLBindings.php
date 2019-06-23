@@ -263,18 +263,16 @@ class MySQLBindings implements BindingsInterface, Constants
      */
     public function bLike(string $value, bool $ends = false, bool $starts = false): array
     {
-        // Convert start and end options into a 2 bit binary. 00, 01, 10, 11.
-        $binValue = ($starts * 1) + ($ends * 2);
+        $arr = ['%', $value, '%'];
 
-        if ($binValue === 1) {
+        if ($starts) {
             // Starts with.
-            $value .= '%';
-        } elseif ($binValue === 2) {
+            array_pop($arr);
+        }
+
+        if ($ends) {
             // Ends with.
-            $value = '%' . $value;
-        } elseif ($binValue === 0) {
-            // Is somewhere...
-            $value = '%' . $value . '%';
+            array_shift($arr);
         }
 
         return [$value];
