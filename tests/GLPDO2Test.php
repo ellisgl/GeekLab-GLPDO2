@@ -152,7 +152,7 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  (0 = ?);')->bBoolInt('x');
+                  ->sql('WHERE  (0 = ?);')->bBoolInt(true);
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
