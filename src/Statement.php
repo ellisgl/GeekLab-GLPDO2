@@ -326,7 +326,6 @@ class Statement
         }
     }
 
-
     /**
      * Prepare and Execute the SQL statement.
      *
