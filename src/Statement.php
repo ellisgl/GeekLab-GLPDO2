@@ -86,7 +86,8 @@ class Statement
      */
     public function bBool($value = null, bool $null = false, bool $int = false): self
     {
-        $this->bind($this->getNextName(), ...$this->bindings->bBool($value, $null, $int));
+        $binding = $this->bindings->bBool($value, $null, $int);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
@@ -102,7 +103,8 @@ class Statement
      */
     public function bDate($value = null, bool $null = false): self
     {
-        $this->bind($this->getNextName(), ...$this->bindings->bDate($value, $null));
+        $binding = $this->bindings->bDate($value, $null);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
@@ -118,7 +120,8 @@ class Statement
      */
     public function bDateTime($value = null, bool $null = false): self
     {
-        $this->bind($this->getNextName(), ...$this->bindings->bDateTime($value, $null));
+        $binding = $this->bindings->bDateTime($value, $null);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
@@ -134,7 +137,8 @@ class Statement
      */
     public function bFloat($value = null, $decimals = 3, $null = false): self
     {
-        $this->rawBind($this->getNextName('raw'), ...$this->bindings->bFloat($value, $decimals, $null));
+        $binding = $this->bindings->bFloat($value, $decimals, $null);
+        $this->rawBind($this->getNextName('raw'), $binding[0]);
         return $this;
     }
 
@@ -150,7 +154,8 @@ class Statement
      */
     public function bInt($value = null, bool $null = false): self
     {
-        $this->bind($this->getNextName(), ...$this->bindings->bInt($value, $null));
+        $binding = $this->bindings->bInt($value, $null);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
@@ -166,7 +171,8 @@ class Statement
      */
     public function bIntArray(array $data, int $default = 0): self
     {
-        $this->rawBind($this->getNextName('raw'), ...$this->bindings->bIntArray($data, $default));
+        $binding = $this->bindings->bIntArray($data, $default);
+        $this->rawBind($this->getNextName('raw'), $binding[0]);
         return $this;
     }
 
@@ -181,7 +187,8 @@ class Statement
      */
     public function bJSON($value, bool $null = false): self
     {
-        $this->bind($this->getNextName(), ...$this->bindings->bJSON($value, $null));
+        $binding = $this->bindings->bJSON($value, $null);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
@@ -196,7 +203,8 @@ class Statement
      */
     public function bLike(string $value, bool $ends = false, bool $starts = false): self
     {
-        $this->bind($this->getNextName(), ...$this->bindings->bLike($value, $ends, $starts));
+        $binding = $this->bindings->bLike($value, $ends, $starts);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
@@ -210,7 +218,8 @@ class Statement
      */
     public function bRaw($value): self
     {
-        $this->rawBind($this->getNextName('raw'), ...$this->bindings->bRaw($value));
+        $binding = $this->bindings->bRaw($value);
+        $this->rawBind($this->getNextName('raw'), $binding[0]);
         return $this;
     }
 
@@ -226,7 +235,8 @@ class Statement
      */
     public function bStr($value, bool $null = false, int $type = PDO::PARAM_STR): self
     {
-        $this->bind($this->getNextName(), ...$this->bindings->bStr($value, $null, $type));
+        $binding = $this->bindings->bStr($value, $null, $type);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
@@ -241,10 +251,10 @@ class Statement
      */
     public function bStrArr(array $values, $default = ''): self
     {
-        $this->rawBind($this->getNextName('raw'), ...$this->bindings->bStrArr($values, $default));
+        $binding = $this->bindings->bStrArr($values, $default);
+        $this->rawBind($this->getNextName('raw'), $binding[0]);
         return $this;
     }
-
 
     // The rest of the helpers
 
