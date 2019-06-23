@@ -204,7 +204,7 @@ class Statement
     public function bLike(string $value, bool $ends = false, bool $starts = false): self
     {
         $binding = $this->bindings->bLike($value, $ends, $starts);
-        $this->bind($this->getNextName(), $binding[0], $binding[1]);
+        $this->bind($this->getNextName(), $binding[0]);
         return $this;
     }
 
