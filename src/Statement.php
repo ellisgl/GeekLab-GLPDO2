@@ -77,7 +77,7 @@ class Statement
     /**
      * Bind a boolean value as bool, with NULL option.
      *
-     * @param string|int|bool|null $value
+     * @param int|bool|null $value
      * @param bool $null
      *
      * @return Statement
@@ -93,7 +93,7 @@ class Statement
     /**
      * Bind a boolean value as int, with NULL option.
      *
-     * @param string|int|bool|null $value
+     * @param int|bool|null $value
      * @param bool $null
      *
      * @return Statement
