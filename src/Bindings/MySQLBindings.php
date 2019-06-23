@@ -78,9 +78,10 @@ class MySQLBindings implements BindingsInterface, Constants
 
         if (!empty($value)) {
             $value = trim($value);
+            return $this->bStr(preg_match(self::DATE_REGEX, $value) ? $value : '1970-01-01');
         }
 
-        return $this->bStr(preg_match(self::DATE_REGEX, $value) ? $value : '1970-01-01');
+        return $this->bStr('1970-01-01');
     }
 
     /**
