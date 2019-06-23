@@ -40,7 +40,7 @@ interface BindingsInterface
      * @return array
      * @throws Exception
      */
-    public function bDate($value = null, bool $null = false): array;
+    public function bDate(?string $value, bool $null = false): array;
 
     /**
      * Bind a date value as date time or optional NULL.

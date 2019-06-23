@@ -66,25 +66,19 @@ class MySQLBindings implements BindingsInterface, Constants
      * @return array
      * @throws Exception
      */
-    public function bDate($value = null, bool $null = false): array
+    public function bDate(?string $value, bool $null = false): array
     {
         if ($value === null && !$null) {
             throw new DomainException('Can not bind NULL in date spot.');
         }
 
-        $d = 0;
-
-        if ($value !== null) {
-            $value = trim($value);
-            $d = preg_match(self::DATE_REGEX, $value);
-        }
-
-        // Use NULL?
-        if ($d === 0 && $null) {
+        if (empty($value) && $null) {
             return $this->bStr(null, true);
         }
 
-        return $this->bStr($d ? $value : '1970-01-01');
+        $value = trim($value);
+
+        return $this->bStr(preg_match(self::DATE_REGEX, $value) ? $value : '1970-01-01');
     }
 
     /**
