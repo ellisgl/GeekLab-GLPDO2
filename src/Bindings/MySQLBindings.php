@@ -181,9 +181,7 @@ class MySQLBindings implements BindingsInterface, Constants
             throw new DomainException('Can not bind "' . $value . '" in integer spot.');
         }
 
-        $value = sprintf('%u', $value);
-
-        return [(int) $value, PDO::PARAM_INT];
+        return [(int) sprintf('%u', $value), PDO::PARAM_INT];
     }
 
     /**
@@ -265,14 +263,16 @@ class MySQLBindings implements BindingsInterface, Constants
      */
     public function bLike(string $value, bool $ends = false, bool $starts = false): array
     {
+        // Convert start and end options into a 2 bit binary. 00, 01, 10, 11.
+        $binValue = ($starts * 1) + ($ends * 2);
 
-        if ($starts && !$ends) {
+        if ($binValue === 1) {
             // Starts with.
             $value .= '%';
-        } elseif (!$starts && $ends) {
+        } elseif ($binValue === 2) {
             // Ends with.
             $value = '%' . $value;
-        } elseif (!$starts && !$ends) {
+        } elseif ($binValue === 0) {
             // Is somewhere...
             $value = '%' . $value . '%';
         }
