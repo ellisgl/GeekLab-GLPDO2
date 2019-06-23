@@ -14,6 +14,7 @@ Easy to use PDO Wrapper for PHP 7.2+
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
+* Bindings are injected, so you can create your own!
 * Help prevent injections.
 * PSR1/2/4 Compliant.
 
