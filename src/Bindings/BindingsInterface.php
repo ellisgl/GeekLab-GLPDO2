@@ -2,9 +2,8 @@
 
 namespace GeekLab\GLPDO2\Bindings;
 
-use DomainException;
-use Exception;
-use PDO;
+use \Exception;
+use \PDO;
 
 interface BindingsInterface
 {

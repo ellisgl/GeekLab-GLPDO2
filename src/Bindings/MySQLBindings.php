@@ -5,8 +5,8 @@ namespace GeekLab\GLPDO2\Bindings;
 use \DomainException;
 use \Exception;
 use \JsonException;
+use \PDO;
 use GeekLab\GLPDO2\Constants;
-use PDO;
 
 class MySQLBindings implements BindingsInterface, Constants
 {
@@ -76,7 +76,9 @@ class MySQLBindings implements BindingsInterface, Constants
             return $this->bStr(null, true);
         }
 
-        $value = trim($value);
+        if (!empty($value)) {
+            $value = trim($value);
+        }
 
         return $this->bStr(preg_match(self::DATE_REGEX, $value) ? $value : '1970-01-01');
     }
