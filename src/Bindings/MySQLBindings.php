@@ -72,7 +72,7 @@ class MySQLBindings implements BindingsInterface, Constants
             throw new DomainException('Can not bind NULL in date spot.');
         }
 
-        $d = null;
+        $d = 0;
 
         if ($value !== null) {
             $value = trim($value);
@@ -80,7 +80,7 @@ class MySQLBindings implements BindingsInterface, Constants
         }
 
         // Use NULL?
-        if ($d === null && $null) {
+        if ($d === 0 && $null) {
             return $this->bStr(null, true);
         }
 
