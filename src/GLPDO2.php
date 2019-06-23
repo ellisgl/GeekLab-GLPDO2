@@ -158,19 +158,23 @@ class GLPDO2
      * Executes statement and return a specific column from the first row of results.
      *
      * @param Statement $SQL
-     * @param string    $column
-     * @param bool      $caseSensitive
-     * @param bool      $default
+     * @param string $column
+     * @param bool $caseSensitive
+     * @param mixed $default
      *
-     * @return string
+     * @return string|null
      * @throws Exception
      */
-    public function selectValue(Statement $SQL, string $column, bool $caseSensitive = false, bool $default = false): string
-    {
+    public function selectValue(
+        Statement $SQL,
+        string $column,
+        bool $caseSensitive = false,
+        bool $default = null
+    ) {
         $row = $this->selectRow($SQL);
 
         if (!$caseSensitive) {
-            $row    = array_change_key_case($row);
+            $row = array_change_key_case($row);
             $column = strtolower($column);
         }
 
