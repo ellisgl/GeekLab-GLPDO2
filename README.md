@@ -25,7 +25,7 @@ composer require geeklab/glpdo2
 * Better schema for testing.
 * Better docs.
 * More of a real wold example.
-* Reduce the complexity, which is probably going to break the API completely.
+* Reduce the complexity?
 
 ### Basic Usage (Quick-N-Dirty)
 
