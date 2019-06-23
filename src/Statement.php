@@ -75,18 +75,33 @@ class Statement
     // Bind types
 
     /**
-     * Bind a boolean value as bool, with NULL option or with integer option.
+     * Bind a boolean value as bool, with NULL option.
      *
      * @param string|int|bool|null $value
      * @param bool $null
-     * @param bool $int
      *
      * @return Statement
      * @throws Exception
      */
-    public function bBool($value = null, bool $null = false, bool $int = false): self
+    public function bBool($value = null, bool $null = false): self
     {
-        $binding = $this->bindings->bBool($value, $null, $int);
+        $binding = $this->bindings->bBool($value, $null);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
+        return $this;
+    }
+
+    /**
+     * Bind a boolean value as int, with NULL option.
+     *
+     * @param string|int|bool|null $value
+     * @param bool $null
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bBoolInt($value = null, bool $null = false): self
+    {
+        $binding = $this->bindings->bBoolInt($value, $null);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }

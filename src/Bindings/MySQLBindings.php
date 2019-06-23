@@ -11,16 +11,15 @@ use PDO;
 class MySQLBindings implements BindingsInterface, Constants
 {
     /**
-     * Bind a boolean value as bool, with NULL option or with integer option.
+     * Bind a boolean value as bool, with NULL option.
      *
-     * @param string|int|bool|null $value
+     * @param int|bool|null $value
      * @param bool $null
-     * @param bool $int
      *
      * @return array
      * @throws Exception
      */
-    public function bBool($value = null, bool $null = false, bool $int = false): array
+    public function bBool($value = null, bool $null = false): array
     {
         // use NULL
         if ($value === null && $null) {
@@ -31,11 +30,30 @@ class MySQLBindings implements BindingsInterface, Constants
             throw new DomainException('Can not bind NULL in boolean spot.');
         }
 
-        $value = (bool) $value;
-        $value = $int ? (int) $value : $value;
-        $type = $int ? PDO::PARAM_INT : PDO::PARAM_BOOL;
+        return [(bool) $value, PDO::PARAM_BOOL];
+    }
 
-        return [$value, $type];
+    /**
+     * Bind a boolean value as int, with NULL option.
+     *
+     * @param int|bool|null $value
+     * @param bool $null
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function bBoolInt($value = null, bool $null = false): array
+    {
+        // use NULL
+        if ($value === null && $null) {
+            return $this->bStr(null, true);
+        }
+
+        if ($value === null && $null === false) {
+            throw new DomainException('Can not bind NULL in boolean spot.');
+        }
+
+        return [(int) $value, PDO::PARAM_INT];
     }
 
     /**

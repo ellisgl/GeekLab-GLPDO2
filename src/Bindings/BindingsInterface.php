@@ -9,16 +9,26 @@ use PDO;
 interface BindingsInterface
 {
     /**
-     * Bind a boolean value as bool, with NULL option or with integer option.
+     * Bind a boolean value as bool, with NULL option.
      *
-     * @param string|int|bool|null $value
+     * @param int|bool|null $value
      * @param bool $null
-     * @param bool $int
      *
      * @return array
      * @throws Exception
      */
-    public function bBool($value = null, bool $null = false, bool $int = false): array;
+    public function bBool($value = null, bool $null = false): array;
+
+    /**
+     * Bind a boolean value as int, with NULL option.
+     *
+     * @param int|bool|null $value
+     * @param bool $null
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function bBoolInt($value = null, bool $null = false): array;
 
     /**
      * Bind a date value as date or optional NULL.

@@ -6,6 +6,8 @@ use GeekLab\GLPDO2;
 use PHPUnit\Framework\TestCase;
 use \PDO;
 use \Exception;
+use \JsonException;
+use \stdClass;
 
 class GLPDO2Test extends TestCase
 {
@@ -67,7 +69,7 @@ class GLPDO2Test extends TestCase
 
     public function testPDOConnection(): void
     {
-        $this->assertTrue(is_object($this->db), '$this->db is not an object!');
+        $this->assertIsObject($this->db, '$this->db is not an object!');
     }
 
     // Basic Select
@@ -98,13 +100,39 @@ class GLPDO2Test extends TestCase
 
     // Select with bindings
     // Bool
+    public function testBoolIntNull(): void
+    {
+        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+
+        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+            ->sql('VALUES (')
+            ->sql('    ?,')->bStr('Ellis2')
+            ->sql('    ?,')->bBoolInt(null, true)// Yeah, totally need to make the table better for all the tests...
+            ->sql('    %%,')->bFloat('1.8', 1)
+            ->sql('    ?,')->bDate('2000-01-12')
+            ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+            ->sql(');');
+
+        $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
+            "VALUES (\n" .
+            "    'Ellis2',\n" .
+            "    NULL,\n" .
+            "    1.8,\n" .
+            "    '2000-01-12',\n" .
+            "    '2000-01-12 00:01:02'\n" .
+            ');';
+
+        $this->assertEquals($expected, $Statement->getComputed());
+    }
+
+    // Bool
     public function testBoolFalseInt(): void
     {
         $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  (0 = ?);')->bBool(false, false, true);
+                  ->sql('WHERE  (0 = ?);')->bBoolInt(false);
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
@@ -124,7 +152,7 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  (0 = ?);')->bBool('x', false, true);
+                  ->sql('WHERE  (0 = ?);')->bBoolInt('x');
 
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
@@ -166,7 +194,7 @@ class GLPDO2Test extends TestCase
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
-                  ->sql('    ?,')->bBool(true, false, false)// Yeah, totally need to make the table better for all the tests...
+                  ->sql('    ?,')->bBool(true)// Yeah, totally need to make the table better for all the tests...
                   ->sql('    %%,')->bFloat('1.8', 1)
                   ->sql('    ?,')->bDate('2000-01-12')
                   ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
@@ -194,7 +222,7 @@ class GLPDO2Test extends TestCase
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis2')
-                  ->sql('    ?,')->bBool(false, false, false)// Yeah, totally need to make the table better for all the tests...
+                  ->sql('    ?,')->bBool(false)// Yeah, totally need to make the table better for all the tests...
                   ->sql('    %%,')->bFloat('1.8', 1)
                   ->sql('    ?,')->bDate('2000-01-12')
                   ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
@@ -416,7 +444,7 @@ class GLPDO2Test extends TestCase
 
         $this->assertEquals($expected, $Statement->getComputed());
 
-        $object    = new \stdClass();
+        $object    = new stdClass();
         $object->a = 123;
 
         $Statement->reset()
@@ -708,7 +736,7 @@ class GLPDO2Test extends TestCase
         $expected = "SELECT *\n" .
                     "FROM   `test`\n" .
                     "WHERE  `name` = :pos999\n" .
-                    "AND `location` = :raw999;";
+                    'AND `location` = :raw999;';
 
         $this->assertSame($expected, $Statement->getComputed());
     }
@@ -880,15 +908,27 @@ class GLPDO2Test extends TestCase
 
     }
 
-    public function testBoolNullException(): void
+       public function testBoolNullException(): void
     {
         $this->expectException(Exception::class);
 
         $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
 
         $Statement->sql('SELECT *')
-                  ->sql('FROM   `test`')
-                  ->sql('WHERE  `name` = ?;')->bBool(null);
+            ->sql('FROM   `test`')
+            ->sql('WHERE  `name` = ?;')->bBool();
+        $this->db->selectRows($Statement);
+    }
+
+    public function testBoolIntNullException(): void
+    {
+        $this->expectException(Exception::class);
+
+        $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
+
+        $Statement->sql('SELECT *')
+            ->sql('FROM   `test`')
+            ->sql('WHERE  `name` = ?;')->bBoolInt();
         $this->db->selectRows($Statement);
     }
 
@@ -900,7 +940,7 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `name` = %%;')->bFloat(null);
+                  ->sql('WHERE  `name` = %%;')->bFloat();
         $this->db->selectRows($Statement);
     }
 
@@ -912,7 +952,7 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `someDate` = ?;')->bDate(null);
+                  ->sql('WHERE  `someDate` = ?;')->bDate();
         $this->db->selectRows($Statement);
     }
 
@@ -941,7 +981,7 @@ class GLPDO2Test extends TestCase
 
         $Statement->sql('SELECT *')
                   ->sql('FROM   `test`')
-                  ->sql('WHERE  `someDate` = ?;')->bDateTime(null, false);
+                  ->sql('WHERE  `someDate` = ?;')->bDateTime();
         $this->db->selectRows($Statement);
     }
 
@@ -1007,7 +1047,7 @@ class GLPDO2Test extends TestCase
         $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
                   ->sql('VALUES (')
                   ->sql('    ?,')->bStr('Ellis')
-                  ->sql('    ?,')->bJSON(null, false)
+                  ->sql('    ?,')->bJSON(null)
                   ->sql('    %%,')->bFloat(8.10, 1)
                   ->sql('    ?,')->bDate('2000-01-12')
                   ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
@@ -1016,7 +1056,7 @@ class GLPDO2Test extends TestCase
 
     public function testBadJSONException(): void
     {
-        $this->expectException(\JsonException::class);
+        $this->expectException(JsonException::class);
 
         $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
 
@@ -1032,7 +1072,7 @@ class GLPDO2Test extends TestCase
 
     public function testBadJSONException2(): void
     {
-        $this->expectException(\JsonException::class);
+        $this->expectException(JsonException::class);
 
         $Statement = new GLPDO2\Statement(new GLPDO2\Bindings\MySQLBindings());
 
