@@ -169,7 +169,7 @@ class GLPDO2
         Statement $SQL,
         string $column,
         bool $caseSensitive = false,
-        bool $default = null
+        $default = null
     ) {
         $row = $this->selectRow($SQL);
 
