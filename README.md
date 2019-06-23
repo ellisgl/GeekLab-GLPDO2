@@ -117,7 +117,7 @@ GLPDO->selectRow(Statement $SQL)<br/>
 Runs a normal query, returns a single row as an array, or false.
 
 GLPDO->selectValue(Statement $SQL, $column, $default)<br/>
-Runs a normal query, returns a single column ($column) and can return a default ($default = false) value is no value is in the column.
+Runs a normal query, returns a single column ($column) and can return a default (mixed $default = null) value is no value is in the column.
 
 GLPDO->selectRow(Statement $SQL)<br/>
 Runs a normal query, returns a single row as an array.
