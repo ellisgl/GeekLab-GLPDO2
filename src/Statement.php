@@ -487,7 +487,7 @@ class Statement
         // Replace positioned placeholders with named placeholders (first value).
         // Force to string, in the case of null.
         $sql = (string) preg_replace_callback('/:[a-z0-9_]+/m', function ($matches) {
-           return $this->placeholderFill($matches);
+            return $this->placeholderFill($matches);
         }, $sql);
 
         return $sql;
