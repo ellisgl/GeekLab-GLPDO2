@@ -12,10 +12,11 @@ php:
 services:
   - mysql
 env:
-  - MYSQLHOST="127.0.0.1"
-  - MYSQLDB="glpdo2_test"
-  - MYSQLUSER="travis"
-  - MYSQLPASS=
+  global:
+    - MYSQLHOST="127.0.0.1"
+    - MYSQLDB="glpdo2_test"
+    - MYSQLUSER="travis"
+    - MYSQLPASS=
 script:
   - composer phpcs
   - composer phpstan
