@@ -68,7 +68,7 @@ class MySQLDateTimeBindings implements DateTimeBindingInterface, Constants
         if ($isDateTime === 0 && $value !== null) {
             // $value is not a valid date string, set to earliest date time available (GMT).
             // Or $value is a valid date string, add midnight time.
-            $value = preg_match(self::DATE_REGEX, $value) === 0 ? '1970-01-01 00:00:00' : ' 00:00:00';
+            $value = preg_match(self::DATE_REGEX, $value) === 0 ? '1970-01-01 00:00:00' : $value . ' 00:00:00';
         }
 
         // DateTimes are really strings.
