@@ -2,9 +2,8 @@
 
 namespace GeekLab\GLPDO2\Bindings\MySQL;
 
-use \DomainException;
-use \Exception;
 use \PDO;
+use \InvalidArgumentException;
 use GeekLab\GLPDO2\Bindings\NumericBindingInterface;
 
 class MySQLNumericBindings implements NumericBindingInterface
@@ -17,7 +16,7 @@ class MySQLNumericBindings implements NumericBindingInterface
      * @param bool $null
      *
      * @return array
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function bFloat($value = null, $decimals = 3, $null = false): array
     {
@@ -27,11 +26,11 @@ class MySQLNumericBindings implements NumericBindingInterface
         }
 
         if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in float spot.');
+            throw new InvalidArgumentException('Can not bind NULL in float spot.');
         }
 
         if (!is_numeric($value)) {
-            throw new DomainException('Can not bind "' . $value . '" in float spot.');
+            throw new InvalidArgumentException('Can not bind "' . $value . '" in float spot.');
         }
 
         $format = sprintf('%%0.%df', $decimals);
@@ -47,7 +46,7 @@ class MySQLNumericBindings implements NumericBindingInterface
      * @param bool $null
      *
      * @return array
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function bInt($value = null, bool $null = false): array
     {
@@ -57,11 +56,11 @@ class MySQLNumericBindings implements NumericBindingInterface
         }
 
         if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in integer spot.');
+            throw new InvalidArgumentException('Can not bind NULL in integer spot.');
         }
 
         if (!is_numeric($value)) {
-            throw new DomainException('Can not bind "' . $value . '" in integer spot.');
+            throw new InvalidArgumentException('Can not bind "' . $value . '" in integer spot.');
         }
 
         return [(int) sprintf('%u', $value), PDO::PARAM_INT];
@@ -75,12 +74,12 @@ class MySQLNumericBindings implements NumericBindingInterface
      * @param int $default
      *
      * @return array
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function bIntArray(array $data, int $default = 0): array
     {
         if (empty($data)) {
-            throw new DomainException('Can not bind an empty array.');
+            throw new InvalidArgumentException('Can not bind an empty array.');
         }
 
         // Make unique integer array

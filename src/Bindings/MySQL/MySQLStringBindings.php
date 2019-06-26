@@ -2,9 +2,8 @@
 
 namespace GeekLab\GLPDO2\Bindings\MySQL;
 
-use \Exception;
 use \JsonException;
-use \DomainException;
+use \InvalidArgumentException;
 
 use GeekLab\GLPDO2\Bindings\StringBindingInterface;
 use PDO;
@@ -17,7 +16,7 @@ class MySQLStringBindings implements StringBindingInterface
      * @param bool $null
      *
      * @return array
-     * @throws Exception
+     * @throws JsonException
      */
     public function bJSON($value, bool $null = false): array
     {
@@ -81,14 +80,14 @@ class MySQLStringBindings implements StringBindingInterface
      * @param int $type
      *
      * @return array
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function bStr($value, bool $null = false, int $type = PDO::PARAM_STR): array
     {
         if ($value === null && $null) {
             $type = PDO::PARAM_NULL;
         } elseif ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in string spot.');
+            throw new InvalidArgumentException('Can not bind NULL in string spot.');
         }
 
         return [(string) $value, $type];

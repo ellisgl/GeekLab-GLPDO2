@@ -3,8 +3,7 @@
 namespace GeekLab\GLPDO2\Bindings\MySQL;
 
 use \PDO;
-use \DomainException;
-use \Exception;
+use \InvalidArgumentException;
 use GeekLab\GLPDO2\Constants;
 use GeekLab\GLPDO2\Bindings\DateTimeBindingInterface;
 
@@ -18,12 +17,12 @@ class MySQLDateTimeBindings implements DateTimeBindingInterface, Constants
      * @param bool $null
      *
      * @return array
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function bDate(?string $value, bool $null = false): array
     {
         if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in date spot.');
+            throw new InvalidArgumentException('Can not bind NULL in date spot.');
         }
 
         if (empty($value) && $null) {
@@ -46,34 +45,30 @@ class MySQLDateTimeBindings implements DateTimeBindingInterface, Constants
      * @param bool $null
      *
      * @return array
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function bDateTime($value = null, bool $null = false): array
     {
         if ($value === null && !$null) {
-            throw new DomainException('Can not bind NULL in date time spot.');
+            throw new InvalidArgumentException('Can not bind NULL in date time spot.');
         }
 
-        $dt = 0;
+        $isDateTime = 0;
 
         if ($value !== null) {
             // Trim $value and see if it matches full date time string format.
-            $dt = preg_match(self::DATE_TIME_REGEX, trim($value));
+            $isDateTime = preg_match(self::DATE_TIME_REGEX, trim($value));
         }
 
         // Use NULL?
-        if ($dt === 0 && $null) {
+        if ($isDateTime === 0 && $null) {
             return [null, PDO::PARAM_NULL];
         }
 
-        if ($dt === 0 && $value !== null) {
-            if (preg_match(self::DATE_REGEX, $value) === 0) {
-                // $value is not a valid date string, set to earliest date time available (GMT).
-                $value = '1970-01-01 00:00:00';
-            } else {
-                // $value is a valid date string, add midnight time.
-                $value .= ' 00:00:00';
-            }
+        if ($isDateTime === 0 && $value !== null) {
+            // $value is not a valid date string, set to earliest date time available (GMT).
+            // Or $value is a valid date string, add midnight time.
+            $value = preg_match(self::DATE_REGEX, $value) === 0 ? '1970-01-01 00:00:00' : ' 00:00:00';
         }
 
         // DateTimes are really strings.
