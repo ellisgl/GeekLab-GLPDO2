@@ -11,6 +11,12 @@ php:
   - '7.3'
 services:
   - mysql
+env:
+  - MYSQLHOST=127.0.0.1
+  - MYSQLDB=glpdo2_test
+  - MYSQLUSER=travis
+  - MYSQLPASS=
+  - SH=bash
 script:
   - composer phpcs
   - composer phpstan

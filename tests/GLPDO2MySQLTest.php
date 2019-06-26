@@ -9,7 +9,7 @@ use \Exception;
 use \JsonException;
 use \stdClass;
 
-class GLPDO2Test extends TestCase
+class GLPDO2MySQLTest extends TestCase
 {
     private $db;
     private const SAMPLE_DATA = [
@@ -28,7 +28,7 @@ class GLPDO2Test extends TestCase
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $dbConn   = new PDO('mysql:host=127.0.0.1;dbname=glpdo2_test', 'travis', null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $dbConn   = new PDO('mysql:host=' . getenv('MYSQLHOST') . ';dbname=' . getenv('MYSQLDB'), getenv('MYSQLUSER'), getenv('MYSQLPASS'), [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
         $this->db = new GLPDO2\GLPDO2($dbConn);
     }
 
