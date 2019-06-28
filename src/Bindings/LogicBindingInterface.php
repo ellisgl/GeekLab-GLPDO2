@@ -40,7 +40,7 @@ interface LogicBindingInterface
     /**
      * Bind a boolean value as int.
      *
-     * @param int|bool $value
+     * @param int|bool|null $value
      *
      * @return array
      * @throws TypeError
