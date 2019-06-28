@@ -34,7 +34,7 @@ class MySQLLogicBindings implements LogicBindingInterface
      * @return array
      * @throws TypeError
      */
-    public function bBool(?$value): array
+    public function bBool($value = null): array
     {
         if ($value === null) {
             throw new TypeError('Can not bind ' . gettype($value) . ':(' . $value . ') in boolean spot.');
@@ -70,7 +70,7 @@ class MySQLLogicBindings implements LogicBindingInterface
      * @return array
      * @throws TypeError
      */
-    public function bBoolInt(?$value): array
+    public function bBoolInt($value = null): array
     {
         if ($value === null) {
             throw new TypeError('Can not bind ' . gettype($value) . ':(' . $value . ') in boolean / integer spot.');

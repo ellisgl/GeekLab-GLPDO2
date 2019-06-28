@@ -24,7 +24,7 @@ interface LogicBindingInterface
      * @return array
      * @throws TypeError
      */
-    public function bBool(?$value): array;
+    public function bBool($value = null): array;
 
 
     /**
@@ -45,5 +45,5 @@ interface LogicBindingInterface
      * @return array
      * @throws TypeError
      */
-    public function bBoolInt(?$value): array;
+    public function bBoolInt($value = null): array;
 }

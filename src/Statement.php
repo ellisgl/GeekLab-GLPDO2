@@ -49,7 +49,7 @@ class Statement
      *
      * @return bool|null
      */
-    private function filterValidateBool(?$value): ?bool
+    private function filterValidateBool($value): ?bool
     {
         return  $value === null
             ? null
@@ -181,7 +181,7 @@ class Statement
      */
     public function bDateNullable(?string $value = null): self
     {
-        $binding = $this->bindings->bDateNullable($this->filterValidateBool($value));
+        $binding = $this->bindings->bDateNullable($value);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -260,7 +260,7 @@ class Statement
      * @return Statement
      * @throws TypeError
      */
-    public function bFloat($value = null, $decimals = 3): self
+    public function bFloat($value, $decimals = 3): self
     {
         $binding = $this->bindings->bFloat($value, $decimals);
         $this->rawBind($this->getNextName('raw'), $binding[0]);
@@ -290,7 +290,7 @@ class Statement
      * @return Statement
      * @throws TypeError
      */
-    public function bInt($value = null): self
+    public function bInt($value): self
     {
         $binding = $this->bindings->bInt($value);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);

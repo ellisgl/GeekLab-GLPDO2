@@ -54,7 +54,7 @@ class Bindings
     /**
      * Bind a boolean value as bool.
      *
-     * @param int|bool $value
+     * @param int|bool|null $value
 
      *
      * @return array
@@ -81,7 +81,7 @@ class Bindings
     /**
      * Bind a boolean value as int.
      *
-     * @param int|bool $value
+     * @param int|bool|null $value
      *
      * @return array
      * @throws TypeError
