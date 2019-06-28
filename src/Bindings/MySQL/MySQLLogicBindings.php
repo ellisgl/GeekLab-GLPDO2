@@ -4,6 +4,7 @@ namespace GeekLab\GLPDO2\Bindings\MySQL;
 
 use \PDO;
 use \InvalidArgumentException;
+use \TypeError;
 use GeekLab\GLPDO2\Bindings\LogicBindingInterface;
 
 class MySQLLogicBindings implements LogicBindingInterface
@@ -14,12 +15,12 @@ class MySQLLogicBindings implements LogicBindingInterface
      * @param int|bool|null $value
      *
      * @return array
-     * @throws InvalidArgumentException
+     * @throws TypeError
      */
     public function bBoolNullable($value = null): array
     {
         // use NULL
-        if ($value === null) {
+        if ($value === null ) {
             return [null, PDO::PARAM_NULL];
         }
 
@@ -32,15 +33,15 @@ class MySQLLogicBindings implements LogicBindingInterface
      * @param int|bool $value
      *
      * @return array
-     * @throws \TypeError
+     * @throws TypeError
      */
     public function bBool($value): array
     {
-        if (!is_bool($value) && !is_int($value)) {
-            throw new \TypeError('Can not bind ' . gettype($value) . ' in boolean spot.');
+        if ($value === null) {
+            throw new TypeError('Can not bind ' . gettype($value) . ':(' . $value .') in boolean spot.');
         }
 
-        return [(bool) $value, PDO::PARAM_BOOL];
+        return [$value, PDO::PARAM_BOOL];
     }
 
 
@@ -50,7 +51,7 @@ class MySQLLogicBindings implements LogicBindingInterface
      * @param int|bool|null $value
      *
      * @return array
-     * @throws InvalidArgumentException
+     * @throws TypeError
      */
     public function bBoolIntNullable($value = null): array
     {
@@ -59,7 +60,7 @@ class MySQLLogicBindings implements LogicBindingInterface
             return [null, PDO::PARAM_NULL];
         }
 
-        return $this->bBool($value);
+        return $this->bBoolInt($value);
     }
 
     /**
@@ -68,12 +69,12 @@ class MySQLLogicBindings implements LogicBindingInterface
      * @param int|bool $value
      *
      * @return array
-     * @throws \TypeError
+     * @throws TypeError
      */
     public function bBoolInt($value): array
     {
-        if (!is_bool($value) && !is_int($value)) {
-            throw new \TypeError('Can not bind ' . gettype($value) . ' in boolean spot.');
+        if ($value === null) {
+            throw new TypeError('Can not bind ' . gettype($value) . ':(' . $value .') in boolean / integer spot.');
         }
 
         return [(int) $value, PDO::PARAM_INT];

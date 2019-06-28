@@ -41,6 +41,23 @@ class Statement
     }
 
     /**
+     * Due to an outstanding bug (https://bugs.php.net/bug.php?id=70409)
+     * where filter_var + FILTER_NULL_ON_FAILURE doesn't return null on null,
+     * I have to do this and I feel bad about it.
+     *
+     * @param $value
+     *
+     * @return bool|null
+     */
+    private function filterValidateBool($value): ?bool
+    {
+        return  $value === null
+            ? null
+            : filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    }
+
+
+    /**
      * Replace the raw placeholder with raw values.
      *
      * @param string $sql
@@ -102,7 +119,7 @@ class Statement
      */
     public function bBoolNullable($value = null): self
     {
-        $binding = $this->bindings->bBoolNullable($value);
+        $binding = $this->bindings->bBoolNullable($this->filterValidateBool($value));
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -117,7 +134,7 @@ class Statement
      */
     public function bBool($value): self
     {
-        $binding = $this->bindings->bBool($value);
+        $binding = $this->bindings->bBool($this->filterValidateBool($value));
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -133,7 +150,7 @@ class Statement
      */
     public function bBoolIntNullable($value = null): self
     {
-        $binding = $this->bindings->bBoolIntNullable($value);
+        $binding = $this->bindings->bBoolIntNullable($this->filterValidateBool($value));
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -148,7 +165,7 @@ class Statement
      */
     public function bBoolInt($value): self
     {
-        $binding = $this->bindings->bBoolInt($value);
+        $binding = $this->bindings->bBoolInt($this->filterValidateBool($value));
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -163,7 +180,7 @@ class Statement
      */
     public function bDateNullable(?string $value = null): self
     {
-        $binding = $this->bindings->bDateNullable($value);
+        $binding = $this->bindings->bDateNullable($this->filterValidateBool($value));
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
