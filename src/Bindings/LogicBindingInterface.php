@@ -19,18 +19,18 @@ interface LogicBindingInterface
     /**
      * Bind a boolean value as bool.
      *
-     * @param int|bool $value
+     * @param int|bool|null $value
      *
      * @return array
      * @throws TypeError
      */
-    public function bBool($value): array;
+    public function bBool(?$value): array;
 
 
     /**
      * Bind a boolean value as int or null.
      *
-     * @param int|bool $value
+     * @param int|bool|null $value
      *
      * @return array
      * @throws TypeError
@@ -45,5 +45,5 @@ interface LogicBindingInterface
      * @return array
      * @throws TypeError
      */
-    public function bBoolInt($value): array;
+    public function bBoolInt(?$value): array;
 }

@@ -26,7 +26,6 @@ class MySQLNumericBindings implements NumericBindingInterface
         }
 
         return $this->bFloat($value, $decimals);
-
     }
 
     /**

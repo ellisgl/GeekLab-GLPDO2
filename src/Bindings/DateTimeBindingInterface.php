@@ -21,7 +21,7 @@ interface DateTimeBindingInterface
      * Bind a date value as date.
      * YYYY-MM-DD is the proper date format.
      *
-     * @param string
+     * @param string $value
      *
      * @return array
      * @throws TypeError

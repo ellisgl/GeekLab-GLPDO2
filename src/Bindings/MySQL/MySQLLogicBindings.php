@@ -29,12 +29,12 @@ class MySQLLogicBindings implements LogicBindingInterface
     /**
      * Bind a boolean value as bool.
      *
-     * @param int|bool $value
+     * @param int|bool|null $value
      *
      * @return array
      * @throws TypeError
      */
-    public function bBool($value): array
+    public function bBool(?$value): array
     {
         if ($value === null) {
             throw new TypeError('Can not bind ' . gettype($value) . ':(' . $value . ') in boolean spot.');
@@ -65,12 +65,12 @@ class MySQLLogicBindings implements LogicBindingInterface
     /**
      * Bind a boolean value as int.
      *
-     * @param int|bool $value
+     * @param int|bool|null $value
      *
      * @return array
      * @throws TypeError
      */
-    public function bBoolInt($value): array
+    public function bBoolInt(?$value): array
     {
         if ($value === null) {
             throw new TypeError('Can not bind ' . gettype($value) . ':(' . $value . ') in boolean / integer spot.');
