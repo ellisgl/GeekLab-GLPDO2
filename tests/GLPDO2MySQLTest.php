@@ -106,13 +106,13 @@ class GLPDO2MySQLTest extends TestCase
 
     protected function setUp(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('DROP TABLE IF EXISTS `test`');
+        $statement->sql('DROP TABLE IF EXISTS `test`');
 
-        $this->db->queryDelete($Statement);
+        $this->db->queryDelete($statement);
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('CREATE TABLE `test` (')
             ->sql('    `id`   INTEGER PRIMARY KEY AUTO_INCREMENT,')
             ->sql('    `name` VARCHAR(255) DEFAULT NULL,')
@@ -121,9 +121,9 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('    `someDate` DATE NOT NULL,')
             ->sql('    `someDateTime` DATETIME NOT NULL')
             ->sql(');');
-        $this->db->queryInsert($Statement);
+        $this->db->queryInsert($statement);
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('INSERT INTO `test` (`id`, `name`, `location`, `dp`, `someDate`, `someDateTime`)')
             ->sql('VALUES')
             ->sql('    (1,"Davis", "Germany", "10.1", "2000-01-01", "2000-01-01 00:01:02"),')
@@ -136,7 +136,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('    (8,"Sarah", "Christmas Island", "-10.5", "2000-01-08", "2000-01-08 00:01:02"),')
             ->sql('    (9,"Nadine", "Gabon", "-56.9", "2000-01-09", "2000-01-09 00:01:02"),')
             ->sql('    (10,"Drew", "Burundi", "-56.5", "2000-01-10", "2000-01-10 00:01:02");');
-        $this->db->queryInsert($Statement);
+        $this->db->queryInsert($statement);
     }
 
     public function testPDOConnection(): void
@@ -147,18 +147,18 @@ class GLPDO2MySQLTest extends TestCase
     // Basic Select
     public function testBasicSelect(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT * FROM `test`;');
+        $statement->sql('SELECT * FROM `test`;');
 
         // Make sure our statement is what it is.
-        $this->assertEquals('SELECT * FROM `test`;', $Statement->getComputed());
+        $this->assertEquals('SELECT * FROM `test`;', $statement->getComputed());
 
         // Only to help create the array (self::SAMPLE_DATA)
-        //print_r($this->db->selectRows($Statement));
+        //print_r($this->db->selectRows($statement));
 
         // Testing results
-        $this->assertEquals(self::SAMPLE_DATA, $this->db->selectRows($Statement));
+        $this->assertEquals(self::SAMPLE_DATA, $this->db->selectRows($statement));
     }
 
     // For code coverage...
@@ -174,9 +174,9 @@ class GLPDO2MySQLTest extends TestCase
     // Bool
     public function testBoolIntNull(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bBoolIntNullable()// Yeah, totally need to make the table better for all the tests...
@@ -194,15 +194,15 @@ class GLPDO2MySQLTest extends TestCase
             "    '2000-01-12 00:01:02'\n" .
             ');';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
     }
 
     // Bool
     public function testBoolFalseInt(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  (0 = ?);')->bBoolInt(false);
 
@@ -211,18 +211,18 @@ class GLPDO2MySQLTest extends TestCase
             'WHERE  (0 = 0);';
 
         // Statement filled in corrected?
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         // Testing results
-        $this->assertEquals(self::SAMPLE_DATA, $this->db->selectRows($Statement));
+        $this->assertEquals(self::SAMPLE_DATA, $this->db->selectRows($statement));
     }
 
     // Bool
     public function testBoolTrueInt(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  (0 = ?);')->bBoolInt(true);
 
@@ -230,15 +230,15 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             'WHERE  (0 = 1);';
 
-        $this->assertEquals($expected, $Statement->getComputed());
-        $this->assertEmpty($this->db->selectRows($Statement));
+        $this->assertEquals($expected, $statement->getComputed());
+        $this->assertEmpty($this->db->selectRows($statement));
     }
 
     public function testBoolNull(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bBoolNullable()// Yeah, totally need to make the table better for all the tests...
@@ -256,14 +256,14 @@ class GLPDO2MySQLTest extends TestCase
             "    '2000-01-12 00:01:02'\n" .
             ');';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
     }
 
     public function testBoolTrue(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bBool(true)// Yeah, totally need to make the table better for all the tests...
@@ -281,17 +281,17 @@ class GLPDO2MySQLTest extends TestCase
             "    '2000-01-12 00:01:02'\n" .
             ');';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
-        $this->db->queryInsert($Statement);
+        $this->db->queryInsert($statement);
 
     }
 
     public function testBoolFalse(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bBool(false)// Yeah, totally need to make the table better for all the tests...
@@ -309,17 +309,17 @@ class GLPDO2MySQLTest extends TestCase
             "    '2000-01-12 00:01:02'\n" .
             ');';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
-        $this->db->queryInsert($Statement);
+        $this->db->queryInsert($statement);
     }
 
     // Date
     public function testDate(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `someDate` = ?;')->bDate('2000-01-02');
 
@@ -327,9 +327,9 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `someDate` = '2000-01-02';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `someDate` = ?;')->bDate('');
@@ -338,15 +338,15 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `someDate` = '1970-01-01';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
     }
 
     // Date Time
     public function testDateTime(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `someDate` = ?;')->bDateTime('2000-01-02 00:11:22');
 
@@ -354,9 +354,9 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `someDate` = '2000-01-02 00:11:22';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `someDate` = ?;')->bDateTime('2000-01-02');
@@ -365,9 +365,9 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `someDate` = '2000-01-02 00:00:00';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `someDate` = ?;')->bDateTime('');
@@ -376,15 +376,15 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `someDate` = '1970-01-01 00:00:00';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
     }
 
     // Float
     public function testFloatNullable(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `dp` = %%;')->bFloatNullable('1.101', 1); // Making it one decimal point
 
@@ -392,7 +392,7 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             'WHERE  `dp` = 1.1;';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         $expected = [
             [
@@ -405,9 +405,9 @@ class GLPDO2MySQLTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $this->db->selectRows($statement));
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
@@ -426,14 +426,14 @@ class GLPDO2MySQLTest extends TestCase
             "    '2000-01-12 00:01:02'\n" .
             ');';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
     }
 
     public function testFloat(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `dp` = %%;')->bFloat('1.101', 1); // Making it one decimal point
 
@@ -441,15 +441,15 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             'WHERE  `dp` = 1.1;';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
     }
 
     // Int
     public function testIntNullable(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `id` = ?;')->bIntNullable('1');
 
@@ -457,9 +457,9 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             'WHERE  `id` = 1;';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('INSERT INTO `%%` (`id`, `name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bIntNullable(null)
@@ -480,14 +480,14 @@ class GLPDO2MySQLTest extends TestCase
             "    '2000-01-12 00:01:02'\n" .
             ');';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
     }
 
     public function testInt(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `id` = ?;')->bInt('1');
 
@@ -495,7 +495,7 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             'WHERE  `id` = 1;';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         $expected = [
             [
@@ -508,15 +508,15 @@ class GLPDO2MySQLTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $this->db->selectRows($statement));
     }
 
     // Int array
     public function testIntArray(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM `test`')
             ->sql('WHERE `id` IN (%%);')->bIntArray(array(1, 2, 3));
 
@@ -524,7 +524,7 @@ class GLPDO2MySQLTest extends TestCase
             "FROM `test`\n" .
             'WHERE `id` IN (1, 2, 3);';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         $expected = [
             [
@@ -553,15 +553,15 @@ class GLPDO2MySQLTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $this->db->selectRows($statement));
     }
 
     // JSON
     public function testJSON(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJSON('{"a":123}')
@@ -579,12 +579,12 @@ class GLPDO2MySQLTest extends TestCase
             "    '2000-01-12 00:01:02'\n" .
             ');';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         $object = new stdClass();
         $object->a = 123;
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
@@ -594,14 +594,14 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
     }
 
     public function testJSONNull(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJSON(null, true)
@@ -619,15 +619,15 @@ class GLPDO2MySQLTest extends TestCase
             "    '2000-01-12 00:01:02'\n" .
             ');';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
     }
 
     // Like
     public function testLikeBeginsWith(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` LIKE ?;')->bLike('dr', false, true);
 
@@ -635,7 +635,7 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `name` LIKE 'dr%';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         $expected = [
             [
@@ -648,14 +648,14 @@ class GLPDO2MySQLTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $this->db->selectRows($statement));
     }
 
     public function testLikeEndsWith(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` LIKE ?;')->bLike('nn', true);
 
@@ -663,7 +663,7 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `name` LIKE '%nn';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         $expected = [
             [
@@ -676,14 +676,14 @@ class GLPDO2MySQLTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $this->db->selectRows($statement));
     }
 
     public function testLikeSomewhere(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` LIKE ?;')->bLike('li');
 
@@ -691,7 +691,7 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `name` LIKE '%li%';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         $expected = [
             [
@@ -704,14 +704,14 @@ class GLPDO2MySQLTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $this->db->selectRows($statement));
     }
 
     public function testLikeNowhere(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` LIKE ?;')->bLike('li', true, true);
 
@@ -719,16 +719,16 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `name` LIKE 'li';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
-        $this->assertEquals([], $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $statement->getComputed());
+        $this->assertEquals([], $this->db->selectRows($statement));
     }
 
     // Raw
     public function testRaw(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT * FROM `%%` ')->bRaw('test')
+        $statement->sql('SELECT * FROM `%%` ')->bRaw('test')
             ->sql('WHERE ')
             ->sql('(0  = %%) & ')->bRaw(0)
             ->sql('(1  = %%) & ')->bRaw(1)
@@ -758,16 +758,16 @@ class GLPDO2MySQLTest extends TestCase
             "(10 = 10) & \n" .
             '(11 = 11);';
 
-        $this->assertEquals($expected, $Statement->getComputed());
-        $this->assertEquals(self::SAMPLE_DATA, $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $statement->getComputed());
+        $this->assertEquals(self::SAMPLE_DATA, $this->db->selectRows($statement));
     }
 
     // String
     public function testString(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = ?;')->bStr('Sarah');
 
@@ -775,7 +775,7 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `name` = 'Sarah';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         $expected = [
             [
@@ -788,15 +788,15 @@ class GLPDO2MySQLTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $this->db->selectRows($statement));
     }
 
     // String Array
     public function testStringArray(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `location` IN (%%);')->bStrArr(['Germany', 'USA']);
 
@@ -804,7 +804,7 @@ class GLPDO2MySQLTest extends TestCase
             "FROM   `test`\n" .
             "WHERE  `location` IN ('Germany', 'USA');";
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
         $expected = [
             [
@@ -841,15 +841,15 @@ class GLPDO2MySQLTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $this->db->selectRows($Statement));
+        $this->assertEquals($expected, $this->db->selectRows($statement));
     }
 
     // Insert
     public function testInsert(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bStr('USA')
@@ -867,17 +867,17 @@ class GLPDO2MySQLTest extends TestCase
             "    '2000-01-12 00:01:02'\n" .
             ');';
 
-        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals($expected, $statement->getComputed());
 
-        $this->assertEquals(11, $this->db->queryInsert($Statement), 'Insert statement did not return id of 11');
+        $this->assertEquals(11, $this->db->queryInsert($statement), 'Insert statement did not return id of 11');
     }
 
     // Update
     public function testUpdate(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('UPDATE `test`')
+        $statement->sql('UPDATE `test`')
             ->sql('SET    `location` = ?')->bStr('Mexico')
             ->sql('WHERE  `name`     = ?;')->bStr('Drew');
 
@@ -885,43 +885,43 @@ class GLPDO2MySQLTest extends TestCase
             "SET    `location` = 'Mexico'\n" .
             "WHERE  `name`     = 'Drew';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
-        $this->assertEquals(1, $this->db->queryUpdate($Statement), '0 or more than 1 row updated.');
+        $this->assertEquals($expected, $statement->getComputed());
+        $this->assertEquals(1, $this->db->queryUpdate($statement), '0 or more than 1 row updated.');
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = \'Drew\';');
-        $this->assertEquals('Mexico', $this->db->selectRow($Statement)['location'], 'Record did not update correctly.');
+        $this->assertEquals('Mexico', $this->db->selectRow($statement)['location'], 'Record did not update correctly.');
     }
 
     // selectValue tests
     public function testSelectValueCaseInsensitive(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = \'Drew\';');
-        $this->assertEquals('Drew', $this->db->selectValue($Statement, 'NAMe'));
+        $this->assertEquals('Drew', $this->db->selectValue($statement, 'NAMe'));
     }
 
     public function testSelectValueCaseSensitive(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = \'Drew\';');
-        $this->assertNotEquals('Drew', $this->db->selectValueCaseSensitive($Statement, 'NAMe', true));
-        $this->assertEquals('Drew', $this->db->selectValueCaseSensitive($Statement, 'name', true));
+        $this->assertNotEquals('Drew', $this->db->selectValueCaseSensitive($statement, 'NAMe', true));
+        $this->assertEquals('Drew', $this->db->selectValueCaseSensitive($statement, 'name', true));
     }
 
     public function testSelectBadPlaceHolders(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = :pos999')
             ->sql('AND `location` = :raw999;');
@@ -931,29 +931,29 @@ class GLPDO2MySQLTest extends TestCase
             "WHERE  `name` = :pos999\n" .
             'AND `location` = :raw999;';
 
-        $this->assertSame($expected, $Statement->getComputed());
+        $this->assertSame($expected, $statement->getComputed());
     }
 
     // Delete
     public function testDelete(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
-        $Statement->sql('DELETE FROM `test`')
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement->sql('DELETE FROM `test`')
             ->sql('WHERE       `name` = ?;')->bStr('Drew');
 
         $expected = "DELETE FROM `test`\n" .
             "WHERE       `name` = 'Drew';";
 
-        $this->assertEquals($expected, $Statement->getComputed());
-        $this->assertEquals(1, $this->db->queryDelete($Statement), '0 or more than 1 row deleted.');
+        $this->assertEquals($expected, $statement->getComputed());
+        $this->assertEquals(1, $this->db->queryDelete($statement), '0 or more than 1 row deleted.');
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = ?;')->bStr('Drew');
-        $this->assertEmpty($this->db->selectRow($Statement), 'Record did not delete.');
+        $this->assertEmpty($this->db->selectRow($statement), 'Record did not delete.');
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('SELECT *')
             ->sql('FROM   `test`;');
 
@@ -961,14 +961,14 @@ class GLPDO2MySQLTest extends TestCase
 
         array_pop($expected);
 
-        $this->assertEquals($expected, $this->db->selectRows($Statement), 'Table data does not match!');
+        $this->assertEquals($expected, $this->db->selectRows($statement), 'Table data does not match!');
     }
 
     public function testToString(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('UPDATE `test`')
+        $statement->sql('UPDATE `test`')
             ->sql('SET    `location` = ?')->bStr('Mexico')
             ->sql('WHERE  `name`     = ?;')->bStr('Drew');
 
@@ -976,14 +976,14 @@ class GLPDO2MySQLTest extends TestCase
             "SET    `location` = 'Mexico'\n" .
             "WHERE  `name`     = 'Drew';";
 
-        $this->assertEquals($expected, (string) $Statement);
+        $this->assertEquals($expected, (string) $statement);
     }
 
     public function testDebugInfo(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('UPDATE `test`')
+        $statement->sql('UPDATE `test`')
             ->sql('SET    `location` = ?')->bStr('Mexico')
             ->sql('WHERE  `name`     = ?;')->bStr('Drew');
 
@@ -1008,27 +1008,27 @@ class GLPDO2MySQLTest extends TestCase
                 "WHERE  `name`     = 'Drew';"
         ];
 
-        $this->assertSame($expected, $Statement->__debugInfo());
+        $this->assertSame($expected, $statement->__debugInfo());
     }
 
     // Injection Test
     public function testInjection(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = ?;')->bStr("1' OR 1; --'");
 
-        $this->assertEmpty($this->db->selectRows($Statement));
+        $this->assertEmpty($this->db->selectRows($statement));
     }
 
     // Good transaction
     public function testGoodTransaction(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
@@ -1039,7 +1039,7 @@ class GLPDO2MySQLTest extends TestCase
 
         $this->db->beginTransaction();
 
-        $result = $this->db->queryInsert($Statement);
+        $result = $this->db->queryInsert($statement);
 
         $this->assertTrue($this->db->inTransaction());
         $this->db->commit();
@@ -1048,9 +1048,9 @@ class GLPDO2MySQLTest extends TestCase
 
     public function testRollback(): void
     {
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
@@ -1060,17 +1060,17 @@ class GLPDO2MySQLTest extends TestCase
             ->sql(');');
 
         $this->db->beginTransaction();
-        $this->db->queryInsert($Statement);
+        $this->db->queryInsert($statement);
         $this->assertTrue($this->db->inTransaction());
         $this->db->rollback();
 
-        $Statement->reset()
+        $statement->reset()
             ->sql('SELECT `id`')
             ->sql('FROM `test`')
             ->sql('WHERE `name` = ?')->bStr('Ellis2')
             ->sql('LIMIT 1;');
 
-        $result = $this->db->selectRow($Statement);
+        $result = $this->db->selectRow($statement);
 
         $this->assertEmpty($result);
     }
@@ -1080,24 +1080,24 @@ class GLPDO2MySQLTest extends TestCase
     {
         $this->expectException(TypeError::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `id` = ?;')->bInt(null);
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
     }
 
     public function testStringNullException(): void
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = ?;')->bStr(null);
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
 
     }
 
@@ -1105,57 +1105,57 @@ class GLPDO2MySQLTest extends TestCase
     {
         $this->expectException(TypeError::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = ?;')->bBool(null);
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
     }
 
     public function testBoolIntNullException(): void
     {
         $this->expectException(TypeError::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = ?;')->bBoolInt(null);
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
     }
 
     public function testFloatNullException(): void
     {
         $this->expectException(TypeError::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = %%;')->bFloat();
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
     }
 
     public function testDateNullException(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `someDate` = ?;')->bDate(null);
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
     }
 
     public function testDateNullPDOException(): void
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
@@ -1163,28 +1163,28 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('    ?,')->bDateNullable()
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
-        $this->db->queryInsert($Statement);
+        $this->db->queryInsert($statement);
     }
 
     public function testDateTimeNullException(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `someDate` = ?;')->bDateTime(null);
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
     }
 
     public function testDateTimeNullPDOException(): void
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
@@ -1192,52 +1192,52 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTimeNullable()
             ->sql(');');
-        $this->db->queryInsert($Statement);
+        $this->db->queryInsert($statement);
     }
 
     public function testIntArrayEmptyArrayException(): void
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` IN (%%);')->bIntArray(array());
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
     }
 
     public function testFloatInvalidTypeException(): void
     {
         $this->expectException(TypeError::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = %%;')->bFloat('xyz');
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
     }
 
     public function testIntInvalidTypeException(): void
     {
         $this->expectException(TypeError::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = ?;')->bInt('xyz');
-        $this->db->selectRows($Statement);
+        $this->db->selectRows($statement);
     }
 
     public function testJSONNullException(): void
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJSON(null)
@@ -1251,9 +1251,9 @@ class GLPDO2MySQLTest extends TestCase
     {
         $this->expectException(JsonException::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJSON('SDI')
@@ -1267,9 +1267,9 @@ class GLPDO2MySQLTest extends TestCase
     {
         $this->expectException(JsonException::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJSON(123)
@@ -1283,9 +1283,9 @@ class GLPDO2MySQLTest extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`)')->bRaw('test')
+        $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
@@ -1293,6 +1293,6 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('    ?')->bDate('2000-01-12')
             ->sql(');');
         $this->db->beginTransaction();
-        $this->db->queryInsert($Statement);
+        $this->db->queryInsert($statement);
     }
 }

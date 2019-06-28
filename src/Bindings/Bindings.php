@@ -4,7 +4,7 @@ namespace GeekLab\GLPDO2\Bindings;
 
 use \PDO;
 use \Exception;
-use \DomainException;
+use \TypeError;
 use \JsonException;
 
 class Bindings
@@ -44,7 +44,7 @@ class Bindings
      * @param int|bool|null $value
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBoolNullable($value = null): array
     {
@@ -58,7 +58,7 @@ class Bindings
 
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBool($value): array
     {
@@ -71,7 +71,7 @@ class Bindings
      * @param int|bool|null $value
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBoolIntNullable($value = null): array
     {
@@ -84,7 +84,7 @@ class Bindings
      * @param int|bool $value
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBoolInt($value): array
     {
@@ -98,6 +98,7 @@ class Bindings
      * @param string|null $value
      *
      * @return array
+     * @throws TypeError
      */
     public function bDateNullable(?string $value = null): array
     {
@@ -111,6 +112,7 @@ class Bindings
      * @param string $value
      *
      * @return array
+     * @throws TypeError
      */
     public function bDate(string $value): array
     {
@@ -124,6 +126,7 @@ class Bindings
      * @param string|null $value
      *
      * @return array
+     * @throws TypeError
      */
     public function bDateTimeNullable(?string $value = null): array
     {
@@ -138,6 +141,7 @@ class Bindings
 
      *
      * @return array
+     * @throws TypeError
      */
     public function bDateTime(string $value): array
     {
@@ -151,7 +155,7 @@ class Bindings
      * @param int $decimals
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bFloatNullable($value = null, $decimals = 3): array
     {
@@ -165,7 +169,7 @@ class Bindings
      * @param int $decimals
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bFloat($value, $decimals = 3): array
     {
@@ -208,7 +212,7 @@ class Bindings
      * @param int $default
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bIntArray(array $data, int $default = 0): array
     {

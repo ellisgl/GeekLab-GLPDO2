@@ -41,11 +41,11 @@ require_once '..' . DS . '..' . DS . 'vendor' . DS . 'autoload.php';
 
 $dbConn    = new PDO('mysql:host=localhost;dbname=playground', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 $db        = new \GeekLab\GLPDO2\GLPDO2($dbConn);
-$Statement = new \GeekLab\GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+$statement = new \GeekLab\GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 $start     = 0;
 $limit     = 5;
 
-$Statement->sql('SELECT *')
+$statement->sql('SELECT *')
           ->sql('FROM (')
           ->sql('          SELECT *')
           ->sql('          FROM   `mock_data`')
@@ -54,9 +54,9 @@ $Statement->sql('SELECT *')
           ->sql('ORDER BY `id` DESC;');
 
 // Show computedSQL statement
-print_r($Statement->getComputed());
+print_r($statement->getComputed());
 
-$res = $db->selectRows($Statement);
+$res = $db->selectRows($statement);
 
 print_r($res);
 ```
@@ -151,7 +151,7 @@ Used to build up the SQL parameterized statement.
 Statement->reset()<br/>
 Used to reset Statement private variables. Usefully for creating multiple queries without having to create a new Statement object.
 
-Statement->execute(\PDO $PDO)<br/>
+Statement->execute(\PDO $pdo)<br/>
 Prepares and executes the statement
 
 Statement->getComputed()<br/>

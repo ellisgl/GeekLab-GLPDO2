@@ -8,8 +8,8 @@ use \Exception;
 
 class GLPDO2
 {
-    /** @var PDO $PDO */
-    private $PDO;
+    /** @var PDO $pdo Should make private after final...? */
+    protected $pdo;
 
     public function __construct(PDO $pdo)
     {
@@ -59,15 +59,15 @@ class GLPDO2
     /**
      * Perform UPDATE or DELETE query and return the number of affected rows.
      *
-     * @param Statement $Statement
+     * @param Statement $statement
      *
      * @return int
      * @throws Exception
      */
-    private function queryAffectedRows(Statement $Statement): int
+    private function queryAffectedRows(Statement $statement): int
     {
         // Execute statement
-        $sth = $Statement->execute($this->PDO);
+        $sth = $statement->execute($this->PDO);
 
         // Return number of rows affected
         return $sth->rowCount();
@@ -76,41 +76,41 @@ class GLPDO2
     /**
      * Perform DELETE query.
      *
-     * @param Statement $Statement
+     * @param Statement $statement
      *
      * @return int
      * @throws Exception
      */
-    public function queryDelete(Statement $Statement): int
+    public function queryDelete(Statement $statement): int
     {
-        return $this->queryAffectedRows($Statement);
+        return $this->queryAffectedRows($statement);
     }
 
     /**
      * Perform UPDATE query
      *
-     * @param Statement $Statement
+     * @param Statement $statement
      *
      * @return int
      * @throws Exception
      */
-    public function queryUpdate(Statement $Statement): int
+    public function queryUpdate(Statement $statement): int
     {
-        return $this->queryAffectedRows($Statement);
+        return $this->queryAffectedRows($statement);
     }
 
     /**
      * Perform INSERT query
      *
-     * @param Statement $Statement
+     * @param Statement $statement
      *
      * @return bool|string
      * @throws Exception
      */
-    public function queryInsert(Statement $Statement)
+    public function queryInsert(Statement $statement)
     {
         // Execute the statement
-        $sth = $Statement->execute($this->PDO);
+        $sth = $statement->execute($this->PDO);
 
         if (!$sth->rowCount()) {
             // Insert failed
@@ -124,15 +124,15 @@ class GLPDO2
     /**
      * Return multiple rows result as an array
      *
-     * @param Statement $Statement
+     * @param Statement $statement
      *
      * @return array|false
      * @throws Exception
      */
-    public function selectRows(Statement $Statement)
+    public function selectRows(Statement $statement)
     {
         // Execute the statement
-        $sth = $Statement->execute($this->PDO);
+        $sth = $statement->execute($this->PDO);
 
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -140,15 +140,15 @@ class GLPDO2
     /**
      * Execute statement and returns first row of results as an associative array.
      *
-     * @param Statement $Statement
+     * @param Statement $statement
      *
      * @return mixed
      * @throws Exception
      */
-    public function selectRow(Statement $Statement)
+    public function selectRow(Statement $statement)
     {
         // Execute the statement
-        $sth = $Statement->execute($this->PDO);
+        $sth = $statement->execute($this->PDO);
 
         // Return the first row fetched
         return $sth->fetch(PDO::FETCH_ASSOC);
@@ -157,7 +157,7 @@ class GLPDO2
     /**
      * Executes statement and return a specific column from the first row of results.
      *
-     * @param Statement $Statement
+     * @param Statement $statement
      * @param string $column
      * @param mixed $default
      *
@@ -165,11 +165,11 @@ class GLPDO2
      * @throws Exception
      */
     public function selectValue(
-        Statement $Statement,
+        Statement $statement,
         string $column,
         $default = null
     ): ?string {
-        $row = $this->selectRow($Statement);
+        $row = $this->selectRow($statement);
         $row = array_change_key_case($row);
         $column = strtolower($column);
 
@@ -179,7 +179,7 @@ class GLPDO2
     /**
      * Executes statement and return a specific column from the first row of results.
      *
-     * @param Statement $Statement
+     * @param Statement $statement
      * @param string $column
      * @param mixed $default
      *
@@ -187,11 +187,11 @@ class GLPDO2
      * @throws Exception
      */
     public function selectValueCaseSensitive(
-        Statement $Statement,
+        Statement $statement,
         string $column,
         $default = null
     ): ?string {
-        $row = $this->selectRow($Statement);
+        $row = $this->selectRow($statement);
 
         return $row[$column] ?? $default;
     }

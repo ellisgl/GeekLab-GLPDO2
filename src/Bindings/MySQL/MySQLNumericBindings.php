@@ -92,16 +92,16 @@ class MySQLNumericBindings implements NumericBindingInterface
      * @param int $default
      *
      * @return array
-     * @throws InvalidArgumentException
+     * @throws TypeError
      */
     public function bIntArray(array $data, int $default = 0): array
     {
         if (empty($data)) {
-            throw new InvalidArgumentException('Can not bind an empty array.');
+            throw new TypeError('Can not bind an empty array.');
         }
 
         // Make unique integer array
-        $numbers = array();
+        $numbers = [];
 
         foreach ($data as $value) {
             $numbers[(int) $value] = true;

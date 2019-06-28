@@ -115,7 +115,7 @@ class Statement
      * @param int|bool|null $value
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBoolNullable($value = null): self
     {
@@ -130,7 +130,7 @@ class Statement
      * @param int|bool $value
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBool($value): self
     {
@@ -146,7 +146,7 @@ class Statement
      * @param int|bool|null $value
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBoolIntNullable($value = null): self
     {
@@ -161,7 +161,7 @@ class Statement
      * @param int|bool $value
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBoolInt($value): self
     {
@@ -177,6 +177,7 @@ class Statement
      * @param string|null $value
      *
      * @return Statement
+     * @throws TypeError
      */
     public function bDateNullable(?string $value = null): self
     {
@@ -192,6 +193,7 @@ class Statement
      * @param string $value
      *
      * @return Statement
+     * @throws TypeError
      */
     public function bDate(string $value): self
     {
@@ -207,7 +209,7 @@ class Statement
      * @param string|null $value
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bDateTimeNullable(?string $value = null): self
     {
@@ -223,7 +225,7 @@ class Statement
      * @param string $value
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bDateTime(string $value): self
     {
@@ -240,7 +242,7 @@ class Statement
      * @param int $decimals
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bFloatNullable($value = null, $decimals = 3): self
     {
@@ -256,7 +258,7 @@ class Statement
      * @param int $decimals
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bFloat($value = null, $decimals = 3): self
     {
@@ -271,7 +273,7 @@ class Statement
      * @param string|int|float|bool|null $value
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bIntNullable($value = null): self
     {
@@ -286,7 +288,7 @@ class Statement
      * @param string|int|float|bool $value
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bInt($value = null): self
     {
@@ -303,7 +305,7 @@ class Statement
      * @param int $default
      *
      * @return Statement
-     * @throws Exception
+     * @throws TypeError
      */
     public function bIntArray(array $data, int $default = 0): self
     {
@@ -434,19 +436,19 @@ class Statement
     /**
      * Prepare and Execute the SQL statement.
      *
-     * @param PDO $PDO
+     * @param PDO $pdo
      *
      * @return PDOStatement
      * @throws Exception
      */
-    public function execute(PDO $PDO): PDOStatement
+    public function execute(PDO $pdo): PDOStatement
     {
         // Prepare the SQL, force to string in case of null.
         // Then replace raw placements with raw values.
         $sql = $this->rawPlaceholderFill((string) implode(' ', $this->SQL));
 
         /** @var PDOStatement $stmt */
-        $stmt = $PDO->prepare($sql);
+        $stmt = $pdo->prepare($sql);
 
         // Bind named parameters.
         foreach ($this->named as $name => $sVal) {

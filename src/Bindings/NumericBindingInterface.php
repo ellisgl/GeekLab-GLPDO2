@@ -2,7 +2,7 @@
 
 namespace GeekLab\GLPDO2\Bindings;
 
-use \Exception;
+use \TypeError;
 
 interface NumericBindingInterface
 {
@@ -13,7 +13,7 @@ interface NumericBindingInterface
      * @param int $decimals
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bFloatNullable($value = null, $decimals = 3): array;
 
@@ -24,7 +24,7 @@ interface NumericBindingInterface
      * @param int $decimals
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bFloat($value, $decimals = 3): array;
 
@@ -35,7 +35,7 @@ interface NumericBindingInterface
 
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bIntNullable($value = null): array;
 
@@ -45,7 +45,7 @@ interface NumericBindingInterface
      * @param string|int|float|bool $value
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bInt($value): array;
 
@@ -57,7 +57,7 @@ interface NumericBindingInterface
      * @param int $default
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bIntArray(array $data, int $default = 0): array;
 }

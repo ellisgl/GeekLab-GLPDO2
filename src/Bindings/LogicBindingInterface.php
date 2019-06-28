@@ -2,7 +2,8 @@
 
 namespace GeekLab\GLPDO2\Bindings;
 
-use \Exception;
+
+use \TypeError;
 
 interface LogicBindingInterface
 {
@@ -12,7 +13,7 @@ interface LogicBindingInterface
      * @param int|bool|null $value
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBoolNullable($value = null): array;
 
@@ -22,7 +23,7 @@ interface LogicBindingInterface
      * @param int|bool $value
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBool($value): array;
 
@@ -33,7 +34,7 @@ interface LogicBindingInterface
      * @param int|bool $value
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBoolIntNullable($value = null): array;
 
@@ -43,7 +44,7 @@ interface LogicBindingInterface
      * @param int|bool $value
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bBoolInt($value): array;
 }
