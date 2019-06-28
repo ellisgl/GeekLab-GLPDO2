@@ -913,8 +913,8 @@ class GLPDO2MySQLTest extends TestCase
         $Statement->sql('SELECT *')
             ->sql('FROM   `test`')
             ->sql('WHERE  `name` = \'Drew\';');
-        $this->assertNotEquals('Drew', $this->db->selectValue($Statement, 'NAMe', true));
-        $this->assertEquals('Drew', $this->db->selectValue($Statement, 'name', true));
+        $this->assertNotEquals('Drew', $this->db->selectValueCaseSensitive($Statement, 'NAMe', true));
+        $this->assertEquals('Drew', $this->db->selectValueCaseSensitive($Statement, 'name', true));
     }
 
     public function testSelectBadPlaceHolders(): void

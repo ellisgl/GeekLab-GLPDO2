@@ -126,6 +126,9 @@ Run a normal query, returns multiple rows as an array of associative arrays, or 
 GLPDO->selectRow(Statement $SQL)<br/>
 Runs a normal query, returns a single row as an array, or false.
 
+GLPDO->selectValueCaseSensitive(Statement $SQL, $column, $default)<br/>
+Runs a normal query, returns a single column ($column - case sensitive) and can return a default (mixed $default = null) value is no value is in the column.
+
 GLPDO->selectValue(Statement $SQL, $column, $default)<br/>
 Runs a normal query, returns a single column ($column) and can return a default (mixed $default = null) value is no value is in the column.
 

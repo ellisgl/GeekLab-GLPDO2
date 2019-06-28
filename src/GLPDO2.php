@@ -59,15 +59,15 @@ class GLPDO2
     /**
      * Perform UPDATE or DELETE query and return the number of affected rows.
      *
-     * @param Statement $SQL
+     * @param Statement $Statement
      *
      * @return int
      * @throws Exception
      */
-    private function queryAffectedRows(Statement $SQL): int
+    private function queryAffectedRows(Statement $Statement): int
     {
         // Execute statement
-        $sth = $SQL->execute($this->PDO);
+        $sth = $Statement->execute($this->PDO);
 
         // Return number of rows affected
         return $sth->rowCount();
@@ -76,41 +76,41 @@ class GLPDO2
     /**
      * Perform DELETE query.
      *
-     * @param Statement $SQL
+     * @param Statement $Statement
      *
      * @return int
      * @throws Exception
      */
-    public function queryDelete(Statement $SQL): int
+    public function queryDelete(Statement $Statement): int
     {
-        return $this->queryAffectedRows($SQL);
+        return $this->queryAffectedRows($Statement);
     }
 
     /**
      * Perform UPDATE query
      *
-     * @param Statement $SQL
+     * @param Statement $Statement
      *
      * @return int
      * @throws Exception
      */
-    public function queryUpdate(Statement $SQL): int
+    public function queryUpdate(Statement $Statement): int
     {
-        return $this->queryAffectedRows($SQL);
+        return $this->queryAffectedRows($Statement);
     }
 
     /**
      * Perform INSERT query
      *
-     * @param Statement $SQL
+     * @param Statement $Statement
      *
      * @return bool|string
      * @throws Exception
      */
-    public function queryInsert(Statement $SQL)
+    public function queryInsert(Statement $Statement)
     {
         // Execute the statement
-        $sth = $SQL->execute($this->PDO);
+        $sth = $Statement->execute($this->PDO);
 
         if (!$sth->rowCount()) {
             // Insert failed
@@ -124,15 +124,15 @@ class GLPDO2
     /**
      * Return multiple rows result as an array
      *
-     * @param Statement $SQL
+     * @param Statement $Statement
      *
      * @return array|false
      * @throws Exception
      */
-    public function selectRows(Statement $SQL)
+    public function selectRows(Statement $Statement)
     {
         // Execute the statement
-        $sth = $SQL->execute($this->PDO);
+        $sth = $Statement->execute($this->PDO);
 
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -140,15 +140,15 @@ class GLPDO2
     /**
      * Execute statement and returns first row of results as an associative array.
      *
-     * @param Statement $SQL
+     * @param Statement $Statement
      *
      * @return mixed
      * @throws Exception
      */
-    public function selectRow(Statement $SQL)
+    public function selectRow(Statement $Statement)
     {
         // Execute the statement
-        $sth = $SQL->execute($this->PDO);
+        $sth = $Statement->execute($this->PDO);
 
         // Return the first row fetched
         return $sth->fetch(PDO::FETCH_ASSOC);
@@ -157,26 +157,41 @@ class GLPDO2
     /**
      * Executes statement and return a specific column from the first row of results.
      *
-     * @param Statement $SQL
+     * @param Statement $Statement
      * @param string $column
-     * @param bool $caseSensitive
      * @param mixed $default
      *
      * @return string|null
      * @throws Exception
      */
     public function selectValue(
-        Statement $SQL,
+        Statement $Statement,
         string $column,
-        bool $caseSensitive = false,
         $default = null
-    ) {
-        $row = $this->selectRow($SQL);
+    ): ?string {
+        $row = $this->selectRow($Statement);
+        $row = array_change_key_case($row);
+        $column = strtolower($column);
 
-        if (!$caseSensitive) {
-            $row = array_change_key_case($row);
-            $column = strtolower($column);
-        }
+        return $row[$column] ?? $default;
+    }
+
+    /**
+     * Executes statement and return a specific column from the first row of results.
+     *
+     * @param Statement $Statement
+     * @param string $column
+     * @param mixed $default
+     *
+     * @return string|null
+     * @throws Exception
+     */
+    public function selectValueCaseSensitive(
+        Statement $Statement,
+        string $column,
+        $default = null
+    ): ?string {
+        $row = $this->selectRow($Statement);
 
         return $row[$column] ?? $default;
     }
