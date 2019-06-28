@@ -55,7 +55,6 @@ class Bindings
      * Bind a boolean value as bool.
      *
      * @param int|bool|null $value
-
      *
      * @return array
      * @throws TypeError
@@ -138,7 +137,6 @@ class Bindings
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
      * @param string $value
-
      *
      * @return array
      * @throws TypeError
