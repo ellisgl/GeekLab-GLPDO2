@@ -6,6 +6,7 @@ namespace GeekLab\GLPDO2;
 use \PDO;
 use \PDOStatement;
 use \Exception;
+use \TypeError;
 use GeekLab\GLPDO2\Bindings\Bindings;
 
 class Statement
@@ -91,101 +92,188 @@ class Statement
     // Bind types
 
     /**
-     * Bind a boolean value as bool, with NULL option.
+     * Bind a boolean value as bool or null.
+     * Knock, knock. Who's there? Tri-state.
      *
      * @param int|bool|null $value
-     * @param bool $null
      *
      * @return Statement
      * @throws Exception
      */
-    public function bBool($value = null, bool $null = false): self
+    public function bBoolNullable($value = null): self
     {
-        $binding = $this->bindings->bBool($value, $null);
+        $binding = $this->bindings->bBoolNullable($value);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
     /**
-     * Bind a boolean value as int, with NULL option.
+     * Bind a boolean value as bool.
      *
-     * @param int|bool|null $value
-     * @param bool $null
+     * @param int|bool $value
      *
      * @return Statement
      * @throws Exception
      */
-    public function bBoolInt($value = null, bool $null = false): self
+    public function bBool($value): self
     {
-        $binding = $this->bindings->bBoolInt($value, $null);
+        $binding = $this->bindings->bBool($value);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
     /**
-     * Bind a date value as date or optional NULL.
+     * Bind a boolean value as int or null.
+     * Tri-state who? Tri-state Boolean...
+     *
+     * @param int|bool|null $value
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bBoolIntNullable($value = null): self
+    {
+        $binding = $this->bindings->bBoolIntNullable($value);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
+        return $this;
+    }
+
+    /**
+     * Bind a boolean value as int.
+     *
+     * @param int|bool $value
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bBoolInt($value): self
+    {
+        $binding = $this->bindings->bBoolInt($value);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
+        return $this;
+    }
+
+    /**
+     * Bind a date value as date or null.
      * YYYY-MM-DD is the proper date format.
      *
      * @param string|null $value
-     * @param bool $null
      *
      * @return Statement
-     * @throws Exception
      */
-    public function bDate($value = null, bool $null = false): self
+    public function bDateNullable(?string $value = null): self
     {
-        $binding = $this->bindings->bDate($value, $null);
+        $binding = $this->bindings->bDateNullable($value);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
     /**
-     * Bind a date value as date time or optional NULL.
+     * Bind a date value as date.
+     * YYYY-MM-DD is the proper date format.
+     *
+     * @param string $value
+     *
+     * @return Statement
+     */
+    public function bDate(string $value): self
+    {
+        $binding = $this->bindings->bDate($value);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
+        return $this;
+    }
+
+    /**
+     * Bind a date time value as date time or null.
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
      * @param string|null $value
-     * @param bool $null
      *
      * @return Statement
      * @throws Exception
      */
-    public function bDateTime($value = null, bool $null = false): self
+    public function bDateTimeNullable(?string $value = null): self
     {
-        $binding = $this->bindings->bDateTime($value, $null);
+        $binding = $this->bindings->bDateTimeNullable($value);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
+
+    /**
+     * Bind a date time value as date time.
+     * YYYY-MM-DD HH:MM:SS is the proper date format.
+     *
+     * @param string $value
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bDateTime(string $value): self
+    {
+        $binding = $this->bindings->bDateTime($value);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
+        return $this;
+    }
+
 
     /**
      * Bind a float.
      *
      * @param string|int|float|null $value
      * @param int $decimals
-     * @param bool $null
      *
      * @return Statement
      * @throws Exception
      */
-    public function bFloat($value = null, $decimals = 3, $null = false): self
+    public function bFloatNullable($value = null, $decimals = 3): self
     {
-        $binding = $this->bindings->bFloat($value, $decimals, $null);
+        $binding = $this->bindings->bFloatNullable($value, $decimals);
         $this->rawBind($this->getNextName('raw'), $binding[0]);
         return $this;
     }
 
-
     /**
-     * Bind an integer with optional NULL.
+     * Bind a float.
      *
-     * @param string|int|float|bool|null $value
-     * @param bool $null
+     * @param string|int|float| $value
+     * @param int $decimals
      *
      * @return Statement
      * @throws Exception
      */
-    public function bInt($value = null, bool $null = false): self
+    public function bFloat($value = null, $decimals = 3): self
     {
-        $binding = $this->bindings->bInt($value, $null);
+        $binding = $this->bindings->bFloat($value, $decimals);
+        $this->rawBind($this->getNextName('raw'), $binding[0]);
+        return $this;
+    }
+
+    /**
+     * Bind an integer or null.
+     *
+     * @param string|int|float|bool|null $value
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bIntNullable($value = null): self
+    {
+        $binding = $this->bindings->bIntNullable($value);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
+        return $this;
+    }
+
+    /**
+     * Bind an integer.
+     *
+     * @param string|int|float|bool $value
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bInt($value = null): self
+    {
+        $binding = $this->bindings->bInt($value);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }

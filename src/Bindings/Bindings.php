@@ -39,80 +39,141 @@ class Bindings
     }
 
     /**
-     * Bind a boolean value as bool, with NULL option.
+     * Bind a boolean value as bool or null.
      *
      * @param int|bool|null $value
-     * @param bool $null
      *
      * @return array
      * @throws Exception
      */
-    public function bBool($value = null, bool $null = false): array
+    public function bBoolNullable($value = null): array
     {
-        return $this->logic->bBool($value, $null);
+        return $this->logic->bBoolNullable($value);
     }
 
     /**
-     * Bind a boolean value as int, with NULL option.
+     * Bind a boolean value as bool.
      *
-     * @param int|bool|null $value
-     * @param bool $null
+     * @param int|bool $value
+
      *
      * @return array
      * @throws Exception
      */
-    public function bBoolInt($value = null, bool $null = false): array
+    public function bBool($value): array
     {
-        return $this->logic->bBoolInt($value, $null);
+        return $this->logic->bBool($value);
     }
 
     /**
-     * Bind a date value as date or optional NULL.
+     * Bind a boolean value as int or null.
+     *
+     * @param int|bool|null $value
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function bBoolIntNullable($value = null): array
+    {
+        return $this->logic->bBoolIntNullable($value);
+    }
+
+    /**
+     * Bind a boolean value as int.
+     *
+     * @param int|bool $value
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function bBoolInt($value): array
+    {
+        return $this->logic->bBoolInt($value);
+    }
+
+    /**
+     * Bind a date value as date or null.
      * YYYY-MM-DD is the proper date format.
      *
      * @param string|null $value
-     * @param bool $null
      *
      * @return array
-     * @throws Exception
      */
-    public function bDate(?string $value, bool $null = false): array
+    public function bDateNullable(?string $value = null): array
     {
-        return $this->dateTime->bDate($value, $null);
+        return $this->dateTime->bDateNullable($value);
     }
 
     /**
-     * Bind a date value as date time or optional NULL.
+     * Bind a date value as date.
+     * YYYY-MM-DD is the proper date format.
+     *
+     * @param string $value
+     *
+     * @return array
+     */
+    public function bDate(string $value): array
+    {
+        return $this->dateTime->bDate($value);
+    }
+
+    /**
+     * Bind a date time value as date time or null.
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
      * @param string|null $value
-     * @param bool $null
+     *
+     * @return array
+     */
+    public function bDateTimeNullable(?string $value = null): array
+    {
+        return $this->dateTime->bDateTimeNullable($value);
+    }
+
+    /**
+     * Bind a date value as date time.
+     * YYYY-MM-DD HH:MM:SS is the proper date format.
+     *
+     * @param string $value
+
+     *
+     * @return array
+     */
+    public function bDateTime(string $value): array
+    {
+        return $this->dateTime->bDateTime($value);
+    }
+
+    /**
+     * Bind a float or null.
+     *
+     * @param string|int|float|null $value
+     * @param int $decimals
      *
      * @return array
      * @throws Exception
      */
-    public function bDateTime($value = null, bool $null = false): array
+    public function bFloatNullable($value = null, $decimals = 3): array
     {
-        return $this->dateTime->bDateTime($value, $null);
+        return $this->numeric->bFloatNullable($value, $decimals);
     }
 
     /**
      * Bind a float.
      *
-     * @param string|int|float|null $value
+     * @param string|int|float $value
      * @param int $decimals
-     * @param bool $null
      *
      * @return array
      * @throws Exception
      */
-    public function bFloat($value = null, $decimals = 3, $null = false): array
+    public function bFloat($value, $decimals = 3): array
     {
-        return $this->numeric->bFloat($value, $decimals, $null);
+        return $this->numeric->bFloat($value, $decimals);
     }
 
     /**
-     * Bind an integer with optional NULL.
+     * Bind an integer or null.
      *
      * @param string|int|float|bool|null $value
      * @param bool $null
@@ -120,9 +181,23 @@ class Bindings
      * @return array
      * @throws Exception
      */
-    public function bInt($value = null, bool $null = false): array
+    public function bIntNullable($value = null): array
     {
-        return $this->numeric->bInt($value, $null);
+        return $this->numeric->bIntNullable($value);
+    }
+
+    /**
+     * Bind an integer.
+     *
+     * @param string|int|float|bool $value
+     * @param bool $null
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function bInt($value): array
+    {
+        return $this->numeric->bInt($value);
     }
 
     /**

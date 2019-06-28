@@ -1,3 +1,6 @@
+2019-??-?? (4.0.0):
+* Splitting out methods for nullable. PHPMD was complaining.
+
 2019-06-25 (3.0.1):
 * Fixed for PHPMD issues (There shall not be ELSE statements...).
 * Better exception types from the inner classes.

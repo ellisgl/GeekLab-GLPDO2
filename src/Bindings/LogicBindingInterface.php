@@ -7,24 +7,43 @@ use \Exception;
 interface LogicBindingInterface
 {
     /**
-     * Bind a boolean value as bool, with NULL option.
+     * Bind a boolean value as bool or null.
      *
      * @param int|bool|null $value
-     * @param bool $null
      *
      * @return array
      * @throws Exception
      */
-    public function bBool($value = null, bool $null = false): array;
+    public function bBoolNullable($value = null): array;
 
     /**
-     * Bind a boolean value as int, with NULL option.
+     * Bind a boolean value as bool.
      *
-     * @param int|bool|null $value
-     * @param bool $null
+     * @param int|bool $value
      *
      * @return array
      * @throws Exception
      */
-    public function bBoolInt($value = null, bool $null = false): array;
+    public function bBool($value): array;
+
+
+    /**
+     * Bind a boolean value as int or null.
+     *
+     * @param int|bool $value
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function bBoolIntNullable($value = null): array;
+
+    /**
+     * Bind a boolean value as int.
+     *
+     * @param int|bool $value
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function bBoolInt($value): array;
 }

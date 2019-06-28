@@ -10,9 +10,8 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP 7.2+
 
 ### Latest
-2019-06-25 (3.0.1):
-* Fixed for PHPMD issues (There shall not be ELSE statements...).
-* Better exception types from the inner classes.
+2019-06-?? (4.0.0):
+* Splitting out methods for nullable. PHPMD was complaining.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
@@ -25,10 +24,10 @@ composer require geeklab/glpdo2
 
 ### Todo
 * More tests, since we can test at many levels and implementations.
+* Use PHP Date/Time stuff for validation?
 * Better schema for testing.
 * Better docs.
 * More of a real wold example.
-* Reduce the complexity?
 
 ### Basic Usage (Quick-N-Dirty)
 
@@ -63,14 +62,23 @@ print_r($res);
 ```
 
 ### Data Binding Methods
-Statement->bBool($value, optional boolean $null)<br/>
-Binds a value as bool(true, false), with optional NULL value return.
+Statement->bBoolNullable($value)<br/>
+Binds a value as bool(true, false) or as null.
 
-Statement->bBoolInt($value, optional boolean $null)<br/>
-Binds a value as int(0, 1), with optional NULL value return.
+Statement->bBool($value)<br/>
+Binds a value as bool(true, false).
 
-Statement->bDate($value, optional boolean $null)<br/>
-Binds a value as a date (string - validated for YYYY-MM-DD), with optional NULL return.
+Statement->bBoolIntNullable($value)<br/>
+Binds a value as int(0, 1) or null.
+
+Statement->bBoolInt($value)<br/>
+Binds a value as int(0, 1).
+
+Statement->bDateNullable($value)<br/>
+Binds a value as a date (string - validated for YYYY-MM-DD) or null.
+
+Statement->bDate($value)<br/>
+Binds a value as a date (string - validated for YYYY-MM-DD).
 
 Statement->bDateTime($value, optional boolean $null)<br/>
 Binds a value as a date time (string - validated for YYYY-MM-DD HH:MM:SS), with optional NULL return.

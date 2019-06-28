@@ -7,26 +7,42 @@ use \Exception;
 interface DateTimeBindingInterface
 {
     /**
-     * Bind a date value as date or optional NULL.
+     * Bind a date value as date or null.
      * YYYY-MM-DD is the proper date format.
      *
      * @param string|null $value
-     * @param bool $null
      *
      * @return array
-     * @throws Exception
      */
-    public function bDate(?string $value, bool $null = false): array;
+    public function bDateNullable(?string $value): array;
 
     /**
-     * Bind a date value as date time or optional NULL.
+     * Bind a date value as date.
+     * YYYY-MM-DD is the proper date format.
+     *
+     * @param string
+     *
+     * @return array
+     */
+    public function bDate(string $value): array;
+
+    /**
+     * Bind a date time value as date time or null.
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
      * @param string|null $value
-     * @param bool $null
      *
      * @return array
-     * @throws Exception
      */
-    public function bDateTime($value = null, bool $null = false): array;
+    public function bDateTimeNullable(?string $value = null): array;
+
+    /**
+     * Bind a date time value as date time.
+     * YYYY-MM-DD HH:MM:SS is the proper date format.
+     *
+     * @param string $value
+     *
+     * @return array
+     */
+    public function bDateTime(string $value): array;
 }

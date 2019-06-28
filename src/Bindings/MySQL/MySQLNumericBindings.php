@@ -4,33 +4,44 @@ namespace GeekLab\GLPDO2\Bindings\MySQL;
 
 use \PDO;
 use \InvalidArgumentException;
+use \TypeError;
 use GeekLab\GLPDO2\Bindings\NumericBindingInterface;
 
 class MySQLNumericBindings implements NumericBindingInterface
 {
     /**
-     * Bind a float.
+     * Bind a float or null
      *
      * @param string|int|float|null $value
      * @param int $decimals
-     * @param bool $null
      *
      * @return array
-     * @throws InvalidArgumentException
+     * @throws TypeError
      */
-    public function bFloat($value = null, $decimals = 3, $null = false): array
+    public function bFloatNullable($value = null, $decimals = 3): array
     {
         // Use NULL?
-        if ($value === null && $null) {
+        if ($value === null) {
             return ['NULL'];
         }
 
-        if ($value === null && !$null) {
-            throw new InvalidArgumentException('Can not bind NULL in float spot.');
-        }
+        return $this->bFloat($value, $decimals);
 
+    }
+
+    /**
+     * Bind a float.
+     *
+     * @param string|int|float $value
+     * @param int $decimals
+     *
+     * @return array
+     * @throws TypeError
+     */
+    public function bFloat($value, $decimals = 3): array
+    {
         if (!is_numeric($value)) {
-            throw new InvalidArgumentException('Can not bind "' . $value . '" in float spot.');
+            throw new TypeError('Can not bind "' . $value . '" in float spot.');
         }
 
         $format = sprintf('%%0.%df', $decimals);
@@ -40,27 +51,34 @@ class MySQLNumericBindings implements NumericBindingInterface
     }
 
     /**
-     * Bind an integer with optional NULL.
+     * Bind an integer or null.
      *
      * @param string|int|float|bool|null $value
-     * @param bool $null
+     *
+     * @return array
+     * @throws TypeError
+     */
+    public function bIntNullable($value = null): array
+    {
+        // Use NULL?
+        if ($value === null) {
+            return [null, PDO::PARAM_NULL];
+        }
+
+        return $this->bInt($value);
+    }
+    /**
+     * Bind an integer.
+     *
+     * @param string|int|float|bool $value
      *
      * @return array
      * @throws InvalidArgumentException
      */
-    public function bInt($value = null, bool $null = false): array
+    public function bInt($value): array
     {
-        // Use NULL?
-        if ($value === null && $null) {
-            return [null, PDO::PARAM_NULL];
-        }
-
-        if ($value === null && !$null) {
-            throw new InvalidArgumentException('Can not bind NULL in integer spot.');
-        }
-
         if (!is_numeric($value)) {
-            throw new InvalidArgumentException('Can not bind "' . $value . '" in integer spot.');
+            throw new TypeError('Can not bind "' . $value . '" in integer spot.');
         }
 
         return [(int) sprintf('%u', $value), PDO::PARAM_INT];
