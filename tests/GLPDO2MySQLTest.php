@@ -1197,7 +1197,7 @@ class GLPDO2MySQLTest extends TestCase
 
     public function testIntArrayEmptyArrayException(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(TypeError::class);
 
         $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 

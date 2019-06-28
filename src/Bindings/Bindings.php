@@ -180,10 +180,9 @@ class Bindings
      * Bind an integer or null.
      *
      * @param string|int|float|bool|null $value
-     * @param bool $null
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bIntNullable($value = null): array
     {
@@ -194,10 +193,9 @@ class Bindings
      * Bind an integer.
      *
      * @param string|int|float|bool $value
-     * @param bool $null
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
     public function bInt($value): array
     {

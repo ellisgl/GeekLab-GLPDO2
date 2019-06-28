@@ -45,11 +45,11 @@ class Statement
      * where filter_var + FILTER_NULL_ON_FAILURE doesn't return null on null,
      * I have to do this and I feel bad about it.
      *
-     * @param $value
+     * @param bool|int|string|null $value
      *
      * @return bool|null
      */
-    private function filterValidateBool($value): ?bool
+    private function filterValidateBool(?$value): ?bool
     {
         return  $value === null
             ? null
@@ -254,7 +254,7 @@ class Statement
     /**
      * Bind a float.
      *
-     * @param string|int|float| $value
+     * @param string|int|float $value
      * @param int $decimals
      *
      * @return Statement

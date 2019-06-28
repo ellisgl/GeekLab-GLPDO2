@@ -2,7 +2,7 @@
 
 namespace GeekLab\GLPDO2\Bindings;
 
-use \Exception;
+use \TypeError;
 
 interface DateTimeBindingInterface
 {
@@ -13,6 +13,7 @@ interface DateTimeBindingInterface
      * @param string|null $value
      *
      * @return array
+     * @throws TypeError
      */
     public function bDateNullable(?string $value): array;
 
@@ -23,6 +24,7 @@ interface DateTimeBindingInterface
      * @param string
      *
      * @return array
+     * @throws TypeError
      */
     public function bDate(string $value): array;
 
@@ -33,6 +35,7 @@ interface DateTimeBindingInterface
      * @param string|null $value
      *
      * @return array
+     * @throws TypeError
      */
     public function bDateTimeNullable(?string $value = null): array;
 
@@ -43,6 +46,7 @@ interface DateTimeBindingInterface
      * @param string $value
      *
      * @return array
+     * @throws TypeError
      */
     public function bDateTime(string $value): array;
 }

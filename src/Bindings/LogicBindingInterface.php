@@ -2,7 +2,6 @@
 
 namespace GeekLab\GLPDO2\Bindings;
 
-
 use \TypeError;
 
 interface LogicBindingInterface

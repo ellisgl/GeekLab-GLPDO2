@@ -13,7 +13,7 @@ class GLPDO2
 
     public function __construct(PDO $pdo)
     {
-        $this->PDO = $pdo;
+        $this->pdo = $pdo;
     }
 
     /**
@@ -23,7 +23,7 @@ class GLPDO2
      */
     public function beginTransaction(): bool
     {
-        return $this->PDO->beginTransaction();
+        return $this->pdo->beginTransaction();
     }
 
     /**
@@ -33,7 +33,7 @@ class GLPDO2
      */
     public function inTransaction(): bool
     {
-        return $this->PDO->inTransaction();
+        return $this->pdo->inTransaction();
     }
 
     /**
@@ -43,7 +43,7 @@ class GLPDO2
      */
     public function commit(): bool
     {
-        return $this->PDO->commit();
+        return $this->pdo->commit();
     }
 
     /**
@@ -53,7 +53,7 @@ class GLPDO2
      */
     public function rollback(): bool
     {
-        return $this->PDO->rollBack();
+        return $this->pdo->rollBack();
     }
 
     /**
@@ -67,7 +67,7 @@ class GLPDO2
     private function queryAffectedRows(Statement $statement): int
     {
         // Execute statement
-        $sth = $statement->execute($this->PDO);
+        $sth = $statement->execute($this->pdo);
 
         // Return number of rows affected
         return $sth->rowCount();
@@ -110,7 +110,7 @@ class GLPDO2
     public function queryInsert(Statement $statement)
     {
         // Execute the statement
-        $sth = $statement->execute($this->PDO);
+        $sth = $statement->execute($this->pdo);
 
         if (!$sth->rowCount()) {
             // Insert failed
@@ -118,7 +118,7 @@ class GLPDO2
         }
 
         // Return the ID
-        return $this->PDO->lastInsertId();
+        return $this->pdo->lastInsertId();
     }
 
     /**
@@ -132,7 +132,7 @@ class GLPDO2
     public function selectRows(Statement $statement)
     {
         // Execute the statement
-        $sth = $statement->execute($this->PDO);
+        $sth = $statement->execute($this->pdo);
 
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -148,7 +148,7 @@ class GLPDO2
     public function selectRow(Statement $statement)
     {
         // Execute the statement
-        $sth = $statement->execute($this->PDO);
+        $sth = $statement->execute($this->pdo);
 
         // Return the first row fetched
         return $sth->fetch(PDO::FETCH_ASSOC);
