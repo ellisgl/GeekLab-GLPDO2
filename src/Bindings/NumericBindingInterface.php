@@ -32,7 +32,6 @@ interface NumericBindingInterface
      * Bind an integer or null.
      *
      * @param string|int|float|bool|null $value
-
      *
      * @return array
      * @throws TypeError
