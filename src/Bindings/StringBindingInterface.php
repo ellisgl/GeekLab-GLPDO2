@@ -22,7 +22,7 @@ interface StringBindingInterface
     /**
      * Bind a JSON to string.
      *
-     * @param string|object $value
+     * @param string|object|null $value
      *
      * @return array
      * @throws JsonException
@@ -55,8 +55,7 @@ interface StringBindingInterface
     /**
      * Bind a string value.
      *
-     * @param string|int|float|bool $value
-     * @param bool $null
+     * @param string|int|float|bool|null $value
      * @param int $type
      *
      * @return array
