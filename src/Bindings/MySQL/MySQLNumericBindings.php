@@ -66,6 +66,7 @@ class MySQLNumericBindings implements NumericBindingInterface
 
         return $this->bInt($value);
     }
+
     /**
      * Bind an integer.
      *

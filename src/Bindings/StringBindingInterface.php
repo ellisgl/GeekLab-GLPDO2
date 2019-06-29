@@ -18,6 +18,7 @@ interface StringBindingInterface
      * @throws TypeError
      */
     public function bJsonNullable($value): array;
+
     /**
      * Bind a JSON to string.
      *

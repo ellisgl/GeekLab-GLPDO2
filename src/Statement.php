@@ -52,7 +52,7 @@ class Statement
      */
     private function filterValidateBool($value): ?bool
     {
-        return  $value === null
+        return $value === null
             ? null
             : filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
     }
