@@ -3,6 +3,7 @@
 namespace GeekLab\GLPDO2;
 
 use GeekLab\GLPDO2;
+use MongoDB\BSON\Type;
 use PHPUnit\Framework\TestCase;
 use \PDO;
 use \Exception;
@@ -462,7 +463,7 @@ class GLPDO2MySQLTest extends TestCase
         $statement->reset()
             ->sql('INSERT INTO `%%` (`id`, `name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
-            ->sql('    ?,')->bIntNullable(null)
+            ->sql('    ?,')->bIntNullable()
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bStr('USA')
             ->sql('    %%,')->bFloat(8.10, 1)
@@ -556,15 +557,15 @@ class GLPDO2MySQLTest extends TestCase
         $this->assertEquals($expected, $this->db->selectRows($statement));
     }
 
-    // JSON
-    public function testJSON(): void
+    // Json
+    public function testJson(): void
     {
         $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
-            ->sql('    ?,')->bJSON('{"a":123}')
+            ->sql('    ?,')->bJson('{"a":123}')
             ->sql('    %%,')->bFloat(8.10, 1)
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
@@ -588,7 +589,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
-            ->sql('    ?,')->bJSON($object)
+            ->sql('    ?,')->bJson($object)
             ->sql('    %%,')->bFloat(8.10, 1)
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
@@ -597,14 +598,14 @@ class GLPDO2MySQLTest extends TestCase
         $this->assertEquals($expected, $statement->getComputed());
     }
 
-    public function testJSONNull(): void
+    public function testJsonNull(): void
     {
         $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
-            ->sql('    ?,')->bJSON(null, true)
+            ->sql('    ?,')->bJsonNullable(null)
             ->sql('    %%,')->bFloat(8.10, 1)
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
@@ -1090,7 +1091,7 @@ class GLPDO2MySQLTest extends TestCase
 
     public function testStringNullException(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(TypeError::class);
 
         $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
@@ -1133,7 +1134,7 @@ class GLPDO2MySQLTest extends TestCase
 
         $statement->sql('SELECT *')
             ->sql('FROM   `test`')
-            ->sql('WHERE  `name` = %%;')->bFloat();
+            ->sql('WHERE  `name` = %%;')->bFloat(null);
         $this->db->selectRows($statement);
     }
 
@@ -1231,23 +1232,23 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($statement);
     }
 
-    public function testJSONNullException(): void
+    public function testJsonNullException(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(TypeError::class);
 
         $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
-            ->sql('    ?,')->bJSON(null)
+            ->sql('    ?,')->bJson(null)
             ->sql('    %%,')->bFloat(8.10, 1)
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
     }
 
-    public function testBadJSONException(): void
+    public function testBadJsonException(): void
     {
         $this->expectException(JsonException::class);
 
@@ -1256,23 +1257,23 @@ class GLPDO2MySQLTest extends TestCase
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
-            ->sql('    ?,')->bJSON('SDI')
+            ->sql('    ?,')->bJson('SDI')
             ->sql('    %%,')->bFloat(8.10, 1)
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
     }
 
-    public function testBadJSONException2(): void
+    public function testBadJsonException2(): void
     {
-        $this->expectException(JsonException::class);
+        $this->expectException(TypeError::class);
 
         $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
-            ->sql('    ?,')->bJSON(123)
+            ->sql('    ?,')->bJson(123)
             ->sql('    %%,')->bFloat(8.10, 1)
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
@@ -1281,7 +1282,7 @@ class GLPDO2MySQLTest extends TestCase
 
     public function testBadTransaction(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(TypeError::class);
 
         $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 

@@ -216,17 +216,32 @@ class Bindings
     }
 
     /**
-     * Bind a object or JSON string to a string
+     * Bind JSON to string or null.
      *
      * @param string|object|null $value
-     * @param bool $null
      *
      * @return array
      * @throws JsonException
+     * @throws TypeError
      */
-    public function bJSON($value, bool $null = false): array
+    public function bJsonNullable($value): array
     {
-        return $this->string->bJSON($value, $null);
+        return $this->string->bJsonNullable($value);
+    }
+
+
+    /**
+     * Bind JSON to string.
+     *
+     * @param string|object|null $value
+     *
+     * @return array
+     * @throws JsonException
+     * @throws TypeError
+     */
+    public function bJson($value): array
+    {
+        return $this->string->bJson($value);
     }
 
     /**
@@ -257,18 +272,31 @@ class Bindings
     }
 
     /**
-     * Bind a string value.
+     * Bind a string or null.
      *
      * @param string|int|float|bool|null $value
-     * @param bool $null
      * @param int $type
      *
      * @return array
      * @throws Exception
      */
-    public function bStr($value, bool $null = false, int $type = PDO::PARAM_STR): array
+    public function bStrNullable($value, int $type = PDO::PARAM_STR): array
     {
-        return $this->string->bStr($value, $null, $type);
+        return $this->string->bStrNullable($value, $type);
+    }
+
+    /**
+     * Bind a string.
+     *
+     * @param string|int|float|bool|null $value
+     * @param int $type
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function bStr($value, int $type = PDO::PARAM_STR): array
+    {
+        return $this->string->bStr($value, $type);
     }
 
     /**

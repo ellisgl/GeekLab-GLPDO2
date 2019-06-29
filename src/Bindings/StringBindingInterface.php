@@ -3,21 +3,31 @@
 namespace GeekLab\GLPDO2\Bindings;
 
 use \PDO;
-use \Exception;
 use \JsonException;
+use \TypeError;
 
 interface StringBindingInterface
 {
     /**
-     * Bind a object or JSON string to a string
+     * Bind a JSON to string or null.
      *
      * @param string|object|null $value
-     * @param bool $null
      *
      * @return array
      * @throws JsonException
+     * @throws TypeError
      */
-    public function bJSON($value, bool $null = false): array;
+    public function bJsonNullable($value): array;
+    /**
+     * Bind a JSON to string.
+     *
+     * @param string|object $value
+     *
+     * @return array
+     * @throws JsonException
+     * @throws TypeError
+     */
+    public function bJson($value): array;
 
     /**
      * Create and bind string for LIKE() statements.
@@ -31,16 +41,27 @@ interface StringBindingInterface
     public function bLike(string $value, bool $ends = false, bool $starts = false): array;
 
     /**
-     * Bind a string value.
+     * Bind a string value or null.
      *
      * @param string|int|float|bool|null $value
+     * @param int $type
+     *
+     * @return array
+     * @throws TypeError
+     */
+    public function bStrNullable($value, int $type = PDO::PARAM_STR): array;
+
+    /**
+     * Bind a string value.
+     *
+     * @param string|int|float|bool $value
      * @param bool $null
      * @param int $type
      *
      * @return array
-     * @throws Exception
+     * @throws TypeError
      */
-    public function bStr($value, bool $null = false, int $type = PDO::PARAM_STR): array;
+    public function bStr($value, int $type = PDO::PARAM_STR): array;
 
     /**
      * Convert an array into a string and bind it.

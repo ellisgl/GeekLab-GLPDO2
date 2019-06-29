@@ -2,48 +2,71 @@
 
 namespace GeekLab\GLPDO2\Bindings\MySQL;
 
+use \PDO;
 use \JsonException;
-use \InvalidArgumentException;
-
+use \TypeError;
 use GeekLab\GLPDO2\Bindings\StringBindingInterface;
-use PDO;
 
 class MySQLStringBindings implements StringBindingInterface
 {
-
     /**
+     * Bind JSON to string or null.
+     *
      * @param object|string|null $value
-     * @param bool $null
      *
      * @return array
      * @throws JsonException
+     * @throws TypeError
      */
-    public function bJSON($value, bool $null = false): array
+    public function bJsonNullable($value): array
     {
         // Use NULL?
-        if ($value === null && $null) {
-            return $this->bStr(null, true);
+        if ($value === null) {
+            return $this->bStrNullable(null);
         }
 
-        if ($value === null && !$null) {
-            throw new JsonException('Can not bind NULL in JSON spot.');
+        return $this->bJSON($value);
+    }
+
+    /**
+     * Bind JSON to string.
+     *
+     * @param object|string|null $value
+     *
+     * @return array
+     * @throws JsonException
+     * @throws TypeError
+     */
+    public function bJson($value): array
+    {
+        if ($value === null) {
+            throw new TypeError('Can not bind NULL in JSON spot.');
         }
 
         if (is_object($value)) {
-            $value = json_encode($value);
-        } elseif (is_string($value)) {
-            $JSON = json_decode($value, false, 255);
+           $json = $value = json_encode($value);
 
-            if (json_last_error()) {
-                throw new JsonException('Can not bind invalid JSON in JSON spot. (' . json_last_error_msg() . ')');
+           if (json_last_error()) {
+                throw new JsonException(json_last_error_msg());
             }
 
-            $value = json_encode($JSON);
-        } else {
-            throw new JsonException('Can not bind invalid JSON in JSON spot. (' . $value . ')');
+           return  $this->bStr($json);
         }
 
-        return $this->bStr($value);
+        if (is_string($value)) {
+            /** @var \stdClass $JSON */
+            $json = json_decode($value, false, 255);
+
+            if (json_last_error()) {
+                throw new JsonException(json_last_error_msg());
+            }
+
+            $json = json_encode($json);
+
+            return $this->bStr($json);
+        }
+
+        throw new TypeError('Can not bind ' . gettype($value) . ': ( ' . $value . ') in JSON spot.');
     }
 
     /**
@@ -73,21 +96,37 @@ class MySQLStringBindings implements StringBindingInterface
     }
 
     /**
-     * Bind a string value.
+     * Bind a string value or null
      *
      * @param string|int|float|bool|null $value
-     * @param bool $null
      * @param int $type
      *
      * @return array
-     * @throws InvalidArgumentException
+     * @throws TypeError
      */
-    public function bStr($value, bool $null = false, int $type = PDO::PARAM_STR): array
+    public function bStrNullable($value, int $type = PDO::PARAM_STR): array
     {
-        if ($value === null && $null) {
-            $type = PDO::PARAM_NULL;
-        } elseif ($value === null && !$null) {
-            throw new InvalidArgumentException('Can not bind NULL in string spot.');
+        if ($value === null) {
+            return [null, PDO::PARAM_NULL];
+        }
+
+        return $this->bStr($value, $type);
+    }
+
+
+    /**
+     * Bind a string.
+     *
+     * @param string|int|float|bool|null $value
+     * @param int $type
+     *
+     * @return array
+     * @throws TypeError
+     */
+    public function bStr($value, int $type = PDO::PARAM_STR): array
+    {
+        if ($value === null) {
+            throw new TypeError('Can not bind NULL in string spot.');
         }
 
         return [(string) $value, $type];

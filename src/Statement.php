@@ -6,6 +6,7 @@ namespace GeekLab\GLPDO2;
 use \PDO;
 use \PDOStatement;
 use \Exception;
+use \JsonException;
 use \TypeError;
 use GeekLab\GLPDO2\Bindings\Bindings;
 
@@ -315,17 +316,33 @@ class Statement
     }
 
     /**
-     * Bind a object or JSON string to a string
+     * Bind JSON to string or null.
      *
      * @param string|object|null $value
-     * @param bool $null
      *
      * @return Statement
-     * @throws Exception
+     * @throws JsonException
+     * @throws TypeError
      */
-    public function bJSON($value, bool $null = false): self
+    public function bJsonNullable($value): self
     {
-        $binding = $this->bindings->bJSON($value, $null);
+        $binding = $this->bindings->bJsonNullable($value);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
+        return $this;
+    }
+
+    /**
+     * Bind JSON to string.
+     *
+     * @param string|object|null $value
+     *
+     * @return Statement
+     * @throws JsonException
+     * @throws TypeError
+     */
+    public function bJson($value): self
+    {
+        $binding = $this->bindings->bJson($value);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -362,18 +379,33 @@ class Statement
     }
 
     /**
-     * Bind a string value.
+     * Bind a string or null.
      *
      * @param string|int|float|bool|null $value
-     * @param bool $null
      * @param int $type
      *
      * @return Statement
      * @throws Exception
      */
-    public function bStr($value, bool $null = false, int $type = PDO::PARAM_STR): self
+    public function bStrNullable($value, int $type = PDO::PARAM_STR): self
     {
-        $binding = $this->bindings->bStr($value, $null, $type);
+        $binding = $this->bindings->bStrNullable($value, $type);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
+        return $this;
+    }
+
+    /**
+     * Bind a string value.
+     *
+     * @param string|int|float|bool|null $value
+     * @param int $type
+     *
+     * @return Statement
+     * @throws Exception
+     */
+    public function bStr($value, int $type = PDO::PARAM_STR): self
+    {
+        $binding = $this->bindings->bStr($value, $type);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
