@@ -12,7 +12,7 @@ class MySQLBindingFactory
             new MySQLDateTimeBindings(),
             new MySQLLogicBindings(),
             new MySQLNumericBindings(),
-            new MySQLRawBindings(),
+            new MySQLOtherBindings(),
             new MySQLStringBindings()
         );
     }

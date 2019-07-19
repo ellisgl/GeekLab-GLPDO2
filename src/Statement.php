@@ -41,6 +41,26 @@ class Statement
         $this->bindings = $bindings;
     }
 
+
+    /**
+     * Bind a value to a named parameter.
+     *
+     * @param string $name
+     * @param string|int|float|bool|null $value
+     * @param int $type
+     *
+     * @return Statement
+     */
+    private function bind(string $name, $value, int $type = PDO::PARAM_STR): self
+    {
+        $this->named[$name] = array(
+            'type' => $type,
+            'value' => $value
+        );
+
+        return $this;
+    }
+
     /**
      * Due to an outstanding bug (https://bugs.php.net/bug.php?id=70409)
      * where filter_var + FILTER_NULL_ON_FAILURE doesn't return null on null,
@@ -75,25 +95,6 @@ class Statement
     }
 
     /**
-     * Bind a value to a named parameter.
-     *
-     * @param string $name
-     * @param string|int|float|bool|null $value
-     * @param int $type
-     *
-     * @return Statement
-     */
-    public function bind(string $name, $value, int $type = PDO::PARAM_STR): self
-    {
-        $this->named[$name] = array(
-            'type' => $type,
-            'value' => $value
-        );
-
-        return $this;
-    }
-
-    /**
      * Bind a raw value to a named parameter.
      *
      * @param string $name
@@ -110,111 +111,50 @@ class Statement
     // Bind types
 
     /**
-     * Bind a boolean value as bool or null.
-     * Knock, knock. Who's there? Tri-state.
-     *
-     * @param int|bool|null $value
-     *
-     * @return Statement
-     * @throws TypeError
-     */
-    public function bBoolNullable($value = null): self
-    {
-        $binding = $this->bindings->bBoolNullable($this->filterValidateBool($value));
-        $this->bind($this->getNextName(), $binding[0], $binding[1]);
-        return $this;
-    }
-
-    /**
-     * Bind a boolean value as bool.
+     * Bind a boolean value as bool or optional null.
      *
      * @param int|bool $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return Statement
      * @throws TypeError
      */
-    public function bBool($value): self
+    public function bBool($value, array $options = []): self
     {
-        $binding = $this->bindings->bBool($this->filterValidateBool($value));
+        $binding = $this->bindings->bBool($this->filterValidateBool($value), $options);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
     /**
-     * Bind a boolean value as int or null.
-     * Tri-state who? Tri-state Boolean...
-     *
-     * @param int|bool|null $value
-     *
-     * @return Statement
-     * @throws TypeError
-     */
-    public function bBoolIntNullable($value = null): self
-    {
-        $binding = $this->bindings->bBoolIntNullable($this->filterValidateBool($value));
-        $this->bind($this->getNextName(), $binding[0], $binding[1]);
-        return $this;
-    }
-
-    /**
-     * Bind a boolean value as int.
+     * Bind a boolean value as int or optional null.
      *
      * @param int|bool $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return Statement
      * @throws TypeError
      */
-    public function bBoolInt($value): self
+    public function bBoolInt($value, array $options = []): self
     {
-        $binding = $this->bindings->bBoolInt($this->filterValidateBool($value));
+        $binding = $this->bindings->bBoolInt($this->filterValidateBool($value), $options);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 
     /**
-     * Bind a date value as date or null.
+     * Bind a date value as date or optional null.
      * YYYY-MM-DD is the proper date format.
      *
      * @param string|null $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return Statement
      * @throws TypeError
      */
-    public function bDateNullable(?string $value = null): self
+    public function bDate($value, array $options = []): self
     {
-        $binding = $this->bindings->bDateNullable($value);
-        $this->bind($this->getNextName(), $binding[0], $binding[1]);
-        return $this;
-    }
-
-    /**
-     * Bind a date value as date.
-     * YYYY-MM-DD is the proper date format.
-     *
-     * @param string $value
-     *
-     * @return Statement
-     * @throws TypeError
-     */
-    public function bDate(string $value): self
-    {
-        $binding = $this->bindings->bDate($value);
-        $this->bind($this->getNextName(), $binding[0], $binding[1]);
-        return $this;
-    }
-
-    /**
-     * Bind a date time value as date time or null.
-     * YYYY-MM-DD HH:MM:SS is the proper date format.
-     *
-     * @param string|null $value
-     *
-     * @return Statement
-     * @throws TypeError
-     */
-    public function bDateTimeNullable(?string $value = null): self
-    {
-        $binding = $this->bindings->bDateTimeNullable($value);
+        $binding = $this->bindings->bDate($value, $options);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -223,77 +163,47 @@ class Statement
      * Bind a date time value as date time.
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
-     * @param string $value
+     * @param string|null $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return Statement
      * @throws TypeError
      */
-    public function bDateTime(string $value): self
+    public function bDateTime($value, array $options = []): self
     {
-        $binding = $this->bindings->bDateTime($value);
+        $binding = $this->bindings->bDateTime($value, $options);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
-
 
     /**
      * Bind a float.
      *
      * @param string|int|float|null $value
-     * @param int $decimals
+     * @param array $options ['decimals' => (int), 'nullable' => (bool)]
      *
      * @return Statement
      * @throws TypeError
      */
-    public function bFloatNullable($value = null, $decimals = 3): self
+    public function bFloat($value, array $options = ['decimals' => 2]): self
     {
-        $binding = $this->bindings->bFloatNullable($value, $decimals);
+        $binding = $this->bindings->bFloat($value, $options);
         $this->rawBind($this->getNextName('raw'), $binding[0]);
         return $this;
     }
 
     /**
-     * Bind a float.
-     *
-     * @param string|int|float $value
-     * @param int $decimals
-     *
-     * @return Statement
-     * @throws TypeError
-     */
-    public function bFloat($value, $decimals = 3): self
-    {
-        $binding = $this->bindings->bFloat($value, $decimals);
-        $this->rawBind($this->getNextName('raw'), $binding[0]);
-        return $this;
-    }
-
-    /**
-     * Bind an integer or null.
+     * Bind an integer value as int or optional null.
      *
      * @param string|int|float|bool|null $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return Statement
      * @throws TypeError
      */
-    public function bIntNullable($value = null): self
+    public function bInt($value, array $options = []): self
     {
-        $binding = $this->bindings->bIntNullable($value);
-        $this->bind($this->getNextName(), $binding[0], $binding[1]);
-        return $this;
-    }
-
-    /**
-     * Bind an integer.
-     *
-     * @param string|int|float|bool $value
-     *
-     * @return Statement
-     * @throws TypeError
-     */
-    public function bInt($value): self
-    {
-        $binding = $this->bindings->bInt($value);
+        $binding = $this->bindings->bInt($value, $options);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -316,33 +226,18 @@ class Statement
     }
 
     /**
-     * Bind JSON to string or null.
+     * Bind JSON to string or optional null.
      *
      * @param string|object|null $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return Statement
      * @throws JsonException
      * @throws TypeError
      */
-    public function bJsonNullable($value): self
+    public function bJson($value, array $options = []): self
     {
-        $binding = $this->bindings->bJsonNullable($value);
-        $this->bind($this->getNextName(), $binding[0], $binding[1]);
-        return $this;
-    }
-
-    /**
-     * Bind JSON to string.
-     *
-     * @param string|object|null $value
-     *
-     * @return Statement
-     * @throws JsonException
-     * @throws TypeError
-     */
-    public function bJson($value): self
-    {
-        $binding = $this->bindings->bJson($value);
+        $binding = $this->bindings->bJson($value, $options);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -379,33 +274,17 @@ class Statement
     }
 
     /**
-     * Bind a string or null.
+     * Bind a string value to string or optional null.
      *
      * @param string|int|float|bool|null $value
-     * @param int $type
+     * @param array $options ['nullable' => (bool)]
      *
      * @return Statement
      * @throws Exception
      */
-    public function bStrNullable($value, int $type = PDO::PARAM_STR): self
+    public function bStr($value, array $options = []): self
     {
-        $binding = $this->bindings->bStrNullable($value, $type);
-        $this->bind($this->getNextName(), $binding[0], $binding[1]);
-        return $this;
-    }
-
-    /**
-     * Bind a string value.
-     *
-     * @param string|int|float|bool|null $value
-     * @param int $type
-     *
-     * @return Statement
-     * @throws Exception
-     */
-    public function bStr($value, int $type = PDO::PARAM_STR): self
-    {
-        $binding = $this->bindings->bStr($value, $type);
+        $binding = $this->bindings->bStr($value, $options);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
@@ -423,6 +302,21 @@ class Statement
     {
         $binding = $this->bindings->bStrArr($values, $default);
         $this->rawBind($this->getNextName('raw'), $binding[0]);
+        return $this;
+    }
+
+    /**
+     * Bind a string to the PDO data type.
+     *
+     * @param string|int|float|bool|null $value
+     * @param int $type
+     *
+     * @return Statement
+     */
+    public function bValueType($value, int $type = PDO::PARAM_STR): self
+    {
+        $binding = $this->bindings->bValueType($value, $type);
+        $this->bind($this->getNextName(), $binding[0], $binding[1]);
         return $this;
     }
 

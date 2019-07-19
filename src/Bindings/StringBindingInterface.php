@@ -44,24 +44,22 @@ interface StringBindingInterface
     /**
      * Bind a string value or null.
      *
-     * @param string|int|float|bool|null $value
-     * @param int $type
+     * @param string|int|float|null $value
      *
      * @return array
      * @throws TypeError
      */
-    public function bStrNullable($value, int $type = PDO::PARAM_STR): array;
+    public function bStrNullable($value): array;
 
     /**
      * Bind a string value.
      *
-     * @param string|int|float|bool|null $value
-     * @param int $type
+     * @param string|int|float $value
      *
      * @return array
      * @throws TypeError
      */
-    public function bStr($value, int $type = PDO::PARAM_STR): array;
+    public function bStr($value): array;
 
     /**
      * Convert an array into a string and bind it.

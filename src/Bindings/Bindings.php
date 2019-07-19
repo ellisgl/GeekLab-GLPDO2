@@ -18,8 +18,8 @@ class Bindings
     /** @var NumericBindingInterface $numeric */
     protected $numeric;
 
-    /** @var RawBindingInterface $raw */
-    protected $raw;
+    /** @var OtherBindingInterface $other */
+    protected $other;
 
     /** @var StringBindingInterface $string */
     protected $string;
@@ -28,175 +28,126 @@ class Bindings
         DateTimeBindingInterface $dateTime,
         LogicBindingInterface $logic,
         NumericBindingInterface $numeric,
-        RawBindingInterface $raw,
+        OtherBindingInterface $other,
         StringBindingInterface $string
     ) {
         $this->dateTime = $dateTime;
         $this->logic = $logic;
         $this->numeric = $numeric;
-        $this->raw = $raw;
+        $this->other = $other;
         $this->string = $string;
     }
 
     /**
-     * Bind a boolean value as bool or null.
+     * Bind a boolean value as bool or optional null.
      *
      * @param int|bool|null $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return array
      * @throws TypeError
      */
-    public function bBoolNullable($value = null): array
+    public function bBool($value, array $options = []): array
     {
-        return $this->logic->bBoolNullable($value);
-    }
+        if (isset($options['nullable']) && $options['nullable'] === \true) {
+            return $this->logic->bBoolNullable($value);
+        }
 
-    /**
-     * Bind a boolean value as bool.
-     *
-     * @param int|bool|null $value
-     *
-     * @return array
-     * @throws TypeError
-     */
-    public function bBool($value): array
-    {
         return $this->logic->bBool($value);
     }
 
     /**
-     * Bind a boolean value as int or null.
+     * Bind a boolean value as int or optional null.
      *
      * @param int|bool|null $value
-     *
+     * @param array $options ['nullable' => (bool)]
      * @return array
      * @throws TypeError
      */
-    public function bBoolIntNullable($value = null): array
+    public function bBoolInt($value, array $options = []): array
     {
-        return $this->logic->bBoolIntNullable($value);
-    }
+        if (isset($options['nullable']) && $options['nullable'] === \true) {
+            return $this->logic->bBoolIntNullable($value);
+        }
 
-    /**
-     * Bind a boolean value as int.
-     *
-     * @param int|bool|null $value
-     *
-     * @return array
-     * @throws TypeError
-     */
-    public function bBoolInt($value): array
-    {
         return $this->logic->bBoolInt($value);
     }
 
     /**
-     * Bind a date value as date or null.
+     * Bind a date value as date or optional null.
      * YYYY-MM-DD is the proper date format.
      *
      * @param string|null $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return array
      * @throws TypeError
      */
-    public function bDateNullable(?string $value = null): array
+    public function bDate(?string $value, array $options = []): array
     {
-        return $this->dateTime->bDateNullable($value);
-    }
+        if (isset($options['nullable']) && $options['nullable'] === \true) {
+            return $this->dateTime->bDateNullable($value);
+        }
 
-    /**
-     * Bind a date value as date.
-     * YYYY-MM-DD is the proper date format.
-     *
-     * @param string $value
-     *
-     * @return array
-     * @throws TypeError
-     */
-    public function bDate(string $value): array
-    {
         return $this->dateTime->bDate($value);
     }
 
     /**
-     * Bind a date time value as date time or null.
+     * Bind a date value as date time or optional null.
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
      * @param string|null $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return array
      * @throws TypeError
      */
-    public function bDateTimeNullable(?string $value = null): array
+    public function bDateTime(?string $value, array $options = []): array
     {
-        return $this->dateTime->bDateTimeNullable($value);
-    }
+        if (isset($options['nullable']) && $options['nullable'] === \true) {
+            return $this->dateTime->bDateTimeNullable($value);
+        }
 
-    /**
-     * Bind a date value as date time.
-     * YYYY-MM-DD HH:MM:SS is the proper date format.
-     *
-     * @param string $value
-     *
-     * @return array
-     * @throws TypeError
-     */
-    public function bDateTime(string $value): array
-    {
         return $this->dateTime->bDateTime($value);
     }
 
     /**
-     * Bind a float or null.
+     * Bind a float value as float or optional null.
      *
      * @param string|int|float|null $value
-     * @param int $decimals
+     * @param array $options ['decimals' => (int), 'nullable' => (bool)]
      *
      * @return array
      * @throws TypeError
      */
-    public function bFloatNullable($value = null, $decimals = 3): array
+    public function bFloat($value, array $options = ['decimals' => 2]): array
     {
-        return $this->numeric->bFloatNullable($value, $decimals);
+        if (!isset($options['decimals'])) {
+            $options['decimals'] = 2;
+        }
+
+        if (isset($options['nullable']) && $options['nullable'] === \true) {
+            return $this->numeric->bFloatNullable($value, $options['decimals']);
+        }
+
+        return $this->numeric->bFloat($value, $options['decimals']);
     }
 
     /**
-     * Bind a float.
-     *
-     * @param string|int|float $value
-     * @param int $decimals
-     *
-     * @return array
-     * @throws TypeError
-     */
-    public function bFloat($value, $decimals = 3): array
-    {
-        return $this->numeric->bFloat($value, $decimals);
-    }
-
-    /**
-     * Bind an integer or null.
+     * Bind an integer value as int or optional null.
      *
      * @param string|int|float|bool|null $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return array
      * @throws TypeError
      */
-    public function bIntNullable($value = null): array
+    public function bInt($value, array $options = []): array
     {
-        return $this->numeric->bIntNullable($value);
-    }
+        if (isset($options['nullable']) && $options['nullable'] === \true) {
+            return $this->numeric->bIntNullable($value);
+        }
 
-    /**
-     * Bind an integer.
-     *
-     * @param string|int|float|bool $value
-     *
-     * @return array
-     * @throws TypeError
-     */
-    public function bInt($value): array
-    {
         return $this->numeric->bInt($value);
     }
 
@@ -216,31 +167,21 @@ class Bindings
     }
 
     /**
-     * Bind JSON to string or null.
+     * Bind JSON to string or optional null.
      *
      * @param string|object|null $value
+     * @param array $options ['nullable' => (bool)]
      *
      * @return array
      * @throws JsonException
      * @throws TypeError
      */
-    public function bJsonNullable($value): array
+    public function bJson($value, array $options = []): array
     {
-        return $this->string->bJsonNullable($value);
-    }
+        if (isset($options['nullable']) && $options['nullable'] === \true) {
+            return $this->string->bJsonNullable($value);
+        }
 
-
-    /**
-     * Bind JSON to string.
-     *
-     * @param string|object|null $value
-     *
-     * @return array
-     * @throws JsonException
-     * @throws TypeError
-     */
-    public function bJson($value): array
-    {
         return $this->string->bJson($value);
     }
 
@@ -268,35 +209,20 @@ class Bindings
      */
     public function bRaw($value): array
     {
-        return $this->raw->bRaw($value);
+        return $this->other->bRaw($value);
     }
 
     /**
-     * Bind a string or null.
+     * Bind a string value as string or optional null.
      *
      * @param string|int|float|bool|null $value
-     * @param int $type
-     *
+     * @param array $options ['nullable' => (bool)]
      * @return array
      * @throws Exception
      */
-    public function bStrNullable($value, int $type = PDO::PARAM_STR): array
+    public function bStr($value, array $options = []): array
     {
-        return $this->string->bStrNullable($value, $type);
-    }
-
-    /**
-     * Bind a string.
-     *
-     * @param string|int|float|bool|null $value
-     * @param int $type
-     *
-     * @return array
-     * @throws Exception
-     */
-    public function bStr($value, int $type = PDO::PARAM_STR): array
-    {
-        return $this->string->bStr($value, $type);
+        return $this->string->bStr($value);
     }
 
     /**
@@ -311,5 +237,18 @@ class Bindings
     public function bStrArr(array $values, $default = ''): array
     {
         return $this->string->bStrArr($values, $default);
+    }
+
+    /**
+     * Bind a string to the PDO data type.
+     *
+     * @param string|int|float|bool|null $value
+     * @param int $type
+     *
+     * @return array
+     */
+    public function bValueType($value, int $type = \PDO::PARAM_STR): array
+    {
+        return $this->other->bValueType($value, $type);
     }
 }

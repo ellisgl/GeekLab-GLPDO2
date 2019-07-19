@@ -2,8 +2,9 @@
 
 namespace GeekLab\GLPDO2\Bindings\MySQL;
 
-use \PDO;
 use \JsonException;
+use \PDO;
+use \stdClass;
 use \TypeError;
 use GeekLab\GLPDO2\Bindings\StringBindingInterface;
 
@@ -50,11 +51,11 @@ class MySQLStringBindings implements StringBindingInterface
                 throw new JsonException(json_last_error_msg());
             }
 
-            return $this->bStr($json);
+            return [$json, PDO::PARAM_STR];
         }
 
         if (is_string($value)) {
-            /** @var \stdClass $JSON */
+            /** @var stdClass $JSON */
             $json = json_decode($value, false, 255);
 
             if (json_last_error()) {
@@ -63,7 +64,7 @@ class MySQLStringBindings implements StringBindingInterface
 
             $json = json_encode($json);
 
-            return $this->bStr($json);
+            return [$json, PDO::PARAM_STR];
         }
 
         throw new TypeError('Can not bind ' . gettype($value) . ': ( ' . $value . ') in JSON spot.');
@@ -99,37 +100,35 @@ class MySQLStringBindings implements StringBindingInterface
      * Bind a string value or null
      *
      * @param string|int|float|bool|null $value
-     * @param int $type
      *
      * @return array
      * @throws TypeError
      */
-    public function bStrNullable($value, int $type = PDO::PARAM_STR): array
+    public function bStrNullable($value): array
     {
         if ($value === null) {
             return [null, PDO::PARAM_NULL];
         }
 
-        return $this->bStr($value, $type);
+        return $this->bStr($value);
     }
 
 
     /**
      * Bind a string.
      *
-     * @param string|int|float|bool|null $value
-     * @param int $type
+     * @param string|int|float||null $value
      *
      * @return array
      * @throws TypeError
      */
-    public function bStr($value, int $type = PDO::PARAM_STR): array
+    public function bStr($value): array
     {
         if ($value === null) {
             throw new TypeError('Can not bind NULL in string spot.');
         }
 
-        return [(string) $value, $type];
+        return [(string) $value, PDO::PARAM_STR];
     }
 
     /**

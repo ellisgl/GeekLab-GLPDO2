@@ -3,7 +3,6 @@
 namespace GeekLab\GLPDO2;
 
 use GeekLab\GLPDO2;
-use MongoDB\BSON\Type;
 use PHPUnit\Framework\TestCase;
 use \PDO;
 use \Exception;
@@ -180,8 +179,8 @@ class GLPDO2MySQLTest extends TestCase
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
-            ->sql('    ?,')->bBoolIntNullable()// Yeah, totally need to make the table better for all the tests...
-            ->sql('    %%,')->bFloat('1.8', 1)
+            ->sql('    ?,')->bBoolInt(null, ['nullable' => true])
+            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -242,8 +241,8 @@ class GLPDO2MySQLTest extends TestCase
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
-            ->sql('    ?,')->bBoolNullable()// Yeah, totally need to make the table better for all the tests...
-            ->sql('    %%,')->bFloat('1.8', 1)
+            ->sql('    ?,')->bBool(null, ['nullable' => true])
+            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -267,8 +266,8 @@ class GLPDO2MySQLTest extends TestCase
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
-            ->sql('    ?,')->bBool(true)// Yeah, totally need to make the table better for all the tests...
-            ->sql('    %%,')->bFloat('1.8', 1)
+            ->sql('    ?,')->bBool(true)
+            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -296,7 +295,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bBool(false)// Yeah, totally need to make the table better for all the tests...
-            ->sql('    %%,')->bFloat('1.8', 1)
+            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -387,7 +386,7 @@ class GLPDO2MySQLTest extends TestCase
 
         $statement->sql('SELECT *')
             ->sql('FROM   `test`')
-            ->sql('WHERE  `dp` = %%;')->bFloatNullable('1.101', 1); // Making it one decimal point
+            ->sql('WHERE  `dp` = %%;')->bFloat('1.101', ['decimals' => 1]); // Making it one decimal point
 
         $expected = "SELECT *\n" .
             "FROM   `test`\n" .
@@ -413,7 +412,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
-            ->sql('    %%,')->bFloatNullable(null, 1)
+            ->sql('    %%,')->bFloat(null, ['nullable' => true])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -436,7 +435,7 @@ class GLPDO2MySQLTest extends TestCase
 
         $statement->sql('SELECT *')
             ->sql('FROM   `test`')
-            ->sql('WHERE  `dp` = %%;')->bFloat('1.101', 1); // Making it one decimal point
+            ->sql('WHERE  `dp` = %%;')->bFloat('1.101', ['decimals' => 1]); // Making it one decimal point
 
         $expected = "SELECT *\n" .
             "FROM   `test`\n" .
@@ -452,7 +451,7 @@ class GLPDO2MySQLTest extends TestCase
 
         $statement->sql('SELECT *')
             ->sql('FROM   `test`')
-            ->sql('WHERE  `id` = ?;')->bIntNullable('1');
+            ->sql('WHERE  `id` = ?;')->bInt('1', ['nullable' => true]);
 
         $expected = "SELECT *\n" .
             "FROM   `test`\n" .
@@ -463,10 +462,10 @@ class GLPDO2MySQLTest extends TestCase
         $statement->reset()
             ->sql('INSERT INTO `%%` (`id`, `name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
-            ->sql('    ?,')->bIntNullable()
+            ->sql('    ?,')->bInt(null, ['nullable' => true])
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bStr('USA')
-            ->sql('    %%,')->bFloat(8.10, 1)
+            ->sql('    %%,')->bFloat(8.10, ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -566,7 +565,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJson('{"a":123}')
-            ->sql('    %%,')->bFloat(8.10, 1)
+            ->sql('    %%,')->bFloat(8.10, ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -590,7 +589,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJson($object)
-            ->sql('    %%,')->bFloat(8.10, 1)
+            ->sql('    %%,')->bFloat(8.10, ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -605,8 +604,8 @@ class GLPDO2MySQLTest extends TestCase
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
-            ->sql('    ?,')->bJsonNullable(null)
-            ->sql('    %%,')->bFloat(8.10, 1)
+            ->sql('    ?,')->bJson(null, ['nullable' => true])
+            ->sql('    %%,')->bFloat(8.10, ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -854,7 +853,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bStr('USA')
-            ->sql('    %%,')->bFloat(8.5, 1)
+            ->sql('    %%,')->bFloat(8.5, ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -1033,7 +1032,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
-            ->sql('    %%,')->bFloat('1.8', 1)
+            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -1055,7 +1054,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
-            ->sql('    %%,')->bFloat('1.8', 1)
+            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -1160,8 +1159,8 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
-            ->sql('    %%,')->bFloat('1.8', 1)
-            ->sql('    ?,')->bDateNullable()
+            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
+            ->sql('    ?,')->bDate(null, ['nullable' => true])
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
         $this->db->queryInsert($statement);
@@ -1189,9 +1188,9 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
-            ->sql('    %%,')->bFloat('1.8', 1)
+            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
-            ->sql('    ?')->bDateTimeNullable()
+            ->sql('    ?')->bDateTime(null, ['nullable' => true])
             ->sql(');');
         $this->db->queryInsert($statement);
     }
@@ -1242,7 +1241,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJson(null)
-            ->sql('    %%,')->bFloat(8.10, 1)
+            ->sql('    %%,')->bFloat(8.10, ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -1258,7 +1257,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJson('SDI')
-            ->sql('    %%,')->bFloat(8.10, 1)
+            ->sql('    %%,')->bFloat(8.10, ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -1274,7 +1273,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis')
             ->sql('    ?,')->bJson(123)
-            ->sql('    %%,')->bFloat(8.10, 1)
+            ->sql('    %%,')->bFloat(8.10, ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -1290,7 +1289,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bStr('USA')
-            ->sql('    ?,')->bStr(null, true)
+            ->sql('    ?,')->bStr(null, ['nullable' => true])
             ->sql('    ?')->bDate('2000-01-12')
             ->sql(');');
         $this->db->beginTransaction();
