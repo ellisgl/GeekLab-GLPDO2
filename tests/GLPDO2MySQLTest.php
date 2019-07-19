@@ -181,8 +181,8 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('    ?,')->bStr('Ellis2')
             ->sql('    ?,')->bBoolInt(null, ['nullable' => true])
             ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
-            ->sql('    ?,')->bDate('2000-01-12')
-            ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
+            ->sql('    ?,')->bDate('2000-01-12', ['nullable' => true])
+            ->sql('    ?')->bDateTime('2000-01-12 00:01:02', ['nullable' => true])
             ->sql(');');
 
         $expected = "INSERT INTO `test` (`name`, `location`, `dp`, `someDate`, `someDateTime`)\n" .
@@ -204,7 +204,7 @@ class GLPDO2MySQLTest extends TestCase
 
         $statement->sql('SELECT *')
             ->sql('FROM   `test`')
-            ->sql('WHERE  (0 = ?);')->bBoolInt(false);
+            ->sql('WHERE  (0 = ?);')->bBoolInt(false, ['nullable' => true]);
 
         $expected = "SELECT *\n" .
             "FROM   `test`\n" .
@@ -240,9 +240,9 @@ class GLPDO2MySQLTest extends TestCase
 
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
-            ->sql('    ?,')->bStr('Ellis2')
+            ->sql('    ?,')->bStr('Ellis2', ['nullable' => true])
             ->sql('    ?,')->bBool(null, ['nullable' => true])
-            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
+            ->sql('    %%,')->bFloat('1.8', ['decimals' => 1, 'nullable' => true])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
             ->sql(');');
@@ -266,7 +266,7 @@ class GLPDO2MySQLTest extends TestCase
         $statement->sql('INSERT INTO `%%` (`name`, `location`, `dp`, `someDate`, `someDateTime`)')->bRaw('test')
             ->sql('VALUES (')
             ->sql('    ?,')->bStr('Ellis2')
-            ->sql('    ?,')->bBool(true)
+            ->sql('    ?,')->bBool(true, ['nullable' => true])
             ->sql('    %%,')->bFloat('1.8', ['decimals' => 1])
             ->sql('    ?,')->bDate('2000-01-12')
             ->sql('    ?')->bDateTime('2000-01-12 00:01:02')
