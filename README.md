@@ -8,7 +8,6 @@ Master:
 
 
 Develop:
-
 [![Build Status](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/build-status/master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/coverage.png?b=develop)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=master)
