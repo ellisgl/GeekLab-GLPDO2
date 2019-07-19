@@ -762,6 +762,44 @@ class GLPDO2MySQLTest extends TestCase
         $this->assertEquals(self::SAMPLE_DATA, $this->db->selectRows($statement));
     }
 
+    public function testValueType(): void
+    {
+        $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+
+        $statement->sql('SELECT *')
+            ->sql('FROM   `test`')
+            ->sql('WHERE  `name` = ?;')->bValueType('Sarah');
+
+        $expected = "SELECT *\n" .
+            "FROM   `test`\n" .
+            "WHERE  `name` = 'Sarah';";
+
+        $this->assertEquals($expected, $statement->getComputed());
+
+        $statement->reset()
+            ->sql('SELECT *')
+            ->sql('FROM   `test`')
+            ->sql('WHERE  `id` = ?;')->bValueType('1', PDO::PARAM_INT);
+
+        $expected = "SELECT *\n" .
+            "FROM   `test`\n" .
+            'WHERE  `id` = 1;';
+
+        $this->assertEquals($expected, $statement->getComputed());
+
+        $statement->reset()
+            ->sql('SELECT *')
+            ->sql('FROM   `test`')
+            ->sql('WHERE  `isAwesome` = ?;')->bValueType(true, PDO::PARAM_BOOL);
+
+        $expected = "SELECT *\n" .
+            "FROM   `test`\n" .
+            'WHERE  `isAwesome` = TRUE;';
+
+        $this->assertEquals($expected, $statement->getComputed());
+
+    }
+
     // String
     public function testString(): void
     {
