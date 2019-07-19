@@ -89,6 +89,7 @@ class Bindings
             return $this->dateTime->bDateNullable($value);
         }
 
+        /** @var string $value */
         return $this->dateTime->bDate($value);
     }
 
@@ -108,6 +109,7 @@ class Bindings
             return $this->dateTime->bDateTimeNullable($value);
         }
 
+        /** @var string $value */
         return $this->dateTime->bDateTime($value);
     }
 
@@ -130,6 +132,7 @@ class Bindings
             return $this->numeric->bFloatNullable($value, $options['decimals']);
         }
 
+        /** @var float|int|string $value */
         return $this->numeric->bFloat($value, $options['decimals']);
     }
 
@@ -148,6 +151,7 @@ class Bindings
             return $this->numeric->bIntNullable($value);
         }
 
+        /** @var bool|float|int|string $value */
         return $this->numeric->bInt($value);
     }
 
@@ -222,6 +226,11 @@ class Bindings
      */
     public function bStr($value, array $options = []): array
     {
+        if (isset($options['nullable']) && $options['nullable'] === \true) {
+            return $this->string->bStrNullable($value);
+        }
+
+        /** @var string $value */
         return $this->string->bStr($value);
     }
 

@@ -117,7 +117,7 @@ class MySQLStringBindings implements StringBindingInterface
     /**
      * Bind a string.
      *
-     * @param string|int|float||null $value
+     * @param string|int|float|null $value
      *
      * @return array
      * @throws TypeError
