@@ -113,7 +113,6 @@ class MySQLStringBindings implements StringBindingInterface
         return $this->bStr($value);
     }
 
-
     /**
      * Bind a string.
      *
