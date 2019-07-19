@@ -45,7 +45,7 @@ class MySQLStringBindings implements StringBindingInterface
         }
 
         if (is_object($value)) {
-            $json = $value = json_encode($value);
+            $json = json_encode($value);
 
             if (json_last_error()) {
                 throw new JsonException(json_last_error_msg());
