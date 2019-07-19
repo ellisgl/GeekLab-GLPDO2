@@ -26,7 +26,7 @@ interface DateTimeBindingInterface
      * @return array
      * @throws TypeError
      */
-    public function bDate(string $value): array;
+    public function bDate(?string $value): array;
 
     /**
      * Bind a date time value as date time or null.
@@ -48,5 +48,5 @@ interface DateTimeBindingInterface
      * @return array
      * @throws TypeError
      */
-    public function bDateTime(string $value): array;
+    public function bDateTime(?string $value): array;
 }
