@@ -6,6 +6,7 @@ use \PDO;
 use \InvalidArgumentException;
 use GeekLab\GLPDO2\Constants;
 use GeekLab\GLPDO2\Bindings\DateTimeBindingInterface;
+use TypeError;
 
 class MySQLDateTimeBindings implements DateTimeBindingInterface, Constants
 {
@@ -32,12 +33,16 @@ class MySQLDateTimeBindings implements DateTimeBindingInterface, Constants
      *
      * @todo Use PHP's date stuff for validation?
      *
-     * @param string $value
+     * @param string|null $value
      *
      * @return array
      */
-    public function bDate(string $value): array
+    public function bDate(?string $value): array
     {
+        if ($value === null) {
+            throw new TypeError('Can not bind NULL in date spot.');
+        }
+
         $value = trim($value);
         return [preg_match(self::DATE_REGEX, $value) ? $value : '1970-01-01', PDO::PARAM_STR];
     }
@@ -65,12 +70,16 @@ class MySQLDateTimeBindings implements DateTimeBindingInterface, Constants
      *
      * @todo Use PHP's date stuff for validation?
      *
-     * @param string $value
+     * @param string|null $value
      *
      * @return array
      */
-    public function bDateTime(string $value): array
+    public function bDateTime(?string $value): array
     {
+        if ($value === null) {
+            throw new TypeError('Can not bind NULL in date time spot.');
+        }
+
         $value = trim($value);
         $isDateTime = preg_match(self::DATE_TIME_REGEX, trim($value));
 

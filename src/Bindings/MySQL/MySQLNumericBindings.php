@@ -31,7 +31,7 @@ class MySQLNumericBindings implements NumericBindingInterface
     /**
      * Bind a float.
      *
-     * @param string|int|float $value
+     * @param string|int|float|null $value
      * @param int $decimals
      *
      * @return array
@@ -39,6 +39,10 @@ class MySQLNumericBindings implements NumericBindingInterface
      */
     public function bFloat($value, $decimals = 3): array
     {
+        if ($value === null) {
+            throw new TypeError('Can not bind NULL in float spot.');
+        }
+
         if (!is_numeric($value)) {
             throw new TypeError('Can not bind "' . $value . '" in float spot.');
         }
@@ -70,13 +74,17 @@ class MySQLNumericBindings implements NumericBindingInterface
     /**
      * Bind an integer.
      *
-     * @param string|int|float|bool $value
+     * @param string|int|float|bool|null $value
      *
      * @return array
      * @throws InvalidArgumentException
      */
     public function bInt($value): array
     {
+        if ($value === null) {
+            throw new TypeError('Can not bind NULL in integer spot.');
+        }
+
         if (!is_numeric($value)) {
             throw new TypeError('Can not bind "' . $value . '" in integer spot.');
         }

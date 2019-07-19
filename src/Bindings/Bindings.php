@@ -219,7 +219,7 @@ class Bindings
     /**
      * Bind a string value as string or optional null.
      *
-     * @param string|int|float|bool|null $value
+     * @param string|int|float|null $value
      * @param array $options ['nullable' => (bool)]
      * @return array
      * @throws Exception
