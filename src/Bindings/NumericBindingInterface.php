@@ -20,7 +20,7 @@ interface NumericBindingInterface
     /**
      * Bind a float as float/decimal.
      *
-     * @param string|int|float $value
+     * @param string|int|float|null $value
      * @param int $decimals
      *
      * @return array
@@ -41,7 +41,7 @@ interface NumericBindingInterface
     /**
      * Bind an integer.
      *
-     * @param string|int|float|bool $value
+     * @param string|int|float|bool|null $value
      *
      * @return array
      * @throws TypeError

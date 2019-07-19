@@ -54,7 +54,7 @@ interface StringBindingInterface
     /**
      * Bind a string value.
      *
-     * @param string|int|float $value
+     * @param string|int|float|null $value
      *
      * @return array
      * @throws TypeError

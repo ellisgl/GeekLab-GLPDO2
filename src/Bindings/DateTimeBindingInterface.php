@@ -21,7 +21,7 @@ interface DateTimeBindingInterface
      * Bind a date value as date.
      * YYYY-MM-DD is the proper date format.
      *
-     * @param string $value
+     * @param string|null $value
      *
      * @return array
      * @throws TypeError
@@ -43,7 +43,7 @@ interface DateTimeBindingInterface
      * Bind a date time value as date time.
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
-     * @param string $value
+     * @param string|null $value
      *
      * @return array
      * @throws TypeError
