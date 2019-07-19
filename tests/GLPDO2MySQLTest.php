@@ -1281,7 +1281,7 @@ class GLPDO2MySQLTest extends TestCase
 
     public function testBadTransaction(): void
     {
-        $this->expectException(TypeError::class);
+        $this->expectException(\PDOException::class);
 
         $statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
