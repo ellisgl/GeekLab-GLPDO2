@@ -276,7 +276,7 @@ class Statement
     /**
      * Bind a string value to string or optional null.
      *
-     * @param string|int|float|bool|null $value
+     * @param string|int|float|null $value
      * @param array $options ['nullable' => (bool)]
      *
      * @return Statement
