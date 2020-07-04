@@ -1,8 +1,8 @@
 [![License: BSD](https://img.shields.io/badge/License-BSD-yellow.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![phpstan enabled](https://img.shields.io/badge/phpstan-enabled-green.svg)](https://github.com/phpstan/phpstan)
-[![Build Status](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/build.png?b=release)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/build-status/master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=release)
-[![Code Coverage](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=release)
+[![Build Status](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/build.png?b=release)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/build-status/)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/quality-score.png?b=release)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=release)
+[![Code Coverage](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/coverage.png?b=release)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=release)
 
 GeekLab\GLPDO2
 ============
