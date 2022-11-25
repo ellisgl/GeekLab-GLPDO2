@@ -1,3 +1,6 @@
+2022-11-25 (4.0.6)
+* Update to lock file - maybe Scrutnizer won't fail now.
+
 2022-11-25 (4.0.5)
 * Update to PHPCS
 
