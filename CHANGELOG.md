@@ -1,3 +1,6 @@
+2022-11-25 (4.0.5)
+* Update to PHPCS
+
 2022-11-25 (4.0.4)
 * Logic order fixes. Test fixes.
 

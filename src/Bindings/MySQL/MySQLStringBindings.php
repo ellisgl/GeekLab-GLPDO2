@@ -9,10 +9,9 @@ use PDO;
 
 class MySQLStringBindings implements StringBindingInterface
 {
-
     /**
      * @param mixed $value
-     * @param bool                   $null
+     * @param bool  $null
      *
      * @return array{string, int}
      * @throws JsonException
