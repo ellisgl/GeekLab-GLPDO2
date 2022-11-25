@@ -494,8 +494,7 @@ class Statement
     /**
      * Magic Method for debugging.
      *
-     * @return array{ 'Named Positions': array{} | array{mixed}, 'Unbound SQL': array{} | array{mixed}, 'Bound SQL':
-     *                string }
+     * @return array{'Named Positions': array{} | array{mixed}, 'Unbound SQL': array{} | array{mixed}, 'Bound SQL': string}
      * @throws Exception
      */
     public function __debugInfo(): array
