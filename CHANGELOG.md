@@ -1,3 +1,6 @@
+2022-11-25 (4.0.4)
+* Logic order fixes. Test fixes.
+
 2022-11-25 (4.0.3)
 * PHPStan fixes.
 

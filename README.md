@@ -10,8 +10,8 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP >= 8.1
 
 ### Latest
-2022-11-25 (4.0.3)
-* PHPStan fixes.
+2022-11-25 (4.0.4)
+* Logic order fixes. Test fixes.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
