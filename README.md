@@ -10,7 +10,7 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP >= 8.1
 
 ### Latest
-2022-11-25 (4.0.8)
+2022-11-25 (4.0.9)
 * Style fixes.
 
 ### Features

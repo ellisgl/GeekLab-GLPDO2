@@ -1,3 +1,9 @@
+2022-11-25 (4.0.9)
+* Style fixes.
+
+2022-11-25 (4.0.8)
+* Style fixes.
+ 
 2022-11-25 (4.0.7)
 * Update to composer.json - maybe Scrutinizer won't fail now?
 
