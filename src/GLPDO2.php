@@ -3,8 +3,8 @@
 namespace GeekLab\GLPDO2;
 
 // Make EA inspection stop complaining.
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 class GLPDO2
 {
@@ -158,9 +158,9 @@ class GLPDO2
      * Executes statement and return a specific column from the first row of results.
      *
      * @param Statement $SQL
-     * @param string $column
-     * @param bool $caseSensitive
-     * @param mixed $default
+     * @param string    $column
+     * @param bool      $caseSensitive
+     * @param mixed     $default
      *
      * @return string|null
      * @throws Exception
@@ -170,7 +170,7 @@ class GLPDO2
         string $column,
         bool $caseSensitive = false,
         $default = null
-    ) {
+    ): ?string {
         $row = $this->selectRow($SQL);
 
         if (!$caseSensitive) {

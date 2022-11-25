@@ -2,7 +2,7 @@
 
 namespace GeekLab\GLPDO2\Bindings;
 
-use \Exception;
+use Exception;
 
 interface DateTimeBindingInterface
 {
@@ -22,11 +22,11 @@ interface DateTimeBindingInterface
      * Bind a date value as date time or optional NULL.
      * YYYY-MM-DD HH:MM:SS is the proper date format.
      *
-     * @param string|null $value
-     * @param bool $null
+     * @param string | null $value
+     * @param bool          $null
      *
      * @return array
      * @throws Exception
      */
-    public function bDateTime($value = null, bool $null = false): array;
+    public function bDateTime(?string $value = null, bool $null = false): array;
 }

@@ -2,8 +2,8 @@
 
 namespace GeekLab\GLPDO2\Bindings\MySQL;
 
-use \PDO;
-use \InvalidArgumentException;
+use PDO;
+use InvalidArgumentException;
 use GeekLab\GLPDO2\Bindings\NumericBindingInterface;
 
 class MySQLNumericBindings implements NumericBindingInterface
@@ -11,14 +11,14 @@ class MySQLNumericBindings implements NumericBindingInterface
     /**
      * Bind a float.
      *
-     * @param string|int|float|null $value
-     * @param int $decimals
-     * @param bool $null
+     * @param float | int | string | null $value
+     * @param int                         $decimals
+     * @param bool                        $null
      *
      * @return array
      * @throws InvalidArgumentException
      */
-    public function bFloat($value = null, $decimals = 3, $null = false): array
+    public function bFloat(float | int | string | null $value = null, int $decimals = 3, bool $null = false): array
     {
         // Use NULL?
         if ($value === null && $null) {
@@ -42,13 +42,13 @@ class MySQLNumericBindings implements NumericBindingInterface
     /**
      * Bind an integer with optional NULL.
      *
-     * @param string|int|float|bool|null $value
-     * @param bool $null
+     * @param float | bool | int | string | null $value
+     * @param bool                               $null
      *
      * @return array
      * @throws InvalidArgumentException
      */
-    public function bInt($value = null, bool $null = false): array
+    public function bInt(float | bool | int | string | null $value = null, bool $null = false): array
     {
         // Use NULL?
         if ($value === null && $null) {
@@ -63,7 +63,7 @@ class MySQLNumericBindings implements NumericBindingInterface
             throw new InvalidArgumentException('Can not bind "' . $value . '" in integer spot.');
         }
 
-        return [(int) sprintf('%u', $value), PDO::PARAM_INT];
+        return [(int)sprintf('%u', $value), PDO::PARAM_INT];
     }
 
     /**
@@ -71,7 +71,7 @@ class MySQLNumericBindings implements NumericBindingInterface
      * Great for IN() statements.
      *
      * @param array $data
-     * @param int $default
+     * @param int   $default
      *
      * @return array
      * @throws InvalidArgumentException
@@ -86,7 +86,7 @@ class MySQLNumericBindings implements NumericBindingInterface
         $numbers = array();
 
         foreach ($data as $value) {
-            $numbers[(int) $value] = true;
+            $numbers[(int)$value] = true;
         }
 
         $numbers = array_keys($numbers);

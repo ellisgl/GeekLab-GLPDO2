@@ -9,22 +9,22 @@ interface LogicBindingInterface
     /**
      * Bind a boolean value as bool, with NULL option.
      *
-     * @param int|bool|null $value
-     * @param bool $null
+     * @param bool | int | null $value
+     * @param bool              $null
      *
      * @return array
      * @throws Exception
      */
-    public function bBool($value = null, bool $null = false): array;
+    public function bBool(bool | int | null $value = null, bool $null = false): array;
 
     /**
      * Bind a boolean value as int, with NULL option.
      *
-     * @param int|bool|null $value
-     * @param bool $null
+     * @param bool | int | null $value
+     * @param bool              $null
      *
      * @return array
      * @throws Exception
      */
-    public function bBoolInt($value = null, bool $null = false): array;
+    public function bBoolInt(bool | int | null $value = null, bool $null = false): array;
 }

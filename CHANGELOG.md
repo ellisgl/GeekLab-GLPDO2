@@ -1,3 +1,6 @@
+2022-11-25 (4.0.0)
+* Updated to be 8.1 compatible.
+
 2019-06-25 (3.0.1):
 * Fixed for PHPMD issues (There shall not be ELSE statements...).
 * Better exception types from the inner classes.

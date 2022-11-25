@@ -8,9 +8,9 @@ interface RawBindingInterface
      * !!!DANGER!!!
      * Bind a raw value.
      *
-     * @param string|int|float|bool $value
+     * @param float | bool | int | string $value
      *
      * @return array
      */
-    public function bRaw($value): array;
+    public function bRaw(float | bool | int | string $value): array;
 }

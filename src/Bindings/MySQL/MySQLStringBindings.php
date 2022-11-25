@@ -2,23 +2,22 @@
 
 namespace GeekLab\GLPDO2\Bindings\MySQL;
 
-use \JsonException;
-use \InvalidArgumentException;
-
 use GeekLab\GLPDO2\Bindings\StringBindingInterface;
+use InvalidArgumentException;
+use JsonException;
 use PDO;
 
 class MySQLStringBindings implements StringBindingInterface
 {
 
     /**
-     * @param object|string|null $value
-     * @param bool $null
+     * @param object | string | null $value
+     * @param bool                   $null
      *
      * @return array
      * @throws JsonException
      */
-    public function bJSON($value, bool $null = false): array
+    public function bJSON(object | string | null $value, bool $null = false): array
     {
         // Use NULL?
         if ($value === null && $null) {
@@ -50,8 +49,8 @@ class MySQLStringBindings implements StringBindingInterface
      * Create and bind string for LIKE() statements.
      *
      * @param string $value
-     * @param bool $ends Ends with?
-     * @param bool $starts Starts with?
+     * @param bool   $ends   Ends with?
+     * @param bool   $starts Starts with?
      *
      * @return array
      */
@@ -75,34 +74,37 @@ class MySQLStringBindings implements StringBindingInterface
     /**
      * Bind a string value.
      *
-     * @param string|int|float|bool|null $value
-     * @param bool $null
-     * @param int $type
+     * @param float | bool | int | string | null $value
+     * @param bool                               $null
+     * @param int                                $type
      *
      * @return array
      * @throws InvalidArgumentException
      */
-    public function bStr($value, bool $null = false, int $type = PDO::PARAM_STR): array
-    {
+    public function bStr(
+        float | bool | int | string | null $value,
+        bool $null = false,
+        int $type = PDO::PARAM_STR
+    ): array {
         if ($value === null && $null) {
             $type = PDO::PARAM_NULL;
         } elseif ($value === null && !$null) {
             throw new InvalidArgumentException('Can not bind NULL in string spot.');
         }
 
-        return [(string) $value, $type];
+        return [(string)$value, $type];
     }
 
     /**
      * Convert an array into a string and bind it.
      * Great for IN() statements.
      *
-     * @param array $values
-     * @param string|int|float|bool $default
+     * @param array                 $values
+     * @param float|bool|int|string $default
      *
      * @return array
      */
-    public function bStrArr(array $values, $default = ''): array
+    public function bStrArr(array $values, float | bool | int | string $default = ''): array
     {
         return [empty($values) ? $default : '\'' . implode("', '", $values) . '\''];
     }

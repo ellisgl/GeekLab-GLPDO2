@@ -7,12 +7,11 @@
 GeekLab\GLPDO2
 ============
 
-Easy to use PDO Wrapper for PHP 7.2+
+Easy to use PDO Wrapper for PHP >= 8.1
 
 ### Latest
-2019-06-25 (3.0.1):
-* Fixed for PHPMD issues (There shall not be ELSE statements...).
-* Better exception types from the inner classes.
+2022-11-25 (4.0.0)
+* Updated to be 8.1 compatible.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
