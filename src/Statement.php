@@ -11,12 +11,24 @@ class Statement
 {
     private Bindings $bindings;   // Parameter bindings.
     private int $bindPos = 0;     // Position for SQL binds.
+    /**
+     * @var array{} | array{mixed} $named
+     */
     private array $named = [];    // Named binding values.
+    /**
+     * @var array{} | array{mixed} $SQL
+     */
     private array $SQL = [];      // SQL Statement.
     private int $sqlPos = 0;      // Position holder for statement processing.
+    /**
+     * @var array{} | array<int|string, mixed> $rawNamed
+     */
     private array $rawNamed = []; // Raw named placeholders.
     private int $rawPos = 0;      // Position holder for raw statement processing.
-    private array $rawSql = [];   // SQL Statement.
+    // /**
+    //  * @var array{} | array{mixed} $rawSql
+    //  */
+    // private array $rawSql = [];   // SQL Statement.
 
     public function __construct(Bindings $bindings)
     {
@@ -77,7 +89,7 @@ class Statement
      * Bind a boolean value as bool, with NULL option.
      *
      * @param bool | int | null $value
-     * @param bool          $null
+     * @param bool              $null
      *
      * @return Statement
      * @throws Exception
@@ -183,15 +195,14 @@ class Statement
      * Convert array of integers to comma separated values. Uses %%
      * Great for IN() statements.
      *
-     * @param array $data
-     * @param int   $default
+     * @param array{} | array{mixed} $data
      *
      * @return Statement
      * @throws Exception
      */
-    public function bIntArray(array $data, int $default = 0): self
+    public function bIntArray(array $data): self
     {
-        $binding = $this->bindings->bIntArray($data, $default);
+        $binding = $this->bindings->bIntArray($data);
         $this->rawBind($this->getNextName('raw'), $binding[0]);
 
         return $this;
@@ -235,7 +246,7 @@ class Statement
      * Convert an array into a string and bind it.
      * Great for IN() statements.
      *
-     * @param array                       $values
+     * @param array{} | array{mixed}      $values
      * @param float | bool | int | string $default
      *
      * @return Statement
@@ -286,6 +297,7 @@ class Statement
     }
 
     // The rest of the helpers
+
     /**
      * Name the positions for binding in PDO.
      *
@@ -351,13 +363,17 @@ class Statement
      * Use for building out what a might look like when it's pass to the DB.
      * Used by Statement::getComputed()
      *
-     * @param array $matches
+     * @param array{} | array{int|string} $matches
      *
      * @return mixed
      * @throws Exception
      */
     private function placeholderFill(array $matches): mixed
     {
+        if (empty($matches)) {
+            return null;
+        }
+
         $key = $matches[0];
 
         // Can't fill this param.
@@ -392,16 +408,6 @@ class Statement
     }
 
     /**
-     * Get name of the raw placeholder.
-     *
-     * @return string
-     */
-    private function rawPlaceHolderGetName(): string
-    {
-        return $this->getNextName('rawSql');
-    }
-
-    /**
      * Builds up the SQL parameterized statement.
      *
      * @param string $text
@@ -423,7 +429,7 @@ class Statement
         $text = (string)preg_replace_callback(
             '/%%/m',
             function () {
-                return $this->rawPlaceholderGetName();
+                return $this->getNextName('rawSql');
             },
             $text
         );
@@ -444,9 +450,9 @@ class Statement
         $this->named = [];
         $this->SQL = [];
         $this->sqlPos = 0;
-        $this->rawNamed = array();
+        $this->rawNamed = [];
         $this->rawPos = 0;
-        $this->rawSql = array();
+        // $this->rawSql = [];
 
         return $this;
     }
@@ -488,7 +494,7 @@ class Statement
     /**
      * Magic Method for debugging.
      *
-     * @return array
+     * @return array{ 'Named Positions': array{} | array{mixed}, 'Unbound SQL': array{} | array{mixed}, 'Bound SQL': string }
      * @throws Exception
      */
     public function __debugInfo(): array

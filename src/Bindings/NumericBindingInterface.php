@@ -13,7 +13,7 @@ interface NumericBindingInterface
      * @param int                         $decimals
      * @param bool                        $null
      *
-     * @return array
+     * @return array{?string}
      * @throws Exception
      */
     public function bFloat(float | int | string | null $value = null, int $decimals = 3, bool $null = false): array;
@@ -24,7 +24,7 @@ interface NumericBindingInterface
      * @param float | bool | int | string | null $value
      * @param bool                               $null
      *
-     * @return array
+     * @return array{?int, int}
      * @throws Exception
      */
     public function bInt(float | bool | int | string | null $value = null, bool $null = false): array;
@@ -33,11 +33,10 @@ interface NumericBindingInterface
      * Convert array of integers to comma separated values. Uses %%
      * Great for IN() statements.
      *
-     * @param array $data
-     * @param int $default
+     * @param array{} | array{mixed} $data
      *
-     * @return array
+     * @return array{string}
      * @throws Exception
      */
-    public function bIntArray(array $data, int $default = 0): array;
+    public function bIntArray(array $data): array;
 }

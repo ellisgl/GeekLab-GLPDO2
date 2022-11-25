@@ -16,7 +16,7 @@ class MySQLDateTimeBindings implements DateTimeBindingInterface, Constants
      * @param string | null $value
      * @param bool          $null
      *
-     * @return array
+     * @return array{?string, int}
      * @throws InvalidArgumentException
      */
     public function bDate(?string $value, bool $null = false): array
@@ -44,7 +44,7 @@ class MySQLDateTimeBindings implements DateTimeBindingInterface, Constants
      * @param string | null $value
      * @param bool          $null
      *
-     * @return array
+     * @return array{?string, int}
      * @throws InvalidArgumentException
      */
     public function bDateTime(?string $value = null, bool $null = false): array

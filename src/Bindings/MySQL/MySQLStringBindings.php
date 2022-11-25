@@ -14,17 +14,17 @@ class MySQLStringBindings implements StringBindingInterface
      * @param object | string | null $value
      * @param bool                   $null
      *
-     * @return array
+     * @return array{string, int}
      * @throws JsonException
      */
     public function bJSON(object | string | null $value, bool $null = false): array
     {
         // Use NULL?
-        if ($value === null && $null) {
-            return $this->bStr(null, true);
-        }
+        if ($value === null) {
+            if ($null) {
+                return $this->bStr(null, true);
+            }
 
-        if ($value === null && !$null) {
             throw new JsonException('Can not bind NULL in JSON spot.');
         }
 
@@ -52,7 +52,7 @@ class MySQLStringBindings implements StringBindingInterface
      * @param bool   $ends   Ends with?
      * @param bool   $starts Starts with?
      *
-     * @return array
+     * @return array{string}
      */
     public function bLike(string $value, bool $ends = false, bool $starts = false): array
     {
@@ -78,7 +78,7 @@ class MySQLStringBindings implements StringBindingInterface
      * @param bool                               $null
      * @param int                                $type
      *
-     * @return array
+     * @return array{string, int}
      * @throws InvalidArgumentException
      */
     public function bStr(
@@ -86,9 +86,10 @@ class MySQLStringBindings implements StringBindingInterface
         bool $null = false,
         int $type = PDO::PARAM_STR
     ): array {
-        if ($value === null && $null) {
-            $type = PDO::PARAM_NULL;
-        } elseif ($value === null && !$null) {
+        if ($value === null) {
+            if ($null) {
+                $type = PDO::PARAM_NULL;
+            }
             throw new InvalidArgumentException('Can not bind NULL in string spot.');
         }
 
@@ -99,10 +100,10 @@ class MySQLStringBindings implements StringBindingInterface
      * Convert an array into a string and bind it.
      * Great for IN() statements.
      *
-     * @param array                 $values
-     * @param float|bool|int|string $default
+     * @param array{} | array{mixed}      $values
+     * @param float | bool | int | string $default
      *
-     * @return array
+     * @return array{float | bool | int | string}
      */
     public function bStrArr(array $values, float | bool | int | string $default = ''): array
     {

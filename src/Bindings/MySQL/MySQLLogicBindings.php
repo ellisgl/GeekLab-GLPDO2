@@ -14,7 +14,7 @@ class MySQLLogicBindings implements LogicBindingInterface
      * @param bool | int | null $value
      * @param bool              $null
      *
-     * @return array
+     * @return array{?bool, int}
      * @throws InvalidArgumentException
      */
     public function bBool(bool | int | null $value = null, bool $null = false): array
@@ -37,7 +37,7 @@ class MySQLLogicBindings implements LogicBindingInterface
      * @param bool | int | null $value
      * @param bool              $null
      *
-     * @return array
+     * @return array{?int, int}
      * @throws InvalidArgumentException
      */
     public function bBoolInt(bool | int | null $value = null, bool $null = false): array

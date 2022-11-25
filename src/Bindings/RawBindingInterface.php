@@ -10,7 +10,7 @@ interface RawBindingInterface
      *
      * @param float | bool | int | string $value
      *
-     * @return array
+     * @return array{float | bool | int | string}
      */
     public function bRaw(float | bool | int | string $value): array;
 }

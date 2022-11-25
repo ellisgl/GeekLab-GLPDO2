@@ -14,7 +14,7 @@ interface StringBindingInterface
      * @param object | string | null $value
      * @param bool                   $null
      *
-     * @return array
+     * @return array{string, int}
      * @throws JsonException
      */
     public function bJSON(object | string | null $value, bool $null = false): array;
@@ -23,10 +23,10 @@ interface StringBindingInterface
      * Create and bind string for LIKE() statements.
      *
      * @param string $value
-     * @param bool $ends Ends with?
-     * @param bool $starts Starts with?
+     * @param bool   $ends   Ends with?
+     * @param bool   $starts Starts with?
      *
-     * @return array
+     * @return array{string}
      */
     public function bLike(string $value, bool $ends = false, bool $starts = false): array;
 
@@ -37,19 +37,23 @@ interface StringBindingInterface
      * @param bool                               $null
      * @param int                                $type
      *
-     * @return array
+     * @return array{string, int}
      * @throws Exception
      */
-    public function bStr(float | bool | int | string | null $value, bool $null = false, int $type = PDO::PARAM_STR): array;
+    public function bStr(
+        float | bool | int | string | null $value,
+        bool $null = false,
+        int $type = PDO::PARAM_STR
+    ): array;
 
     /**
      * Convert an array into a string and bind it.
      * Great for IN() statements.
      *
-     * @param array                       $values
+     * @param array{} | array{mixed}      $values
      * @param float | bool | int | string $default
      *
-     * @return array
+     * @return array{float | bool | int | string}
      */
     public function bStrArr(array $values, float | bool | int | string $default = ''): array;
 }

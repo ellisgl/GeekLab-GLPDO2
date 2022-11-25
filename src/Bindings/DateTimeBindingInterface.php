@@ -13,7 +13,7 @@ interface DateTimeBindingInterface
      * @param string|null $value
      * @param bool $null
      *
-     * @return array
+     * @return array{?string, int}
      * @throws Exception
      */
     public function bDate(?string $value, bool $null = false): array;
@@ -25,7 +25,7 @@ interface DateTimeBindingInterface
      * @param string | null $value
      * @param bool          $null
      *
-     * @return array
+     * @return array{?string, int}
      * @throws Exception
      */
     public function bDateTime(?string $value = null, bool $null = false): array;

@@ -2,7 +2,7 @@
 
 namespace GeekLab\GLPDO2\Bindings;
 
-use \Exception;
+use Exception;
 
 interface LogicBindingInterface
 {
@@ -12,7 +12,7 @@ interface LogicBindingInterface
      * @param bool | int | null $value
      * @param bool              $null
      *
-     * @return array
+     * @return array{?bool, int}
      * @throws Exception
      */
     public function bBool(bool | int | null $value = null, bool $null = false): array;
@@ -23,7 +23,7 @@ interface LogicBindingInterface
      * @param bool | int | null $value
      * @param bool              $null
      *
-     * @return array
+     * @return array{?int, int}
      * @throws Exception
      */
     public function bBoolInt(bool | int | null $value = null, bool $null = false): array;

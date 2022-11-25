@@ -122,22 +122,6 @@ class GLPDO2
     }
 
     /**
-     * Return multiple rows result as an array
-     *
-     * @param Statement $SQL
-     *
-     * @return array|false
-     * @throws Exception
-     */
-    public function selectRows(Statement $SQL)
-    {
-        // Execute the statement
-        $sth = $SQL->execute($this->PDO);
-
-        return $sth->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
      * Execute statement and returns first row of results as an associative array.
      *
      * @param Statement $SQL
@@ -145,7 +129,7 @@ class GLPDO2
      * @return mixed
      * @throws Exception
      */
-    public function selectRow(Statement $SQL)
+    public function selectRow(Statement $SQL): mixed
     {
         // Execute the statement
         $sth = $SQL->execute($this->PDO);
@@ -155,21 +139,37 @@ class GLPDO2
     }
 
     /**
-     * Executes statement and return a specific column from the first row of results.
+     * Return multiple rows result as an array
      *
      * @param Statement $SQL
-     * @param string    $column
-     * @param bool      $caseSensitive
-     * @param mixed     $default
      *
-     * @return string|null
+     * @return array{} | false
+     * @throws Exception
+     */
+    public function selectRows(Statement $SQL): bool | array
+    {
+        // Execute the statement
+        $sth = $SQL->execute($this->PDO);
+
+        return $sth->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Executes statement and return a specific column from the first row of results.
+     *
+     * @param Statement    $SQL
+     * @param string       $column
+     * @param bool         $caseSensitive
+     * @param mixed | null $default
+     *
+     * @return string | null
      * @throws Exception
      */
     public function selectValue(
         Statement $SQL,
         string $column,
         bool $caseSensitive = false,
-        $default = null
+        mixed $default = null
     ): ?string {
         $row = $this->selectRow($SQL);
 

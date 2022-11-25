@@ -15,17 +15,17 @@ class MySQLNumericBindings implements NumericBindingInterface
      * @param int                         $decimals
      * @param bool                        $null
      *
-     * @return array
+     * @return array{?string}
      * @throws InvalidArgumentException
      */
     public function bFloat(float | int | string | null $value = null, int $decimals = 3, bool $null = false): array
     {
         // Use NULL?
-        if ($value === null && $null) {
-            return ['NULL'];
-        }
+        if ($value === null) {
+            if ($null) {
+                return ['NULL'];
+            }
 
-        if ($value === null && !$null) {
             throw new InvalidArgumentException('Can not bind NULL in float spot.');
         }
 
@@ -45,17 +45,17 @@ class MySQLNumericBindings implements NumericBindingInterface
      * @param float | bool | int | string | null $value
      * @param bool                               $null
      *
-     * @return array
+     * @return array{?int, int}
      * @throws InvalidArgumentException
      */
     public function bInt(float | bool | int | string | null $value = null, bool $null = false): array
     {
         // Use NULL?
-        if ($value === null && $null) {
-            return [null, PDO::PARAM_NULL];
-        }
+        if ($value === null) {
+            if ($null) {
+                return [null, PDO::PARAM_NULL];
+            }
 
-        if ($value === null && !$null) {
             throw new InvalidArgumentException('Can not bind NULL in integer spot.');
         }
 
@@ -70,20 +70,19 @@ class MySQLNumericBindings implements NumericBindingInterface
      * Convert array of integers to comma separated values. Uses %%
      * Great for IN() statements.
      *
-     * @param array $data
-     * @param int   $default
+     * @param array{} | array{mixed} $data
      *
-     * @return array
+     * @return array{string}
      * @throws InvalidArgumentException
      */
-    public function bIntArray(array $data, int $default = 0): array
+    public function bIntArray(array $data): array
     {
         if (empty($data)) {
             throw new InvalidArgumentException('Can not bind an empty array.');
         }
 
         // Make unique integer array
-        $numbers = array();
+        $numbers = [];
 
         foreach ($data as $value) {
             $numbers[(int)$value] = true;
@@ -91,9 +90,7 @@ class MySQLNumericBindings implements NumericBindingInterface
 
         $numbers = array_keys($numbers);
 
-        // turn into a string
-        $result = implode(', ', $numbers);
-
-        return [$result ?: $default];
+        // Turn into a comma delimited string.
+        return [implode(', ', $numbers)];
     }
 }

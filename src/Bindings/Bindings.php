@@ -4,7 +4,6 @@ namespace GeekLab\GLPDO2\Bindings;
 
 use PDO;
 use Exception;
-use DomainException;
 use JsonException;
 
 class Bindings
@@ -35,7 +34,7 @@ class Bindings
      * @param bool | int | null $value
      * @param bool              $null
      *
-     * @return array
+     * @return array{?bool, int}
      * @throws Exception
      */
     public function bBool(bool | int | null $value = null, bool $null = false): array
@@ -49,7 +48,7 @@ class Bindings
      * @param bool | int | null $value
      * @param bool              $null
      *
-     * @return array
+     * @return array{?int, int}
      * @throws Exception
      */
     public function bBoolInt(bool | int | null $value = null, bool $null = false): array
@@ -64,7 +63,7 @@ class Bindings
      * @param string | null $value
      * @param bool          $null
      *
-     * @return array
+     * @return array{?string, int}
      * @throws Exception
      */
     public function bDate(?string $value, bool $null = false): array
@@ -79,7 +78,7 @@ class Bindings
      * @param string | null $value
      * @param bool          $null
      *
-     * @return array
+     * @return array{?string, int}
      * @throws Exception
      */
     public function bDateTime(?string $value = null, bool $null = false): array
@@ -94,7 +93,7 @@ class Bindings
      * @param int                         $decimals
      * @param bool                        $null
      *
-     * @return array
+     * @return array{?string}
      * @throws Exception
      */
     public function bFloat(float | int | string | null $value = null, int $decimals = 3, bool $null = false): array
@@ -108,7 +107,7 @@ class Bindings
      * @param float | bool | int | string | null $value
      * @param bool                               $null
      *
-     * @return array
+     * @return array{?int, int}
      * @throws Exception
      */
     public function bInt(float | bool | int | string | null $value = null, bool $null = false): array
@@ -120,24 +119,23 @@ class Bindings
      * Convert array of integers to comma separated values. Uses %%
      * Great for IN() statements.
      *
-     * @param array $data
-     * @param int   $default
+     * @param array{} | array{mixed} $data
      *
-     * @return array
+     * @return array{int | string}
      * @throws Exception
      */
-    public function bIntArray(array $data, int $default = 0): array
+    public function bIntArray(array $data): array
     {
-        return $this->numeric->bIntArray($data, $default);
+        return $this->numeric->bIntArray($data);
     }
 
     /**
-     * Bind a object or JSON string to a string
+     * Bind an object or JSON string to a string
      *
      * @param object | string | null $value
      * @param bool                   $null
      *
-     * @return array
+     * @return array{string, int}
      * @throws JsonException
      */
     public function bJSON(object | string | null $value, bool $null = false): array
@@ -152,7 +150,7 @@ class Bindings
      * @param bool   $ends   Ends with?
      * @param bool   $starts Starts with?
      *
-     * @return array
+     * @return array{string}
      */
     public function bLike(string $value, bool $ends = false, bool $starts = false): array
     {
@@ -165,7 +163,7 @@ class Bindings
      *
      * @param float | bool | int | string $value
      *
-     * @return array
+     * @return array{float | bool | int | string}
      */
     public function bRaw(float | bool | int | string $value): array
     {
@@ -179,7 +177,7 @@ class Bindings
      * @param bool                               $null
      * @param int                                $type
      *
-     * @return array
+     * @return array{string, int}
      * @throws Exception
      */
     public function bStr(
@@ -194,10 +192,10 @@ class Bindings
      * Convert an array into a string and bind it.
      * Great for IN() statements.
      *
-     * @param array                       $values
+     * @param array{} | array{mixed}      $values
      * @param float | bool | int | string $default
      *
-     * @return array
+     * @return array{float | bool | int | string}
      */
     public function bStrArr(array $values, float | bool | int | string $default = ''): array
     {
