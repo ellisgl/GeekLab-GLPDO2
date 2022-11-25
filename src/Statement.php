@@ -212,7 +212,7 @@ class Statement
      * Bind an object or JSON string to a string
      *
      * @param mixed $value
-     * @param bool                   $null
+     * @param bool  $null
      *
      * @return Statement
      * @throws Exception
@@ -494,7 +494,8 @@ class Statement
     /**
      * Magic Method for debugging.
      *
-     * @return array{ 'Named Positions': array{} | array{mixed}, 'Unbound SQL': array{} | array{mixed}, 'Bound SQL': string }
+     * @return array{ 'Named Positions': array{} | array{mixed}, 'Unbound SQL': array{} | array{mixed}, 'Bound SQL':
+     *                string }
      * @throws Exception
      */
     public function __debugInfo(): array

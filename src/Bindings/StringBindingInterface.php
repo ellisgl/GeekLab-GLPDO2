@@ -12,7 +12,7 @@ interface StringBindingInterface
      * Bind an object or JSON string to a string.
      *
      * @param mixed $value
-     * @param bool                   $null
+     * @param bool  $null
      *
      * @return array{string, int}
      * @throws JsonException

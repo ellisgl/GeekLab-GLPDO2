@@ -11,7 +11,7 @@ interface DateTimeBindingInterface
      * YYYY-MM-DD is the proper date format.
      *
      * @param string|null $value
-     * @param bool $null
+     * @param bool        $null
      *
      * @return array{?string, int}
      * @throws Exception

@@ -619,6 +619,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // JSON
+
     /**
      * @return void
      * @throws Exception
@@ -696,6 +697,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Like
+
     /**
      * @return void
      * @throws Exception
@@ -817,6 +819,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Raw
+
     /**
      * @return void
      * @throws Exception
@@ -890,6 +893,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // String Array
+
     /**
      * @return void
      * @throws Exception
@@ -900,8 +904,8 @@ class GLPDO2MySQLTest extends TestCase
 
         $Statement
             ->sql('SELECT *')
-                  ->sql('FROM   `test`')
-                  ->sql('WHERE  `location` IN (%%);')->bStrArr(['Germany', 'USA']);
+            ->sql('FROM   `test`')
+            ->sql('WHERE  `location` IN (%%);')->bStrArr(['Germany', 'USA']);
 
         $expected = "SELECT *\n" .
             "FROM   `test`\n" .
@@ -948,6 +952,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Insert
+
     /**
      * @return void
      * @throws Exception
@@ -981,6 +986,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Update
+
     /**
      * @return void
      * @throws Exception
@@ -1238,6 +1244,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Exception Tests
+
     /**
      * @return void
      * @throws Exception
@@ -1434,6 +1441,7 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('WHERE  `name` = %%;')->bFloat('xyz');
         $this->db->selectRows($Statement);
     }
+
     /**
      * @return void
      * @throws Exception
