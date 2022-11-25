@@ -95,6 +95,11 @@ class GLPDO2MySQLTest extends TestCase
         ],
     ];
 
+    /**
+     * @param       $name
+     * @param array $data
+     * @param       $dataName
+     */
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -108,6 +113,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     protected function setUp(): void
@@ -153,6 +159,11 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Basic Select
+
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testBasicSelect(): void
     {
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
@@ -170,6 +181,10 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // For code coverage...
+
+    /**
+     * @return void
+     */
     public function testDoesItConstruct(): void
     {
         $dbConn = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
@@ -181,6 +196,7 @@ class GLPDO2MySQLTest extends TestCase
     // Select with bindings
     // Bool
     /**
+     * @return void
      * @throws Exception
      */
     public function testBoolIntNull(): void
@@ -215,6 +231,7 @@ class GLPDO2MySQLTest extends TestCase
     // Bool
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testBoolFalseInt(): void
@@ -240,6 +257,7 @@ class GLPDO2MySQLTest extends TestCase
     // Bool
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testBoolTrueInt(): void
@@ -260,6 +278,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testBoolNull(): void
@@ -289,6 +308,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testBoolTrue(): void
@@ -320,6 +340,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testBoolFalse(): void
@@ -353,6 +374,7 @@ class GLPDO2MySQLTest extends TestCase
     // Date
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testDate(): void
@@ -386,6 +408,7 @@ class GLPDO2MySQLTest extends TestCase
     // Date Time
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testDateTime(): void
@@ -431,6 +454,7 @@ class GLPDO2MySQLTest extends TestCase
     // Float
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testFloat(): void
@@ -487,6 +511,7 @@ class GLPDO2MySQLTest extends TestCase
     // Int
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testInt(): void
@@ -545,6 +570,7 @@ class GLPDO2MySQLTest extends TestCase
     // Int array
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testIntArray(): void
@@ -593,6 +619,10 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // JSON
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testJSON(): void
     {
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
@@ -635,6 +665,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->assertEquals($expected, $Statement->getComputed());
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testJSONNull(): void
     {
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
@@ -662,6 +696,10 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Like
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testLikeBeginsWith(): void
     {
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
@@ -692,6 +730,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testLikeEndsWith(): void
@@ -723,6 +762,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->assertEquals($expected, $this->db->selectRows($Statement));
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testLikeSomewhere(): void
     {
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
@@ -753,6 +796,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testLikeNowhere(): void
@@ -773,6 +817,10 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Raw
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testRaw(): void
     {
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
@@ -842,11 +890,16 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // String Array
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testStringArray(): void
     {
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
-        $Statement->sql('SELECT *')
+        $Statement
+            ->sql('SELECT *')
                   ->sql('FROM   `test`')
                   ->sql('WHERE  `location` IN (%%);')->bStrArr(['Germany', 'USA']);
 
@@ -895,6 +948,10 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Insert
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testInsert(): void
     {
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
@@ -924,6 +981,10 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Update
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testUpdate(): void
     {
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
@@ -950,6 +1011,7 @@ class GLPDO2MySQLTest extends TestCase
     // selectValue tests
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testSelectValueCaseInsensitive(): void
@@ -964,6 +1026,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testSelectValueCaseSensitive(): void
@@ -978,6 +1041,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testSelectBadPlaceHolders(): void
@@ -1001,6 +1065,7 @@ class GLPDO2MySQLTest extends TestCase
     // Delete
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testDelete(): void
@@ -1035,6 +1100,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testToString(): void
@@ -1054,6 +1120,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testDebugInfo(): void
@@ -1092,6 +1159,7 @@ class GLPDO2MySQLTest extends TestCase
     // Injection Test
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testInjection(): void
@@ -1108,6 +1176,7 @@ class GLPDO2MySQLTest extends TestCase
     // Good transaction
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testGoodTransaction(): void
@@ -1134,6 +1203,7 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     public function testRollback(): void
@@ -1168,6 +1238,10 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     // Exception Tests
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testIntNullException(): void
     {
         $this->expectException(Exception::class);
@@ -1181,6 +1255,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testStringNullException(): void
     {
         $this->expectException(Exception::class);
@@ -1194,6 +1272,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testBoolNullException(): void
     {
         $this->expectException(Exception::class);
@@ -1207,6 +1289,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testBoolIntNullException(): void
     {
         $this->expectException(Exception::class);
@@ -1220,6 +1306,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testFloatNullException(): void
     {
         $this->expectException(Exception::class);
@@ -1233,6 +1323,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testDateNullException(): void
     {
         $this->expectException(Exception::class);
@@ -1246,6 +1340,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testDateNullPDOException(): void
     {
         $this->expectException(Exception::class);
@@ -1264,6 +1362,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->queryInsert($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testDateTimeNullException(): void
     {
         $this->expectException(Exception::class);
@@ -1277,6 +1379,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testDateTimeNullPDOException(): void
     {
         $this->expectException(Exception::class);
@@ -1295,6 +1401,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->queryInsert($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testIntArrayEmptyArrayException(): void
     {
         $this->expectException(Exception::class);
@@ -1308,6 +1418,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testFloatInvalidTypeException(): void
     {
         $this->expectException(Exception::class);
@@ -1320,7 +1434,10 @@ class GLPDO2MySQLTest extends TestCase
             ->sql('WHERE  `name` = %%;')->bFloat('xyz');
         $this->db->selectRows($Statement);
     }
-
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testIntInvalidTypeException(): void
     {
         $this->expectException(Exception::class);
@@ -1334,6 +1451,10 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->selectRows($Statement);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testJSONNullException(): void
     {
         $this->expectException(Exception::class);
@@ -1351,6 +1472,10 @@ class GLPDO2MySQLTest extends TestCase
             ->sql(');');
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testBadJSONException(): void
     {
         $this->expectException(JsonException::class);
@@ -1368,6 +1493,10 @@ class GLPDO2MySQLTest extends TestCase
             ->sql(');');
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testBadJSONException2(): void
     {
         $this->expectException(JsonException::class);
@@ -1385,6 +1514,10 @@ class GLPDO2MySQLTest extends TestCase
             ->sql(');');
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testBadTransaction(): void
     {
         $this->expectException(Exception::class);

@@ -11,13 +11,13 @@ class MySQLStringBindings implements StringBindingInterface
 {
 
     /**
-     * @param object | string | null $value
+     * @param mixed $value
      * @param bool                   $null
      *
      * @return array{string, int}
      * @throws JsonException
      */
-    public function bJSON(object | string | null $value, bool $null = false): array
+    public function bJSON(mixed $value, bool $null = false): array
     {
         // Use NULL?
         if ($value === null) {
@@ -87,10 +87,11 @@ class MySQLStringBindings implements StringBindingInterface
         int $type = PDO::PARAM_STR
     ): array {
         if ($value === null) {
-            if ($null) {
-                $type = PDO::PARAM_NULL;
+            if (!$null) {
+                throw new InvalidArgumentException('Can not bind NULL in string spot.');
             }
-            throw new InvalidArgumentException('Can not bind NULL in string spot.');
+
+            $type = PDO::PARAM_NULL;
         }
 
         return [(string)$value, $type];

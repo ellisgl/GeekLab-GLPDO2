@@ -132,13 +132,13 @@ class Bindings
     /**
      * Bind an object or JSON string to a string
      *
-     * @param object | string | null $value
+     * @param mixed $value
      * @param bool                   $null
      *
      * @return array{string, int}
      * @throws JsonException
      */
-    public function bJSON(object | string | null $value, bool $null = false): array
+    public function bJSON(mixed $value, bool $null = false): array
     {
         return $this->string->bJSON($value, $null);
     }

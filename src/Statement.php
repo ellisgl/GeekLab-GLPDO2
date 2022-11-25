@@ -211,13 +211,13 @@ class Statement
     /**
      * Bind an object or JSON string to a string
      *
-     * @param object | string | null $value
+     * @param mixed $value
      * @param bool                   $null
      *
      * @return Statement
      * @throws Exception
      */
-    public function bJSON(object | string | null $value, bool $null = false): self
+    public function bJSON(mixed $value, bool $null = false): self
     {
         $binding = $this->bindings->bJSON($value, $null);
         $this->bind($this->getNextName(), $binding[0], $binding[1]);
