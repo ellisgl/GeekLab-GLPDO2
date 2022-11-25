@@ -1,5 +1,8 @@
+2022-11-25 (4.0.7)
+* Update to composer.json - maybe Scrutinizer won't fail now?
+
 2022-11-25 (4.0.6)
-* Update to lock file - maybe Scrutnizer won't fail now.
+* Update to lock file - maybe Scrutinizer won't fail now.
 
 2022-11-25 (4.0.5)
 * Update to PHPCS
