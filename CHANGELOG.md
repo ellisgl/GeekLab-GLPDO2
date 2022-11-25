@@ -1,3 +1,6 @@
+2022-11-25 (4.0.3)
+* PHPStan fixes.
+
 2022-11-25 (4.0.0)
 * Updated to be 8.1 compatible.
 
