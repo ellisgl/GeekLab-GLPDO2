@@ -1662,4 +1662,49 @@ class GLPDO2MySQLTest extends TestCase
         $this->db->beginTransaction();
         $this->db->queryInsert($Statement);
     }
+
+    /**
+     * Values above PHP_INT_MAX go in exactly, and comparisons tell neighbours apart,
+     * even in expressions where MySQL would compare a string parameter as a float.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testUnsignedBigint(): void
+    {
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+
+        $this->db->queryUpdate($Statement->sql('DROP TABLE IF EXISTS `test_unsigned`'));
+        $this->db->queryUpdate(
+            $Statement->reset()->sql('CREATE TABLE `test_unsigned` (`id` BIGINT UNSIGNED PRIMARY KEY)')
+        );
+        $this->db->queryInsert(
+            $Statement->reset()
+                ->sql('INSERT INTO `test_unsigned` VALUES (%%), (%%)')
+                ->bUInt('18446744073709551614')->bUInt(PHP_INT_MAX)
+        );
+
+        $max = $this->db->selectValue(
+            $Statement->reset()->sql('SELECT MAX(`id`) AS m FROM `test_unsigned`'),
+            'm'
+        );
+        $this->assertSame('18446744073709551614', $max);
+
+        $count = $this->db->selectValue(
+            $Statement->reset()
+                ->sql('SELECT COUNT(*) AS c FROM `test_unsigned`')
+                ->sql('WHERE `id` + 0 = %% OR `id` IN (%%)')
+                ->bUInt('18446744073709551615')->bUIntArray(['18446744073709551613', '1']),
+            'c'
+        );
+        $this->assertSame('0', $count);
+
+        $count = $this->db->selectValue(
+            $Statement->reset()
+                ->sql('SELECT COUNT(*) AS c FROM `test_unsigned` WHERE `id` IN (%%)')
+                ->bUIntArray(['18446744073709551614', PHP_INT_MAX]),
+            'c'
+        );
+        $this->assertSame('2', $count);
+    }
 }

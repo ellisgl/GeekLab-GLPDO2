@@ -4,10 +4,13 @@ namespace GeekLab\GLPDO2\Bindings\MySQL;
 
 use PDO;
 use InvalidArgumentException;
-use GeekLab\GLPDO2\Bindings\NumericBindingInterface;
+use GeekLab\GLPDO2\Bindings\UnsignedNumericBindingInterface;
 
-class MySQLNumericBindings implements NumericBindingInterface
+class MySQLNumericBindings implements UnsignedNumericBindingInterface
 {
+    /** @const string UINT64_MAX The largest BIGINT UNSIGNED value, 2^64 - 1. */
+    private const UINT64_MAX = '18446744073709551615';
+
     /**
      * Bind a float.
      *
@@ -110,5 +113,117 @@ class MySQLNumericBindings implements NumericBindingInterface
 
         // Turn into a comma delimited string.
         return [implode(', ', $numbers)];
+    }
+
+    /**
+     * Bind an unsigned integer (0 to 18446744073709551615), with NULL option. Uses %%
+     * The value goes into the SQL as digits, not as a bound parameter: MySQL compares a string parameter
+     * with a number as a float, which can't tell large values apart. The digits are validated, so this is
+     * safe for user input.
+     *
+     * @param float | bool | int | string | null $value
+     * @param bool                               $null
+     *
+     * @return array{string}
+     * @throws InvalidArgumentException
+     */
+    public function bUInt(float | bool | int | string | null $value = null, bool $null = false): array
+    {
+        // Use NULL?
+        if ($value === null) {
+            if ($null) {
+                return ['NULL'];
+            }
+
+            throw new InvalidArgumentException('Can not bind NULL in unsigned integer spot.');
+        }
+
+        return [$this->toUInt($value)];
+    }
+
+    /**
+     * Convert an array of unsigned integers to comma separated values. Uses %%
+     * Great for IN() statements. Every value is validated as bUInt() does, and duplicates are removed.
+     *
+     * @param array{} | array{mixed} $data
+     *
+     * @return array{string}
+     * @throws InvalidArgumentException
+     */
+    public function bUIntArray(array $data): array
+    {
+        if (empty($data)) {
+            throw new InvalidArgumentException('Can not bind an empty array.');
+        }
+
+        $numbers = [];
+
+        foreach ($data as $value) {
+            if (!is_scalar($value)) {
+                throw new InvalidArgumentException('Can not bind a non-scalar value in an unsigned integer array.');
+            }
+
+            $numbers[$this->toUInt($value)] = true;
+        }
+
+        return [implode(', ', array_keys($numbers))];
+    }
+
+    /**
+     * Validate an unsigned integer and return it as a string of digits.
+     * Floats are truncated toward zero, as bInt() does. Values above PHP_INT_MAX must be integer strings,
+     * since a float can't hold them exactly.
+     *
+     * @param float | bool | int | string $value
+     *
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    private function toUInt(float | bool | int | string $value): string
+    {
+        if (is_bool($value)) {
+            return $value ? '1' : '0';
+        }
+
+        // Integer strings are checked digit by digit, so values above PHP_INT_MAX stay exact.
+        if (is_string($value) && preg_match('/^\s*\+?0*(\d+)\s*$/', $value, $match) === 1) {
+            $digits = $match[1];
+
+            if (strlen($digits) > 20 || (strlen($digits) === 20 && strcmp($digits, self::UINT64_MAX) > 0)) {
+                throw new InvalidArgumentException(
+                    'Can not bind ' . var_export($value, true) . ' in unsigned integer spot: out of range.'
+                );
+            }
+
+            return $digits;
+        }
+
+        if (!is_numeric($value)) {
+            throw new InvalidArgumentException(
+                'Can not bind ' . var_export($value, true) . ' in unsigned integer spot.'
+            );
+        }
+
+        $number = +$value;
+
+        if ($number < 0) {
+            throw new InvalidArgumentException(
+                'Can not bind ' . var_export($value, true) . ' in unsigned integer spot: negative.'
+            );
+        }
+
+        if (is_float($number)) {
+            // (float)PHP_INT_MAX rounds up to 2^63, hence >=. Larger values need an integer string.
+            if (!is_finite($number) || $number >= PHP_INT_MAX) {
+                throw new InvalidArgumentException(
+                    'Can not bind ' . var_export($value, true) . ' in unsigned integer spot: out of range '
+                    . 'for a float. Pass values above ' . PHP_INT_MAX . ' as an integer string.'
+                );
+            }
+
+            $number = (int)$number;
+        }
+
+        return (string)$number;
     }
 }

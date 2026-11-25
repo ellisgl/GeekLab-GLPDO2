@@ -182,7 +182,7 @@ Build a query one line at a time with `sql()`, and put each value's binding righ
 | Placeholder | Filled by | How the value gets to the database |
 |---|---|---|
 | `?` | `bStr`, `bInt`, `bBool`, `bBoolInt`, `bDate`, `bDateTime`, `bJSON`, `bLike` | Bound as a PDO parameter. The value is never part of the SQL text. |
-| `%%` | `bStrArr`, `bIntArray`, `bFloat`, `bIdent`, `bRaw` | Replaced in the SQL text: by a list of bound parameters (`bStrArr`), by validated numbers (`bIntArray`, `bFloat`), by quoted identifiers (`bIdent`), or as is (`bRaw`). |
+| `%%` | `bStrArr`, `bIntArray`, `bUInt`, `bUIntArray`, `bFloat`, `bIdent`, `bRaw` | Replaced in the SQL text: by a list of bound parameters (`bStrArr`), by validated numbers (`bIntArray`, `bUInt`, `bUIntArray`, `bFloat`), by quoted identifiers (`bIdent`), or as is (`bRaw`). |
 
 Placeholders are filled in order: the first `?` gets the first `?`-type binding, and the first `%%` gets the first `%%`-type binding. Inside quoted strings and comments, `?` and `%%` are plain text, so `WHERE note = 'Why?'` works. Inside quoted identifiers (backticks for MySQL, double quotes for PostgreSQL), `%%` is still a placeholder, so `` `%%` `` with `bRaw()` can fill in a table name. What counts as a string or comment depends on the database; see [PostgreSQL](#postgresql).
 
@@ -231,6 +231,7 @@ Every method returns the `Statement`, so calls chain. Methods with a `$null` par
 |---|---|---|---|
 | `bStr($value, $null = false, $type = PDO::PARAM_STR)` | `?` | string | Pass a different `PDO::PARAM_*` type if needed. |
 | `bInt($value, $null = false)` | `?` | integer | Accepts ints, floats and numeric strings. Floats are truncated toward zero. Non-numeric or out-of-range values throw `InvalidArgumentException`. |
+| `bUInt($value, $null = false)` | `%%` | unsigned integer | `0` to `18446744073709551615`, for `UNSIGNED` columns. Pass values above `PHP_INT_MAX` as integer strings. Floats are truncated toward zero. Negative, non-numeric and out-of-range values throw `InvalidArgumentException`. See [Unsigned integers](#unsigned-integers). |
 | `bFloat($value, $decimals = 3, $null = false)` | `%%` | number with `$decimals` decimal places | Must be numeric. |
 | `bBool($value, $null = false)` | `?` | boolean | |
 | `bBoolInt($value, $null = false)` | `?` | `0` or `1` | For `TINYINT` flag columns. |
@@ -240,9 +241,24 @@ Every method returns the `Statement`, so calls chain. Methods with a `$null` par
 | `bLike($value, $ends = false, $starts = false)` | `?` | `%value%` | `$starts = true` gives `value%` (starts with). `$ends = true` gives `%value` (ends with). |
 | `bStrArr(array $values, $default = '')` | `%%` | `:arr0, :arr1, …` | For `IN (%%)`. Each value is its own bound parameter. If `$values` is empty, `$default` is inserted **as is**. |
 | `bIntArray(array $values)` | `%%` | `1, 2, 3` | For `IN (%%)`. Values are cast to integers and duplicates removed. An empty array throws `InvalidArgumentException`. |
+| `bUIntArray(array $values)` | `%%` | `1, 2, 3` | For `IN (%%)` on `UNSIGNED` columns. Each value is validated as `bUInt()` does, so a bad value throws rather than being cast. Duplicates are removed. An empty array throws `InvalidArgumentException`. |
 | `bIdent($name)` | `%%` | quoted identifier(s) | Table, column or database name, quoted for your database. `'db.users.id'` quotes each part; an array gives a comma-separated list. See [Quoting table and column names](#quoting-table-and-column-names). |
 | `bRaw($value)` | `%%` | the value, **as is** | For table names, column names and SQL functions you control. **Never pass user input.** |
 | `bind($name, $value, $type = PDO::PARAM_STR)` | `:name` | anything | Binds your own named placeholder. |
+
+### Unsigned integers
+
+`bInt()` binds a PHP integer, which stops at `9223372036854775807` (2⁶³−1), and it accepts negative numbers. For `UNSIGNED` columns, use `bUInt()` and `bUIntArray()` instead. They reject negative values and go up to `BIGINT UNSIGNED`'s maximum, `18446744073709551615` (2⁶⁴−1):
+
+```php
+$statement
+    ->sql('SELECT * FROM `events` WHERE `id` = %%')->bUInt('18446744073709551615')
+    ->sql('OR `parent_id` IN (%%)')->bUIntArray([1, 2, '9223372036854775808']);
+```
+
+They use `%%` and put the validated digits into the SQL text, rather than binding a parameter. A value above `PHP_INT_MAX` can only be bound as a string, and in an expression or an `IN (...)` list MySQL compares a string with a number as a float, so `18446744073709551615` and `18446744073709551614` would match. Digits in the SQL text are compared exactly. Only digits get through the validation, so this is safe for user input.
+
+PostgreSQL has no unsigned types. There, `bUInt()` checks that a value isn't negative, and values above 2⁶³−1 need a `numeric` column.
 
 ## Query methods
 
@@ -274,7 +290,7 @@ Most bindings send values to MySQL as PDO parameters, so they can't change the q
 | Binding | Safe for user input? | Why |
 |---|---|---|
 | `?` bindings, `bStrArr()` values | ✅ Yes | Sent as bound parameters. |
-| `bInt()`, `bFloat()`, `bIntArray()` | ✅ Yes | Validated or cast to numbers before they reach the SQL. |
+| `bInt()`, `bUInt()`, `bFloat()`, `bIntArray()`, `bUIntArray()` | ✅ Yes | Validated or cast to numbers before they reach the SQL. |
 | `bIdent()` | ⚠️ Can't inject SQL, but still check | Quoted and escaped, so it can't change the query's structure. It can still name any table or column, so check user-chosen names against a list you allow. |
 | `bStrArr()`'s `$default` | ❌ No | Inserted as is when the array is empty. |
 | `bRaw()` | ❌ No | Inserted as is, by design. |
@@ -320,7 +336,7 @@ The value bindings are the same as for MySQL. PostgreSQL is stricter about types
 
 ## Custom bindings
 
-The bindings are grouped into six interfaces in `GeekLab\GLPDO2\Bindings`: date/time, logic, numeric, raw, string and identifier. `MySQLBindingFactory::build()` creates the MySQL set. To change how a type is bound, implement the matching interface (or extend the MySQL class) and pass your own set in:
+The bindings are grouped into six interfaces in `GeekLab\GLPDO2\Bindings`: date/time, logic, numeric, raw, string and identifier. `MySQLBindingFactory::build()` creates the MySQL set. To change how a type is bound, implement the matching interface (or extend the MySQL class) and pass your own set in. `bUInt()` and `bUIntArray()` are in `UnsignedNumericBindingInterface`, which extends the numeric interface. If your numeric bindings only implement `NumericBindingInterface`, those two use the MySQL versions:
 
 ```php
 use GeekLab\GLPDO2\Bindings\Bindings;

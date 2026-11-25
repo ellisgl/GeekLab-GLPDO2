@@ -141,4 +141,24 @@ class GLPDO2PostgreSQLTest extends TestCase
 
         $this->assertSame('5', $value);
     }
+
+    public function testUnsignedValuesAboveBigint(): void
+    {
+        // PostgreSQL has no unsigned types; numeric(20) holds the BIGINT UNSIGNED range.
+        $this->db->queryUpdate(
+            $this->statement()->sql('CREATE TEMPORARY TABLE "big" ("id" numeric(20) PRIMARY KEY)')
+        );
+        $this->db->queryInsert(
+            $this->statement()->sql('INSERT INTO "big" VALUES (%%), (%%)')
+                ->bUInt('18446744073709551615')->bUInt(0)
+        );
+
+        $value = $this->db->selectValue(
+            $this->statement()->sql('SELECT "id" FROM "big" WHERE "id" IN (%%)')
+                ->bUIntArray(['18446744073709551615', '18446744073709551614']),
+            'id'
+        );
+
+        $this->assertSame('18446744073709551615', $value);
+    }
 }
