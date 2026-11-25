@@ -8,8 +8,8 @@ use GeekLab\GLPDO2\Bindings\UnsignedNumericBindingInterface;
 
 class MySQLNumericBindings implements UnsignedNumericBindingInterface
 {
-    /** @const string UINT64_MAX The largest BIGINT UNSIGNED value, 2^64 - 1. */
-    private const UINT64_MAX = '18446744073709551615';
+    /** @const string UINT_MAX The largest value bUInt() accepts: BIGINT UNSIGNED's maximum, 2^64 - 1. */
+    protected const UINT_MAX = '18446744073709551615';
 
     /**
      * Bind a float.
@@ -189,7 +189,9 @@ class MySQLNumericBindings implements UnsignedNumericBindingInterface
         if (is_string($value) && preg_match('/^\s*\+?0*(\d+)\s*$/', $value, $match) === 1) {
             $digits = $match[1];
 
-            if (strlen($digits) > 20 || (strlen($digits) === 20 && strcmp($digits, self::UINT64_MAX) > 0)) {
+            $max = static::UINT_MAX;
+
+            if (strlen($digits) > strlen($max) || (strlen($digits) === strlen($max) && strcmp($digits, $max) > 0)) {
                 throw new InvalidArgumentException(
                     'Can not bind ' . var_export($value, true) . ' in unsigned integer spot: out of range.'
                 );

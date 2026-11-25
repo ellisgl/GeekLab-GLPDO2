@@ -33,6 +33,7 @@ $users = $db->selectRows(
 - [Query methods](#query-methods)
 - [Security](#security)
 - [PostgreSQL](#postgresql)
+- [SQLite](#sqlite)
 - [Custom bindings](#custom-bindings)
 - [Limitations](#limitations)
 - [Development](#development)
@@ -70,7 +71,7 @@ With GLPDO2:
 composer require geeklab/glpdo2
 ```
 
-Requires PHP 8.3 or newer, with the `pdo_mysql` extension for MySQL and MariaDB or `pdo_pgsql` for PostgreSQL. PHP 8.4 or newer is recommended for PostgreSQL; see [PostgreSQL](#postgresql).
+Requires PHP 8.3 or newer, with the `pdo_mysql` extension for MySQL and MariaDB, `pdo_pgsql` for PostgreSQL, or `pdo_sqlite` for SQLite 3. PHP 8.4 or newer is recommended for PostgreSQL; see [PostgreSQL](#postgresql).
 
 ## Quick start
 
@@ -184,11 +185,11 @@ Build a query one line at a time with `sql()`, and put each value's binding righ
 | `?` | `bStr`, `bInt`, `bBool`, `bBoolInt`, `bDate`, `bDateTime`, `bJSON`, `bLike` | Bound as a PDO parameter. The value is never part of the SQL text. |
 | `%%` | `bStrArr`, `bIntArray`, `bUInt`, `bUIntArray`, `bFloat`, `bIdent`, `bRaw` | Replaced in the SQL text: by a list of bound parameters (`bStrArr`), by validated numbers (`bIntArray`, `bUInt`, `bUIntArray`, `bFloat`), by quoted identifiers (`bIdent`), or as is (`bRaw`). |
 
-Placeholders are filled in order: the first `?` gets the first `?`-type binding, and the first `%%` gets the first `%%`-type binding. Inside quoted strings and comments, `?` and `%%` are plain text, so `WHERE note = 'Why?'` works. Inside quoted identifiers (backticks for MySQL, double quotes for PostgreSQL), `%%` is still a placeholder, so `` `%%` `` with `bRaw()` can fill in a table name. What counts as a string or comment depends on the database; see [PostgreSQL](#postgresql).
+Placeholders are filled in order: the first `?` gets the first `?`-type binding, and the first `%%` gets the first `%%`-type binding. Inside quoted strings and comments, `?` and `%%` are plain text, so `WHERE note = 'Why?'` works. Inside quoted identifiers (backticks for MySQL, double quotes for PostgreSQL, any of `"..."`, `` `...` `` and `[...]` for SQLite), `%%` is still a placeholder, so `` `%%` `` with `bRaw()` can fill in a table name. What counts as a string or comment depends on the database; see [PostgreSQL](#postgresql) and [SQLite](#sqlite).
 
 ### Quoting table and column names
 
-The examples here quote names with MySQL backticks. To leave quoting to the library, put `%%` where the name goes and bind it with `bIdent()`. The bindings decide how to quote it: backticks for MySQL, double quotes for PostgreSQL.
+The examples here quote names with MySQL backticks. To leave quoting to the library, put `%%` where the name goes and bind it with `bIdent()`. The bindings decide how to quote it: backticks for MySQL, double quotes for PostgreSQL and SQLite.
 
 ```php
 $statement
@@ -259,6 +260,8 @@ $statement
 They use `%%` and put the validated digits into the SQL text, rather than binding a parameter. A value above `PHP_INT_MAX` can only be bound as a string, and in an expression or an `IN (...)` list MySQL compares a string with a number as a float, so `18446744073709551615` and `18446744073709551614` would match. Digits in the SQL text are compared exactly. Only digits get through the validation, so this is safe for user input.
 
 PostgreSQL has no unsigned types. There, `bUInt()` checks that a value isn't negative, and values above 2⁶³−1 need a `numeric` column.
+
+SQLite integers are signed 64-bit, and SQLite reads any larger number as a float, so 2⁶⁴−1 and 2⁶⁴−2 would be stored as the same value. With the SQLite bindings, `bUInt()` and `bUIntArray()` therefore stop at `9223372036854775807` and throw above it. Store larger values as text with `bStr()`.
 
 ## Query methods
 
@@ -334,6 +337,36 @@ PDO scans the SQL again before sending it, and its scanner doesn't follow all of
 
 The value bindings are the same as for MySQL. PostgreSQL is stricter about types, so add a cast where it can't infer one, such as `?::date`, `?::jsonb` or `?::int` in a select list. `bBoolInt()` binds `0` or `1`, which a PostgreSQL `boolean` column won't accept; use `bBool()` there.
 
+## SQLite
+
+Build the bindings with `SQLiteBindingFactory`. Everything else works as it does for MySQL:
+
+```php
+use GeekLab\GLPDO2\Bindings\SQLite\SQLiteBindingFactory;
+
+$pdo = new PDO('sqlite:/path/to/app.db', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+$db = new GLPDO2($pdo);
+$statement = new Statement(SQLiteBindingFactory::build());
+
+$rows = $db->selectRows(
+    $statement
+        ->sql('SELECT %% FROM %%')->bIdent(['id', 'name'])->bIdent('users')
+        ->sql('WHERE "settings" ->> ? = ?')->bStr('$.theme')->bStr('dark')
+);
+```
+
+With it, `sql()` reads the text by SQLite's rules:
+
+| | SQLite |
+|---|---|
+| Strings | `'...'`. A backslash is a plain character; `''` is a quote. |
+| Quoted identifiers | `"..."`, `` `...` `` and `[...]` |
+| Comments | `--` (no whitespace needed after it) and `/* */` (doesn't nest) |
+
+`#` and `$` have no special meaning, and `??` is two placeholders, since SQLite has no `?` operator.
+
+SQLite handles PDO placeholders itself, so none of the PDO limits described under [PostgreSQL](#postgresql) apply. SQLite has no boolean type: `bBool()` stores `1` or `0`. Dates from `bDate()` and `bDateTime()` are stored as text, which SQLite's date functions read. For unsigned integers above 2⁶³−1, see [Unsigned integers](#unsigned-integers).
+
 ## Custom bindings
 
 The bindings are grouped into six interfaces in `GeekLab\GLPDO2\Bindings`: date/time, logic, numeric, raw, string and identifier. `MySQLBindingFactory::build()` creates the MySQL set. To change how a type is bound, implement the matching interface (or extend the MySQL class) and pass your own set in. `bUInt()` and `bUIntArray()` are in `UnsignedNumericBindingInterface`, which extends the numeric interface. If your numeric bindings only implement `NumericBindingInterface`, those two use the MySQL versions:
@@ -373,7 +406,7 @@ $bindings = new Bindings(
 
 ## Limitations
 
-- **MySQL, MariaDB and PostgreSQL.** Other databases may work for simple queries, but aren't tested. See [PostgreSQL](#postgresql) for limits that come from PDO.
+- **MySQL, MariaDB, PostgreSQL and SQLite 3.** Other databases may work for simple queries, but aren't tested. See [PostgreSQL](#postgresql) for limits that come from PDO.
 - **Invalid dates don't throw.** `bDate()` and `bDateTime()` bind `1970-01-01` (`1970-01-01 00:00:00`) for a value that isn't in the expected format, and only accept years 1900–2099. Validate dates first if that matters.
 - **`bLike()` doesn't escape wildcards.** A `%` or `_` in the value acts as a wildcard.
 - **`getComputed()` is approximate.** It shows string values in quotes without escaping them.

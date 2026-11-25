@@ -1,4 +1,8 @@
 Unreleased
+* Added SQLite 3 support: Dialect::SQLite and SQLiteBindingFactory. With it, Statement::sql() reads '...' strings without backslash escapes, "...", `...` and [...] identifiers, "--" comments without a following space and non-nesting block comments, and "#" isn't a comment.
+* Added SQLiteNumericBindings: bUInt() and bUIntArray() stop at 9223372036854775807, SQLite's integer maximum, since SQLite reads larger numbers as floats and can't tell them apart.
+* MySQLNumericBindings' unsigned maximum is now the protected UINT_MAX constant, so subclasses can lower it.
+* CI installs pdo_sqlite; GLPDO2SQLiteTest runs against an in-memory database.
 * Added Statement::bIdent() to quote table, column and database names for the database in use, with a '%%' placeholder. 'db.users.id' quotes each part, 'users.*' keeps the star, and an array gives a column list.
 * Added IdentifierBindingInterface, with QuotedIdentifierBindings (any quote characters), MySQLIdentifierBindings (backticks) and PostgreSQLIdentifierBindings (double quotes). Bindings takes it as an optional sixth argument and defaults to MySQL, so existing code doesn't change.
 * Added Statement::bUInt() and bUIntArray() for unsigned integers, 0 to 18446744073709551615 (BIGINT UNSIGNED). They reject negative values, accept values above PHP_INT_MAX as integer strings, and use '%%' so the value is compared exactly. A string parameter would be compared as a float in MySQL expressions and IN() lists.
