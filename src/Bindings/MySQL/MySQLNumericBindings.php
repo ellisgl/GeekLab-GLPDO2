@@ -63,7 +63,25 @@ class MySQLNumericBindings implements NumericBindingInterface
             throw new InvalidArgumentException('Can not bind "' . $value . '" in integer spot.');
         }
 
-        return [(int)sprintf('%u', $value), PDO::PARAM_INT];
+        // Numeric strings become int or float; floats are truncated toward zero, like (int).
+        $number = +$value;
+
+        if (is_float($number)) {
+            // An integer-only string that still became a float overflowed the integer range.
+            $overflowed = is_string($value) && preg_match('/^\s*[+-]?\d+\s*$/', $value) === 1;
+
+            // (int) on a float outside the integer range gives a meaningless value, so refuse it.
+            // (float)PHP_INT_MAX rounds up to 2^63, which is already out of range, hence >=.
+            if ($overflowed || !is_finite($number) || $number >= PHP_INT_MAX || $number < PHP_INT_MIN) {
+                throw new InvalidArgumentException(
+                    'Can not bind ' . var_export($value, true) . ' in integer spot: out of range.'
+                );
+            }
+
+            $number = (int)$number;
+        }
+
+        return [$number, PDO::PARAM_INT];
     }
 
     /**
