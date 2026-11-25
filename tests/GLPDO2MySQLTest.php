@@ -951,6 +951,84 @@ class GLPDO2MySQLTest extends TestCase
         $this->assertEquals($expected, $this->db->selectRows($Statement));
     }
 
+    /**
+     * Values are bound as parameters, so a quote can't break out of the IN() list.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testStringArrayIsNotInjectable(): void
+    {
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+
+        $Statement
+            ->sql('SELECT `name`')
+            ->sql('FROM   `test`')
+            ->sql('WHERE  `location` IN (%%)')->bStrArr(['Estonia', "x') OR ('1'='1"])
+            ->sql('ORDER BY `id`;');
+
+        $this->assertEquals([['name' => 'Reese']], $this->db->selectRows($Statement));
+    }
+
+    /**
+     * Array placeholders must not shift the positions of '?' placeholders around them.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testStringArrayWithPositionalPlaceholders(): void
+    {
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+
+        $Statement
+            ->sql('SELECT `name`')
+            ->sql('FROM   `test`')
+            ->sql('WHERE  `id` > ?')->bInt(1)
+            ->sql('AND    `location` IN (%%)')->bStrArr(['Germany', 'USA'])
+            ->sql('AND    `id` < ?')->bInt(4)
+            ->sql('ORDER BY `id`;');
+
+        $expected = "SELECT `name`\n" .
+            "FROM   `test`\n" .
+            "WHERE  `id` > 1\n" .
+            "AND    `location` IN ('Germany', 'USA')\n" .
+            "AND    `id` < 4\n" .
+            "ORDER BY `id`;";
+
+        $this->assertEquals($expected, $Statement->getComputed());
+        $this->assertEquals([['name' => 'Hyacinth'], ['name' => 'Quynn']], $this->db->selectRows($Statement));
+    }
+
+    /**
+     * An empty array inserts $default raw, as before.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testStringArrayEmptyUsesDefault(): void
+    {
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+
+        $Statement
+            ->sql('SELECT `name`')
+            ->sql('FROM   `test`')
+            ->sql('WHERE  `location` IN (%%);')->bStrArr([], 'NULL');
+
+        $this->assertEquals("SELECT `name`\nFROM   `test`\nWHERE  `location` IN (NULL);", $Statement->getComputed());
+        $this->assertEquals([], $this->db->selectRows($Statement));
+    }
+
+    /**
+     * @return void
+     */
+    public function testStringArrayNonScalarException(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+        $Statement->sql('SELECT 1 WHERE `location` IN (%%);')->bStrArr(['Germany', ['nested']]);
+    }
+
     // Insert
 
     /**
