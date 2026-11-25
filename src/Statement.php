@@ -25,7 +25,8 @@ class Statement
      * @var array{} | array<int|string, mixed> $rawNamed
      */
     private array $rawNamed = []; // Raw named placeholders.
-    private int $rawPos = 0;      // Position holder for raw statement processing.
+    private int $rawPos = 0;      // Position for raw binds (bRaw, bFloat, bIntArray, bStrArr).
+    private int $rawSqlPos = 0;   // Position holder for '%%' placeholders found by sql().
     private int $arrPos = 0;      // Position holder for array element binds (bStrArr).
 
     // Where sql() is in the statement text, so '?' and '%%' inside literals and comments are left alone.
@@ -342,7 +343,8 @@ class Statement
     {
         return match ($type) {
             'sql' => sprintf(':pos%d', $this->sqlPos++),
-            'rawSql' => sprintf(':raw%d', $this->rawPos),
+            // Each '%%' gets its own number, matched in order to the raw binds, as '?' is to binds.
+            'rawSql' => sprintf(':raw%d', $this->rawSqlPos++),
             'raw' => sprintf(':raw%d', $this->rawPos++),
             'arr' => sprintf(':arr%d', $this->arrPos++),
             default => sprintf(':pos%d', $this->bindPos++),
@@ -561,6 +563,7 @@ class Statement
         $this->sqlPos = 0;
         $this->rawNamed = [];
         $this->rawPos = 0;
+        $this->rawSqlPos = 0;
         $this->arrPos = 0;
         $this->lexState = self::LEX_CODE;
         $this->lexQuote = '';

@@ -1045,6 +1045,21 @@ class GLPDO2MySQLTest extends TestCase
     }
 
     /**
+     * Two '%%' placeholders in one sql() call each get their own value.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testTwoRawPlaceholdersInOneSqlCallExecute(): void
+    {
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+
+        $Statement->sql('SELECT %% AS `a`, %% AS `b`;')->bFloat(1, 1)->bFloat(2, 1);
+
+        $this->assertEquals(['a' => '1.0', 'b' => '2.0'], $this->db->selectRow($Statement));
+    }
+
+    /**
      * A "-- comment" in one sql() call must not comment out the calls after it.
      *
      * @return void

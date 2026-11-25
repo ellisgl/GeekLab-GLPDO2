@@ -60,6 +60,22 @@ class StatementPlaceholderTest extends TestCase
         $this->assertSame('SELECT `col?` FROM `test`', $statement->getComputed());
     }
 
+    public function testTwoRawPlaceholdersInOneSqlCallGetTheirOwnValues(): void
+    {
+        $statement = $this->statement()->sql('VALUES (%%, %%)')->bFloat(1)->bFloat(2);
+
+        $this->assertSame('VALUES (1.000, 2.000)', $statement->getComputed());
+    }
+
+    public function testRawAndPositionalPlaceholdersMixedInOneSqlCall(): void
+    {
+        $statement = $this->statement()
+            ->sql('SELECT ? FROM `%%` WHERE a IN (%%) AND b = ?')
+            ->bInt(1)->bRaw('t')->bIntArray([4, 5])->bStr('x');
+
+        $this->assertSame("SELECT 1 FROM `t` WHERE a IN (4, 5) AND b = 'x'", $statement->getComputed());
+    }
+
     public function testPlaceholderAfterBlockCommentWorks(): void
     {
         $statement = $this->statement()->sql('SELECT /* ? */ ?')->bInt(7);

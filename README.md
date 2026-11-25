@@ -10,9 +10,10 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP >= 8.1
 
 ### Latest
-2026-11-25 (4.0.11)
-* Security: `bStrArr()` now binds each value as a parameter. Values containing quotes could previously break out of the `IN()` list (SQL injection).
-* `bInt()` no longer turns negative numbers into huge positive ones, and rejects values outside the integer range.
+2026-11-25 (4.0.12)
+* `?` and `%%` inside quoted strings and comments are no longer treated as placeholders, so SQL like `WHERE note = 'Why?'` works.
+* Two `%%` placeholders in one `sql()` call now each get their own value.
+* A `-- comment` in one `sql()` call no longer comments out the calls after it.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
