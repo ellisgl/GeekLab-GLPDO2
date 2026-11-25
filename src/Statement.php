@@ -18,8 +18,8 @@ class Statement
     private const LEX_BLOCK_COMMENT = 3; // Inside /* ... */; $lexDepth counts nesting (PostgreSQL).
     private const LEX_DOLLAR        = 4; // Inside a PostgreSQL $tag$...$tag$ string; $lexQuote holds the tag.
 
-    private Bindings $bindings;    // Parameter bindings.
-    private int      $bindPos = 0; // Position for SQL binds.
+    private Bindings $bindings; // Parameter bindings.
+    private int $bindPos = 0;   // Position for SQL binds.
     /**
      * @var array{} | array{mixed} $named
      */
@@ -32,22 +32,22 @@ class Statement
      * @var array{} | array{mixed} $shownSQL
      */
     private array $shownSQL = []; // SQL Statement for getComputed(). Differs only where "??" stands for "?".
-    private int   $sqlPos   = 0;  // Position holder for statement processing.
+    private int $sqlPos     = 0;  // Position holder for statement processing.
     /**
      * @var array{} | array<int|string, mixed> $rawNamed
      */
     private array $rawNamed = []; // Raw named placeholders.
     private int $rawPos     = 0;  // Position for raw binds (bRaw, bFloat, bIntArray, bStrArr).
     private int $rawSqlPos  = 0;  // Position holder for '%%' placeholders found by sql().
-    private int $arrPos     = 0;   // Position holder for array element binds (bStrArr).
+    private int $arrPos     = 0;  // Position holder for array element binds (bStrArr).
 
     private Dialect $dialect;     // Decides how sql() finds quoted text and comments.
-    
-    private int    $lexState     = self::LEX_CODE;
-    private string $lexQuote     = '';
-    private bool   $lexBackslash = false;  // Whether a backslash escapes the next character in this quote.
-    private bool   $lexIdent     = false;      // Whether this quote is an identifier, where '%%' is still a placeholder.
-    private int    $lexDepth     = 0;
+
+    private int $lexState      = self::LEX_CODE;
+    private string $lexQuote   = '';
+    private bool $lexBackslash = false;  // Whether a backslash escapes the next character in this quote.
+    private bool $lexIdent     = false;  // Whether this quote is an identifier, where '%%' is still a placeholder.
+    private int $lexDepth      = 0;
     // /**
     //  * @var array{} | array{mixed} $rawSql
     //  */
