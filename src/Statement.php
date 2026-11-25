@@ -543,7 +543,7 @@ class Statement
         $pg = $this->dialect === Dialect::PostgreSQL;
         $sqlite = $this->dialect === Dialect::SQLite;
 
-        for ($i = 0; $i < $len; $i++) {
+        for ($i = 0; $i < $len; ++$i) {
             $char = $text[$i];
             $next = $i + 1 < $len ? $text[$i + 1] : '';
             $emit = $char;     // What this step adds to $out.
@@ -554,11 +554,11 @@ class Statement
                     if ($this->lexIdent && $char === '%' && $next === '%') {
                         // `%%` with bRaw() fills in an identifier, such as a table name.
                         $emit = $this->getNextName('rawSql');
-                        $i++;
+                        ++$i;
                     } elseif ($char === '\\' && $this->lexBackslash) {
                         // Backslash escape: copy it and the escaped character as is.
                         $emit = $char . $next;
-                        $i++;
+                        ++$i;
                     } elseif ($char === $this->lexQuote) {
                         // A doubled quote ('') closes and immediately reopens, which works out the same.
                         $this->lexState = self::LEX_CODE;
@@ -582,7 +582,7 @@ class Statement
                 case self::LEX_BLOCK_COMMENT:
                     if ($char === '*' && $next === '/') {
                         $emit = '*/';
-                        $i++;
+                        ++$i;
 
                         if (--$this->lexDepth === 0) {
                             $this->lexState = self::LEX_CODE;
@@ -590,8 +590,8 @@ class Statement
                     } elseif ($pg && $char === '/' && $next === '*') {
                         // PostgreSQL block comments nest.
                         $emit = '/*';
-                        $i++;
-                        $this->lexDepth++;
+                        ++$i;
+                        ++$this->lexDepth;
                     }
                     break;
 
@@ -602,12 +602,12 @@ class Statement
                         // "??" is PDO's escape for a literal "?" (PHP 7.4+), e.g. the jsonb "?" operator.
                         $emit = '??';
                         $emitShown = '?';
-                        $i++;
+                        ++$i;
                     } elseif ($char === '?') {
                         $emit = $this->placeholderGetName();
                     } elseif ($char === '%' && $next === '%') {
                         $emit = $this->getNextName('rawSql');
-                        $i++;
+                        ++$i;
                     } elseif ($char === "'") {
                         // Backslash escapes: always in MySQL, only in E'...' in PostgreSQL, never in SQLite.
                         $this->startQuote($char, $mysql || ($pg && $this->isEscapeStringPrefix($text, $i)), false);
@@ -631,7 +631,7 @@ class Statement
                         $this->lexState = self::LEX_LINE_COMMENT;
                     } elseif ($char === '/' && $next === '*') {
                         $emit = '/*';
-                        $i++;
+                        ++$i;
                         $this->lexState = self::LEX_BLOCK_COMMENT;
                         $this->lexDepth = 1;
                     }
