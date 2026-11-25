@@ -1,8 +1,8 @@
-[![License: BSD](https://img.shields.io/badge/License-BSD-yellow.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![phpstan enabled](https://img.shields.io/badge/phpstan-enabled-green.svg)](https://github.com/phpstan/phpstan)
-[![Build Status](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/build.png?b=release)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/build-status/)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/quality-score.png?b=release)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=release)
-[![Code Coverage](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/badges/coverage.png?b=release)](https://scrutinizer-ci.com/g/ellisgl/GeekLab-GLPDO2/?branch=release)
+[![CI](https://github.com/ellisgl/GeekLab-GLPDO2/actions/workflows/ci.yml/badge.svg)](https://github.com/ellisgl/GeekLab-GLPDO2/actions/workflows/ci.yml)
+[![Packagist Version](https://img.shields.io/packagist/v/geeklab/glpdo2)](https://packagist.org/packages/geeklab/glpdo2)
+[![PHP Version](https://img.shields.io/packagist/dependency-v/geeklab/glpdo2/php)](https://packagist.org/packages/geeklab/glpdo2)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen)](https://phpstan.org/)
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 GeekLab\GLPDO2
 ============
