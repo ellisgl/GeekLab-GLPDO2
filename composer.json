@@ -2,7 +2,7 @@
     "name"              : "geeklab/glpdo2",
     "description"       : "The easy to use and better PDO Wrapper.",
     "minimum-stability" : "stable",
-    "license"           : "MIT",
+    "license"           : "BSD-3-Clause",
     "keywords"          : [
         "GeekLab"
     ],
