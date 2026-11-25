@@ -30,17 +30,35 @@ jobs:
           --health-interval=5s
           --health-timeout=5s
           --health-retries=20
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: glpdo2
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d glpdo2"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
     env:
       MYSQLHOST: 127.0.0.1
       MYSQLDB: glpdo2
       MYSQLUSER: root
       MYSQLPASS: root
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGDB: glpdo2
+      PGUSER: postgres
+      PGPASS: postgres
     steps:
       - uses: actions/checkout@v4
 
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: pdo_mysql, pdo_pgsql
           coverage: none
 
       - uses: ramsey/composer-install@v3

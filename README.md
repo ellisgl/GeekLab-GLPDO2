@@ -32,6 +32,7 @@ $users = $db->selectRows(
 - [Binding methods](#binding-methods)
 - [Query methods](#query-methods)
 - [Security](#security)
+- [PostgreSQL](#postgresql)
 - [Custom bindings](#custom-bindings)
 - [Limitations](#limitations)
 - [Development](#development)
@@ -69,7 +70,7 @@ With GLPDO2:
 composer require geeklab/glpdo2
 ```
 
-Requires PHP 8.3 or newer with the `pdo_mysql` extension. The bindings are written for MySQL and MariaDB.
+Requires PHP 8.3 or newer, with the `pdo_mysql` extension for MySQL and MariaDB or `pdo_pgsql` for PostgreSQL. PHP 8.4 or newer is recommended for PostgreSQL; see [PostgreSQL](#postgresql).
 
 ## Quick start
 
@@ -178,12 +179,31 @@ try {
 
 Build a query one line at a time with `sql()`, and put each value's binding right after the line with its placeholder. There are two kinds of placeholder:
 
-| Placeholder | Filled by | How the value gets to MySQL |
+| Placeholder | Filled by | How the value gets to the database |
 |---|---|---|
 | `?` | `bStr`, `bInt`, `bBool`, `bBoolInt`, `bDate`, `bDateTime`, `bJSON`, `bLike` | Bound as a PDO parameter. The value is never part of the SQL text. |
-| `%%` | `bStrArr`, `bIntArray`, `bFloat`, `bRaw` | Replaced in the SQL text: by a list of bound parameters (`bStrArr`), by validated numbers (`bIntArray`, `bFloat`), or as is (`bRaw`). |
+| `%%` | `bStrArr`, `bIntArray`, `bFloat`, `bIdent`, `bRaw` | Replaced in the SQL text: by a list of bound parameters (`bStrArr`), by validated numbers (`bIntArray`, `bFloat`), by quoted identifiers (`bIdent`), or as is (`bRaw`). |
 
-Placeholders are filled in order: the first `?` gets the first `?`-type binding, and the first `%%` gets the first `%%`-type binding. Inside quoted strings and comments, `?` and `%%` are plain text, so `WHERE note = 'Why?'` works. Inside backticks, `%%` is still a placeholder, so `` `%%` `` with `bRaw()` can fill in a table name.
+Placeholders are filled in order: the first `?` gets the first `?`-type binding, and the first `%%` gets the first `%%`-type binding. Inside quoted strings and comments, `?` and `%%` are plain text, so `WHERE note = 'Why?'` works. Inside quoted identifiers (backticks for MySQL, double quotes for PostgreSQL), `%%` is still a placeholder, so `` `%%` `` with `bRaw()` can fill in a table name. What counts as a string or comment depends on the database; see [PostgreSQL](#postgresql).
+
+### Quoting table and column names
+
+The examples here quote names with MySQL backticks. To leave quoting to the library, put `%%` where the name goes and bind it with `bIdent()`. The bindings decide how to quote it: backticks for MySQL, double quotes for PostgreSQL.
+
+```php
+$statement
+    ->sql('SELECT %% FROM %% WHERE %% = ?')
+    ->bIdent(['id', 'users.name'])->bIdent('app.users')->bIdent('id')->bInt(5);
+
+// MySQL:      SELECT `id`, `users`.`name` FROM `app`.`users` WHERE `id` = 5
+// PostgreSQL: SELECT "id", "users"."name" FROM "app"."users" WHERE "id" = 5
+```
+
+- Dots split a name into parts, and each part is quoted on its own. A name that contains a dot can't be quoted with `bIdent()`.
+- A `*` as the last part (`users.*`) is left unquoted.
+- Aliases aren't parsed: `'users u'` becomes one quoted name. Write the alias in the SQL instead: `->sql('FROM %% u')`.
+- An array becomes a comma-separated list, for `SELECT` and `INSERT` column lists.
+- A quote character inside a name is doubled, so the name can't break out of its quotes. Even so, don't let users pick any table or column they like. Check names against a list you allow.
 
 ### See the final SQL
 
@@ -220,6 +240,7 @@ Every method returns the `Statement`, so calls chain. Methods with a `$null` par
 | `bLike($value, $ends = false, $starts = false)` | `?` | `%value%` | `$starts = true` gives `value%` (starts with). `$ends = true` gives `%value` (ends with). |
 | `bStrArr(array $values, $default = '')` | `%%` | `:arr0, :arr1, …` | For `IN (%%)`. Each value is its own bound parameter. If `$values` is empty, `$default` is inserted **as is**. |
 | `bIntArray(array $values)` | `%%` | `1, 2, 3` | For `IN (%%)`. Values are cast to integers and duplicates removed. An empty array throws `InvalidArgumentException`. |
+| `bIdent($name)` | `%%` | quoted identifier(s) | Table, column or database name, quoted for your database. `'db.users.id'` quotes each part; an array gives a comma-separated list. See [Quoting table and column names](#quoting-table-and-column-names). |
 | `bRaw($value)` | `%%` | the value, **as is** | For table names, column names and SQL functions you control. **Never pass user input.** |
 | `bind($name, $value, $type = PDO::PARAM_STR)` | `:name` | anything | Binds your own named placeholder. |
 
@@ -254,14 +275,52 @@ Most bindings send values to MySQL as PDO parameters, so they can't change the q
 |---|---|---|
 | `?` bindings, `bStrArr()` values | ✅ Yes | Sent as bound parameters. |
 | `bInt()`, `bFloat()`, `bIntArray()` | ✅ Yes | Validated or cast to numbers before they reach the SQL. |
+| `bIdent()` | ⚠️ Can't inject SQL, but still check | Quoted and escaped, so it can't change the query's structure. It can still name any table or column, so check user-chosen names against a list you allow. |
 | `bStrArr()`'s `$default` | ❌ No | Inserted as is when the array is empty. |
 | `bRaw()` | ❌ No | Inserted as is, by design. |
 
 Versions before 4.0.11 pasted `bStrArr()` values into the SQL without escaping them. Upgrade if you use it.
 
+## PostgreSQL
+
+Build the bindings with `PostgreSQLBindingFactory`. Everything else works as it does for MySQL:
+
+```php
+use GeekLab\GLPDO2\Bindings\PostgreSQL\PostgreSQLBindingFactory;
+
+$pdo = new PDO('pgsql:host=localhost;dbname=app', 'user', 'pass', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+$db = new GLPDO2($pdo);
+$statement = new Statement(PostgreSQLBindingFactory::build());
+
+$tagged = $db->selectRows(
+    $statement
+        ->sql('SELECT %% FROM %%')->bIdent(['id', 'name'])->bIdent('public.users')
+        ->sql('WHERE "settings" ?? ?')->bStr('beta')
+        ->sql('AND "created" >= ?::date')->bDate('2026-01-01')
+);
+```
+
+With it, `sql()` reads the text by PostgreSQL's rules rather than MySQL's:
+
+| | MySQL | PostgreSQL |
+|---|---|---|
+| Strings | `'...'` and `"..."`, with backslash escapes | `'...'` (backslash is a plain character), `E'...'` (backslash escapes), `$$...$$` and `$tag$...$tag$` |
+| Quoted identifiers | `` `...` `` | `"..."` |
+| Comments | `-- ` (needs whitespace after it), `#`, `/* */` | `--`, `/* */` (can nest) |
+| Literal `?` | — | `??`, for the jsonb `?`, `?\|` and `?&` operators |
+
+`#` isn't a comment in PostgreSQL, so operators like `#>` and `#>>` work. For the jsonb operators, write `??` where you mean a literal `?`: `"data" ?? ?` checks whether the bound key exists. PDO turns `??` back into `?`, and `getComputed()` shows it as `?`.
+
+PDO scans the SQL again before sending it, and its scanner doesn't follow all of PostgreSQL's rules:
+
+- **PHP 8.3:** PDO doesn't recognise dollar-quoted strings, so a `?` or `:name` inside `$$...$$` fails with "mixed named and positional parameters". PHP 8.4 and newer handle them.
+- **Nested comments:** PDO ends a comment at the first `*/`. Don't put `?`, `:name` or quotes in the outer comment after a nested one closes.
+
+The value bindings are the same as for MySQL. PostgreSQL is stricter about types, so add a cast where it can't infer one, such as `?::date`, `?::jsonb` or `?::int` in a select list. `bBoolInt()` binds `0` or `1`, which a PostgreSQL `boolean` column won't accept; use `bBool()` there.
+
 ## Custom bindings
 
-The bindings are grouped into five interfaces in `GeekLab\GLPDO2\Bindings`: date/time, logic, numeric, raw and string. `MySQLBindingFactory::build()` creates the MySQL set. To change how a type is bound, implement the matching interface (or extend the MySQL class) and pass your own set in:
+The bindings are grouped into six interfaces in `GeekLab\GLPDO2\Bindings`: date/time, logic, numeric, raw, string and identifier. `MySQLBindingFactory::build()` creates the MySQL set. To change how a type is bound, implement the matching interface (or extend the MySQL class) and pass your own set in:
 
 ```php
 use GeekLab\GLPDO2\Bindings\Bindings;
@@ -278,9 +337,27 @@ $bindings = new Bindings(
 $statement = new Statement($bindings);
 ```
 
+Two more arguments are optional:
+
+- `$identifier`: how `bIdent()` quotes names. It defaults to the dialect's quoting. For other quote characters, use `QuotedIdentifierBindings`, such as `new QuotedIdentifierBindings('[', ']')` for SQL Server.
+- `$dialect`: a `GeekLab\GLPDO2\Dialect`, which decides how `sql()` finds strings and comments. It defaults to `Dialect::MySQL`.
+
+```php
+use GeekLab\GLPDO2\Dialect;
+
+$bindings = new Bindings(
+    new MyDateTimeBindings(),
+    new MySQL\MySQLLogicBindings(),
+    new MySQL\MySQLNumericBindings(),
+    new MySQL\MySQLRawBindings(),
+    new MySQL\MySQLStringBindings(),
+    dialect: Dialect::PostgreSQL
+);
+```
+
 ## Limitations
 
-- **MySQL and MariaDB only.** Other databases may work for simple queries, but aren't tested.
+- **MySQL, MariaDB and PostgreSQL.** Other databases may work for simple queries, but aren't tested. See [PostgreSQL](#postgresql) for limits that come from PDO.
 - **Invalid dates don't throw.** `bDate()` and `bDateTime()` bind `1970-01-01` (`1970-01-01 00:00:00`) for a value that isn't in the expected format, and only accept years 1900–2099. Validate dates first if that matters.
 - **`bLike()` doesn't escape wildcards.** A `%` or `_` in the value acts as a wildcard.
 - **`getComputed()` is approximate.** It shows string values in quotes without escaping them.

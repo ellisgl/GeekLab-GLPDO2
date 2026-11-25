@@ -4,7 +4,9 @@ namespace GeekLab\GLPDO2\Bindings;
 
 use PDO;
 use Exception;
+use InvalidArgumentException;
 use JsonException;
+use GeekLab\GLPDO2\Dialect;
 
 class Bindings
 {
@@ -13,19 +15,39 @@ class Bindings
     protected NumericBindingInterface $numeric;
     protected RawBindingInterface $raw;
     protected StringBindingInterface $string;
+    protected IdentifierBindingInterface $identifier;
+    protected Dialect $dialect;
 
+    /**
+     * $dialect defaults to MySQL, and $identifier to the dialect's quoting,
+     * so code written before they existed keeps working.
+     */
     public function __construct(
         DateTimeBindingInterface $dateTime,
         LogicBindingInterface $logic,
         NumericBindingInterface $numeric,
         RawBindingInterface $raw,
-        StringBindingInterface $string
+        StringBindingInterface $string,
+        ?IdentifierBindingInterface $identifier = null,
+        ?Dialect $dialect = null
     ) {
         $this->dateTime = $dateTime;
         $this->logic = $logic;
         $this->numeric = $numeric;
         $this->raw = $raw;
         $this->string = $string;
+        $this->dialect = $dialect ?? Dialect::MySQL;
+        $this->identifier = $identifier ?? $this->dialect->identifierBindings();
+    }
+
+    /**
+     * The SQL dialect, which Statement::sql() uses to find quoted text and comments.
+     *
+     * @return Dialect
+     */
+    public function getDialect(): Dialect
+    {
+        return $this->dialect;
     }
 
     /**
@@ -127,6 +149,19 @@ class Bindings
     public function bIntArray(array $data): array
     {
         return $this->numeric->bIntArray($data);
+    }
+
+    /**
+     * Quote an identifier (database, table, column), or a list of them, for the SQL text.
+     *
+     * @param string | array<mixed> $value
+     *
+     * @return array{string}
+     * @throws InvalidArgumentException
+     */
+    public function bIdent(string | array $value): array
+    {
+        return $this->identifier->bIdent($value);
     }
 
     /**

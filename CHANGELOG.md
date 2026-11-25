@@ -1,3 +1,11 @@
+Unreleased
+* Added Statement::bIdent() to quote table, column and database names for the database in use, with a '%%' placeholder. 'db.users.id' quotes each part, 'users.*' keeps the star, and an array gives a column list.
+* Added IdentifierBindingInterface, with QuotedIdentifierBindings (any quote characters), MySQLIdentifierBindings (backticks) and PostgreSQLIdentifierBindings (double quotes). Bindings takes it as an optional sixth argument and defaults to MySQL, so existing code doesn't change.
+* Added PostgreSQL support: Dialect::PostgreSQL and PostgreSQLBindingFactory. With it, Statement::sql() reads '...' strings without backslash escapes, E'...' strings, $tag$...$tag$ strings, "..." identifiers, "--" comments without a following space and nesting block comments, and "#" isn't a comment. "??" is a literal "?", for the jsonb ?, ?| and ?& operators.
+* Bindings takes an optional seventh argument, the Dialect, and has getDialect(). It defaults to MySQL.
+* CI runs a PostgreSQL integration test (GLPDO2PostgreSQLTest), skipped locally unless PGHOST is set.
+* Fixed raw ('%%') values containing '$1' or '\' being read as regex back references when they were put into the SQL.
+
 2026-11-25 (4.1.0)
 * Requires PHP 8.3 or newer (was 8.1). CI tests PHP 8.3-8.5.
 * Dev tools updated: PHPUnit 12, PHP_CodeSniffer 4, PHPMD 3. Tests moved from @dataProvider annotations to attributes.
