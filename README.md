@@ -69,7 +69,7 @@ With GLPDO2:
 composer require geeklab/glpdo2
 ```
 
-Requires PHP 8.1 or newer with the `pdo_mysql` extension. The bindings are written for MySQL and MariaDB.
+Requires PHP 8.3 or newer with the `pdo_mysql` extension. The bindings are written for MySQL and MariaDB.
 
 ## Quick start
 
@@ -304,7 +304,7 @@ docker run -d --rm --name glpdo2-mysql -p 3306:3306 \
 MYSQLHOST=127.0.0.1 MYSQLDB=glpdo2 MYSQLUSER=root MYSQLPASS=root composer test
 ```
 
-[CI](.github/workflows/ci.yml) runs the tests on PHP 8.1–8.5 against MySQL 8.4.
+[CI](.github/workflows/ci.yml) runs the tests on PHP 8.3–8.5 against MySQL 8.4.
 
 ## Changelog and license
 

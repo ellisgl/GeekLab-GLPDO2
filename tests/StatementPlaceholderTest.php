@@ -3,6 +3,7 @@
 namespace GeekLab\GLPDO2;
 
 use GeekLab\GLPDO2\Bindings\MySQL\MySQLBindingFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -37,9 +38,7 @@ class StatementPlaceholderTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider untouchedProvider
-     */
+    #[DataProvider('untouchedProvider')]
     public function testPlaceholderCharactersInLiteralsAndCommentsAreLeftAlone(string $sql): void
     {
         $this->assertSame($sql, $this->statement()->sql($sql)->getComputed());

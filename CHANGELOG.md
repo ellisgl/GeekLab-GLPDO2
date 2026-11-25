@@ -1,3 +1,7 @@
+Unreleased
+* Requires PHP 8.3 or newer (was 8.1). CI tests PHP 8.3-8.5.
+* Dev tools updated: PHPUnit 12, PHP_CodeSniffer 4, PHPMD 3. Tests moved from @dataProvider annotations to attributes.
+
 2026-11-25 (4.0.12)
 * Statement::sql() no longer turns '?' and '%%' inside quoted strings or comments into placeholders, so SQL like `WHERE note = 'Why?'` works. Inside backtick identifiers, '%%' is still a placeholder so `%%` with bRaw() can name a table.
 * Two '%%' placeholders in one sql() call now each get their own value. Before, both got the first one: sql('VALUES (%%, %%)')->bFloat(1)->bFloat(2) produced VALUES (1.000, 1.000).
