@@ -196,6 +196,9 @@ class Bindings
      * @param float | bool | int | string $default
      *
      * @return array{float | bool | int | string}
+     *
+     * @deprecated 4.0.11 Statement::bStrArr() no longer calls this; it binds each value as a parameter.
+     *             This method pastes the values into the SQL unescaped, so never use it with untrusted input.
      */
     public function bStrArr(array $values, float | bool | int | string $default = ''): array
     {

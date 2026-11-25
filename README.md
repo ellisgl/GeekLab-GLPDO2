@@ -10,8 +10,9 @@ GeekLab\GLPDO2
 Easy to use PDO Wrapper for PHP >= 8.1
 
 ### Latest
-2022-11-25 (4.0.9)
-* Style fixes.
+2026-11-25 (4.0.11)
+* Security: `bStrArr()` now binds each value as a parameter. Values containing quotes could previously break out of the `IN()` list (SQL injection).
+* `bInt()` no longer turns negative numbers into huge positive ones, and rejects values outside the integer range.
 
 ### Features
 * Bind value by the correct type. E.g. Don't bind as a string where an integer bind should be.
@@ -78,7 +79,7 @@ Statement->bFloat($value, optional integer $decimals, optional boolean $null)<br
 Binds a value aa a float, with decimal place (default of 3) and optional NULL return. Use '%%' instead of '?'.
 
 Statement->bInt($value, optional boolean $null)<br/>
-Bind a value as an integer, whith optional NULL return.
+Binds a value as an integer, with optional NULL return. Floats are truncated toward zero. Throws InvalidArgumentException for values outside the integer range.
 
 Statement->bIntArray(array $data, integer $default)<br/>
 Converts an array of integers to a comma separated values. Will output $default (which is 0) if $data is not an array. Used with IN() statements. Use '%%' instead of '?'.
@@ -93,7 +94,7 @@ Statement->bStr($value, optional boolean $null, optional \PDO::PARAM_* $type)<br
 Binds a value as a string, with optional NULL value return and optional PDO binding type (default \PDO::PARAM_STR).
 
 Statement->bStrArr(array $values, optional string $default)<br/>
-Binds a string converted array for use with IN statements. $default is used when value isn't an array, which the default is NULL. Use '%%' instead of '?'. 
+Binds an array of strings for use with IN() statements. Each value is bound as its own parameter. Use '%%' instead of '?'. If $values is empty, $default (an empty string by default) is inserted raw, unquoted and unescaped, so never pass untrusted input as $default.
 
 Statement->bind($name, $value, \PDO::PARAM_* $type)<br/>
 Binds a value to a named parameter with option PDO binding type (default \PDO::PARAM_STR)

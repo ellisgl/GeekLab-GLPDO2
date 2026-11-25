@@ -5,6 +5,7 @@ namespace GeekLab\GLPDO2;
 use PDO;
 use PDOStatement;
 use Exception;
+use InvalidArgumentException;
 use GeekLab\GLPDO2\Bindings\Bindings;
 
 class Statement
@@ -25,6 +26,7 @@ class Statement
      */
     private array $rawNamed = []; // Raw named placeholders.
     private int $rawPos = 0;      // Position holder for raw statement processing.
+    private int $arrPos = 0;      // Position holder for array element binds (bStrArr).
     // /**
     //  * @var array{} | array{mixed} $rawSql
     //  */
@@ -243,18 +245,40 @@ class Statement
     }
 
     /**
-     * Convert an array into a string and bind it.
-     * Great for IN() statements.
+     * Bind an array of strings for IN() statements. Uses %%
+     * Each value is bound as its own parameter, so values are never pasted into the SQL.
+     * If $values is empty, $default is inserted raw (unquoted and unescaped) instead.
      *
      * @param array{} | array{mixed}      $values
      * @param float | bool | int | string $default
      *
      * @return Statement
+     * @throws InvalidArgumentException
      */
     public function bStrArr(array $values, float | bool | int | string $default = ''): self
     {
-        $binding = $this->bindings->bStrArr($values, $default);
-        $this->rawBind($this->getNextName('raw'), $binding[0]);
+        if (empty($values)) {
+            $this->rawBind($this->getNextName('raw'), $default);
+
+            return $this;
+        }
+
+        $names = [];
+
+        foreach ($values as $value) {
+            if ($value !== null && !is_scalar($value)) {
+                throw new InvalidArgumentException('Can not bind a non-scalar value in a string array.');
+            }
+
+            // NULL becomes an empty string, as it did when the values were imploded.
+            $binding = $this->bindings->bStr($value ?? '');
+            $name = $this->getNextName('arr');
+            $this->bind($name, $binding[0], $binding[1]);
+            $names[] = $name;
+        }
+
+        // The %% placeholder becomes a list of named placeholders, e.g. ":arr0, :arr1".
+        $this->rawBind($this->getNextName('raw'), implode(', ', $names));
 
         return $this;
     }
@@ -311,6 +335,7 @@ class Statement
             'sql' => sprintf(':pos%d', $this->sqlPos++),
             'rawSql' => sprintf(':raw%d', $this->rawPos),
             'raw' => sprintf(':raw%d', $this->rawPos++),
+            'arr' => sprintf(':arr%d', $this->arrPos++),
             default => sprintf(':pos%d', $this->bindPos++),
         };
     }
@@ -452,6 +477,7 @@ class Statement
         $this->sqlPos = 0;
         $this->rawNamed = [];
         $this->rawPos = 0;
+        $this->arrPos = 0;
         // $this->rawSql = [];
 
         return $this;
@@ -466,8 +492,9 @@ class Statement
      */
     public function getComputed(): string
     {
-        // Merge SQL together
-        $sql = implode("\n", $this->SQL);
+        // Merge SQL together, then fill raw placeholders first, as execute() does.
+        // Raw values can contain named placeholders (bStrArr), which are filled below.
+        $sql = $this->rawPlaceholderFill(implode("\n", $this->SQL));
 
         // Replace positioned placeholders with named placeholders (first value).
         // Force to string, in the case of null.

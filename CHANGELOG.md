@@ -1,3 +1,9 @@
+2026-11-25 (4.0.11)
+* Security: Statement::bStrArr() now binds each value as its own parameter. Before, values were pasted into the SQL unescaped, so a value containing a quote could change the query (SQL injection).
+* The binding-layer bStrArr() methods are deprecated; Statement no longer calls them.
+* Statement::getComputed() now fills raw (%%) placeholders before named ones, matching execute().
+* bInt() no longer formats values as unsigned: negative numbers kept their sign wrong (bInt(-5) bound 9223372036854775807). Values outside the integer range, INF and NAN now throw InvalidArgumentException.
+
 2026-11-25 (4.0.10)
 * Added GitHub Actions CI: PHPUnit on PHP 8.1-8.5 against MySQL 8.4, plus PHPStan (level 8) and PSR-12 checks.
 * Upgraded PHPStan to 2.x and fixed the issues it found (redundant checks, bFloat() return type).
