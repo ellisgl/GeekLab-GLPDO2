@@ -96,28 +96,21 @@ class GLPDO2MySQLTest extends TestCase
     ];
 
     /**
-     * @param       $name
-     * @param array $data
-     * @param       $dataName
-     */
-    public function __construct($name = null, array $data = [], $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-        $dbConn = new PDO(
-            'mysql:host=' . getenv('MYSQLHOST') . ';dbname=' . getenv('MYSQLDB'),
-            getenv('MYSQLUSER'),
-            getenv('MYSQLPASS'),
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
-        $this->db = new GLPDO2\GLPDO2($dbConn);
-    }
-
-    /**
+     * Connect and reset the test table before each test.
+     *
      * @return void
      * @throws Exception
      */
     protected function setUp(): void
     {
+        $dbConn = new PDO(
+            'mysql:host=' . getenv('MYSQLHOST') . ';dbname=' . getenv('MYSQLDB'),
+            (string)getenv('MYSQLUSER'),
+            (string)getenv('MYSQLPASS'),
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        );
+        $this->db = new GLPDO2\GLPDO2($dbConn);
+
         $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
 
         $Statement->sql('DROP TABLE IF EXISTS `test`');

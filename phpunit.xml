@@ -1,21 +1,20 @@
-<?xml version="1.0"?>
-<phpunit  backupGlobals="false"
-          backupStaticAttributes="false"
-          colors="true"
-          bootstrap="vendor/autoload.php"
-          convertErrorsToExceptions="true"
-          convertNoticesToExceptions="true"
-          convertWarningsToExceptions="true"
-          processIsolation="false"
-          stopOnFailure="false">
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         failOnWarning="true"
+         failOnDeprecation="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerWarnings="true">
     <testsuites>
         <testsuite name="GLPDO2 Tests">
             <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">./src</directory>
-        </whitelist>
-    </filter>
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
 </phpunit>

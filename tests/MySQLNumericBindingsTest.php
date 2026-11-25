@@ -5,6 +5,7 @@ namespace GeekLab\GLPDO2;
 use GeekLab\GLPDO2\Bindings\MySQL\MySQLNumericBindings;
 use InvalidArgumentException;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -33,9 +34,7 @@ class MySQLNumericBindingsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider intProvider
-     */
+    #[DataProvider('intProvider')]
     public function testBIntBindsIntegers(float | int | string $value, int $expected): void
     {
         $this->assertSame([$expected, PDO::PARAM_INT], (new MySQLNumericBindings())->bInt($value));
@@ -56,9 +55,7 @@ class MySQLNumericBindingsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider outOfRangeProvider
-     */
+    #[DataProvider('outOfRangeProvider')]
     public function testBIntRejectsOutOfRange(float | string $value): void
     {
         $this->expectException(InvalidArgumentException::class);
