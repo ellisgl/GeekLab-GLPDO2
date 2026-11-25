@@ -13,7 +13,8 @@ class MySQLBindingFactory
             new MySQLLogicBindings(),
             new MySQLNumericBindings(),
             new MySQLRawBindings(),
-            new MySQLStringBindings()
+            new MySQLStringBindings(),
+            new MySQLIdentifierBindings()
         );
     }
 }

@@ -19,7 +19,11 @@ class Statement
     /**
      * @var array{} | array{mixed} $SQL
      */
-    private array $SQL = [];      // SQL Statement.
+    private array $SQL = [];      // SQL Statement, as sent to PDO.
+    /**
+     * @var array{} | array{mixed} $shownSQL
+     */
+    private array $shownSQL = []; // SQL Statement for getComputed(). Differs only where "??" stands for "?".
     private int $sqlPos = 0;      // Position holder for statement processing.
     /**
      * @var array{} | array<int|string, mixed> $rawNamed
@@ -29,14 +33,19 @@ class Statement
     private int $rawSqlPos = 0;   // Position holder for '%%' placeholders found by sql().
     private int $arrPos = 0;      // Position holder for array element binds (bStrArr).
 
+    private Dialect $dialect;     // Decides how sql() finds quoted text and comments.
+
     // Where sql() is in the statement text, so '?' and '%%' inside literals and comments are left alone.
     // Kept across sql() calls, since a quoted string can span several of them.
     private const LEX_CODE = 0;
     private const LEX_QUOTED = 1;        // Inside '...', "..." or `...`; $lexQuote holds which.
-    private const LEX_LINE_COMMENT = 2;  // After "-- " or "#", until the end of the line.
-    private const LEX_BLOCK_COMMENT = 3; // Inside /* ... */.
+    private const LEX_LINE_COMMENT = 2;  // After "--" or "#", until the end of the line.
+    private const LEX_BLOCK_COMMENT = 3; // Inside /* ... */; $lexDepth counts nesting (PostgreSQL).
+    private const LEX_DOLLAR = 4;        // Inside a PostgreSQL $tag$...$tag$ string; $lexQuote holds the tag.
     private int $lexState = self::LEX_CODE;
     private string $lexQuote = '';
+    private bool $lexBackslash = false;  // Whether a backslash escapes the next character in this quote.
+    private int $lexDepth = 0;
     // /**
     //  * @var array{} | array{mixed} $rawSql
     //  */
@@ -45,6 +54,7 @@ class Statement
     public function __construct(Bindings $bindings)
     {
         $this->bindings = $bindings;
+        $this->dialect = $bindings->getDialect();
     }
 
     /**
@@ -57,7 +67,12 @@ class Statement
     private function rawPlaceholderFill(string $sql): string
     {
         foreach ($this->rawNamed as $name => $rVal) {
-            $sql = (string)preg_replace('/' . $name . '\b/', $rVal, $sql);
+            // A callback, so '$1' or '\' in the value is inserted as is rather than read as a back reference.
+            $sql = (string)preg_replace_callback(
+                '/' . preg_quote((string)$name, '/') . '\b/',
+                static fn (): string => (string)$rVal,
+                $sql
+            );
         }
 
         return $sql;
@@ -215,6 +230,27 @@ class Statement
     public function bIntArray(array $data): self
     {
         $binding = $this->bindings->bIntArray($data);
+        $this->rawBind($this->getNextName('raw'), $binding[0]);
+
+        return $this;
+    }
+
+    /**
+     * Quote an identifier (database, table, column), or a list of them. Uses %%
+     * Quoting follows the bindings: backticks for MySQL, double quotes for PostgreSQL.
+     * 'db.users.id' quotes each part, 'users.*' leaves the '*' alone,
+     * and an array becomes a comma separated list, e.g. for INSERT column lists.
+     * Quoting makes any name safe to put in the SQL, but still don't let users pick
+     * arbitrary tables or columns: check names against a list you allow.
+     *
+     * @param string | array<mixed> $name
+     *
+     * @return Statement
+     * @throws InvalidArgumentException
+     */
+    public function bIdent(string | array $name): self
+    {
+        $binding = $this->bindings->bIdent($name);
         $this->rawBind($this->getNextName('raw'), $binding[0]);
 
         return $this;
@@ -446,8 +482,14 @@ class Statement
     /**
      * Builds up the SQL parameterized statement.
      * '?' becomes a named placeholder and '%%' a raw placeholder, except inside
-     * quoted strings ('...', "...") and comments (-- , #, /* * /).
-     * Inside backtick identifiers only '%%' is a placeholder, so `%%` with bRaw() can name a table.
+     * string literals and comments, which are found by the bindings' dialect:
+     *
+     * - MySQL: '...' and "..." strings, "-- " (whitespace after it), "#" and /* * / comments.
+     * - PostgreSQL: '...', E'...' and $tag$...$tag$ strings, "--" and nesting /* * / comments.
+     *   "??" is a literal "?", for the jsonb ?, ?| and ?& operators.
+     *
+     * Inside identifier quotes (`...` for MySQL, "..." for PostgreSQL) only '%%' is a placeholder,
+     * so `%%` with bRaw() can name a table.
      *
      * @param string $text
      *
@@ -455,31 +497,38 @@ class Statement
      */
     public function sql(string $text): self
     {
-        $out = '';
+        $out = '';   // For PDO.
+        $shown = ''; // For getComputed().
         $len = strlen($text);
+        $pg = $this->dialect === Dialect::PostgreSQL;
+        $identQuote = $pg ? '"' : '`';
 
         for ($i = 0; $i < $len; $i++) {
             $char = $text[$i];
             $next = $i + 1 < $len ? $text[$i + 1] : '';
+            $emit = $char;     // What this step adds to $out.
+            $emitShown = null; // What it adds to $shown, when that differs.
 
             switch ($this->lexState) {
                 case self::LEX_QUOTED:
-                    if ($this->lexQuote === '`' && $char === '%' && $next === '%') {
+                    if ($this->lexQuote === $identQuote && $char === '%' && $next === '%') {
                         // `%%` with bRaw() fills in an identifier, such as a table name.
-                        $out .= $this->getNextName('rawSql');
+                        $emit = $this->getNextName('rawSql');
                         $i++;
-                        continue 2;
-                    }
-
-                    if ($char === '\\' && $this->lexQuote !== '`') {
+                    } elseif ($char === '\\' && $this->lexBackslash) {
                         // Backslash escape: copy it and the escaped character as is.
-                        $out .= $char . $next;
+                        $emit = $char . $next;
                         $i++;
-                        continue 2;
-                    }
-
-                    if ($char === $this->lexQuote) {
+                    } elseif ($char === $this->lexQuote) {
                         // A doubled quote ('') closes and immediately reopens, which works out the same.
+                        $this->lexState = self::LEX_CODE;
+                    }
+                    break;
+
+                case self::LEX_DOLLAR:
+                    if ($char === '$' && substr($text, $i, strlen($this->lexQuote)) === $this->lexQuote) {
+                        $emit = $this->lexQuote;
+                        $i += strlen($this->lexQuote) - 1;
                         $this->lexState = self::LEX_CODE;
                     }
                     break;
@@ -492,39 +541,61 @@ class Statement
 
                 case self::LEX_BLOCK_COMMENT:
                     if ($char === '*' && $next === '/') {
-                        $out .= '*/';
+                        $emit = '*/';
                         $i++;
-                        $this->lexState = self::LEX_CODE;
-                        continue 2;
+
+                        if (--$this->lexDepth === 0) {
+                            $this->lexState = self::LEX_CODE;
+                        }
+                    } elseif ($pg && $char === '/' && $next === '*') {
+                        // PostgreSQL block comments nest.
+                        $emit = '/*';
+                        $i++;
+                        $this->lexDepth++;
                     }
                     break;
 
                 default:
-                    if ($char === '?') {
-                        $out .= $this->placeholderGetName();
-                        continue 2;
-                    }
+                    $tag = $pg && $char === '$' ? $this->dollarTag($text, $i) : null;
 
-                    if ($char === '%' && $next === '%') {
-                        $out .= $this->getNextName('rawSql');
+                    if ($char === '?' && $pg && $next === '?') {
+                        // "??" is PDO's escape for a literal "?" (PHP 7.4+), e.g. the jsonb "?" operator.
+                        $emit = '??';
+                        $emitShown = '?';
                         $i++;
-                        continue 2;
-                    }
-
-                    if ($char === "'" || $char === '"' || $char === '`') {
-                        $this->lexState = self::LEX_QUOTED;
-                        $this->lexQuote = $char;
-                    } elseif ($char === '#' || ($char === '-' && $next === '-' && $this->isCommentGap($text, $i + 2))) {
+                    } elseif ($char === '?') {
+                        $emit = $this->placeholderGetName();
+                    } elseif ($char === '%' && $next === '%') {
+                        $emit = $this->getNextName('rawSql');
+                        $i++;
+                    } elseif ($char === "'") {
+                        // MySQL always reads backslash escapes in strings. PostgreSQL only in E'...'.
+                        $this->startQuote($char, !$pg || $this->isEscapeStringPrefix($text, $i));
+                    } elseif ($char === '"') {
+                        // A string in MySQL, an identifier in PostgreSQL.
+                        $this->startQuote($char, !$pg);
+                    } elseif ($char === '`' && !$pg) {
+                        $this->startQuote($char, false);
+                    } elseif ($tag !== null) {
+                        $emit = $tag;
+                        $i += strlen($tag) - 1;
+                        $this->lexState = self::LEX_DOLLAR;
+                        $this->lexQuote = $tag;
+                    } elseif (
+                        ($char === '#' && !$pg)
+                        || ($char === '-' && $next === '-' && ($pg || $this->isCommentGap($text, $i + 2)))
+                    ) {
                         $this->lexState = self::LEX_LINE_COMMENT;
                     } elseif ($char === '/' && $next === '*') {
-                        $out .= '/*';
+                        $emit = '/*';
                         $i++;
                         $this->lexState = self::LEX_BLOCK_COMMENT;
-                        continue 2;
+                        $this->lexDepth = 1;
                     }
             }
 
-            $out .= $char;
+            $out .= $emit;
+            $shown .= $emitShown ?? $emit;
         }
 
         // Each sql() call is its own line in getComputed(), so a line comment ends with it.
@@ -533,8 +604,24 @@ class Statement
         }
 
         $this->SQL[] = $out;
+        $this->shownSQL[] = $shown;
 
         return $this;
+    }
+
+    /**
+     * Enter a quoted string or identifier.
+     *
+     * @param string $quote
+     * @param bool   $backslash Whether a backslash escapes the next character inside it.
+     *
+     * @return void
+     */
+    private function startQuote(string $quote, bool $backslash): void
+    {
+        $this->lexState = self::LEX_QUOTED;
+        $this->lexQuote = $quote;
+        $this->lexBackslash = $backslash;
     }
 
     /**
@@ -551,6 +638,55 @@ class Statement
     }
 
     /**
+     * Whether the quote at $pos opens a PostgreSQL E'...' string, where backslash escapes work.
+     *
+     * @param string $text
+     * @param int    $pos position of the opening quote
+     *
+     * @return bool
+     */
+    private function isEscapeStringPrefix(string $text, int $pos): bool
+    {
+        return $pos > 0
+            && ($text[$pos - 1] === 'E' || $text[$pos - 1] === 'e')
+            && ($pos === 1 || !$this->isIdentifierChar($text[$pos - 2]));
+    }
+
+    /**
+     * The PostgreSQL dollar quote tag ($$ or $tag$) starting at $pos, or null if there isn't one.
+     * A "$" inside a name (foo$bar) or a parameter ($1) doesn't start one.
+     *
+     * @param string $text
+     * @param int    $pos position of the "$"
+     *
+     * @return string | null
+     */
+    private function dollarTag(string $text, int $pos): ?string
+    {
+        if ($pos > 0 && $this->isIdentifierChar($text[$pos - 1])) {
+            return null;
+        }
+
+        if (preg_match('/\G\$(?:[A-Za-z_\x80-\xff][A-Za-z0-9_\x80-\xff]*)?\$/', $text, $match, 0, $pos) !== 1) {
+            return null;
+        }
+
+        return $match[0];
+    }
+
+    /**
+     * Whether a character can be part of an unquoted name.
+     *
+     * @param string $char
+     *
+     * @return bool
+     */
+    private function isIdentifierChar(string $char): bool
+    {
+        return $char === '_' || $char === '$' || ctype_alnum($char) || ord($char) >= 0x80;
+    }
+
+    /**
      * Reset / Clear out properties.
      *
      * @return Statement
@@ -560,6 +696,7 @@ class Statement
         $this->bindPos = 0;
         $this->named = [];
         $this->SQL = [];
+        $this->shownSQL = [];
         $this->sqlPos = 0;
         $this->rawNamed = [];
         $this->rawPos = 0;
@@ -567,6 +704,8 @@ class Statement
         $this->arrPos = 0;
         $this->lexState = self::LEX_CODE;
         $this->lexQuote = '';
+        $this->lexBackslash = false;
+        $this->lexDepth = 0;
         // $this->rawSql = [];
 
         return $this;
@@ -583,7 +722,7 @@ class Statement
     {
         // Merge SQL together, then fill raw placeholders first, as execute() does.
         // Raw values can contain named placeholders (bStrArr), which are filled below.
-        $sql = $this->rawPlaceholderFill(implode("\n", $this->SQL));
+        $sql = $this->rawPlaceholderFill(implode("\n", $this->shownSQL));
 
         // Replace positioned placeholders with named placeholders (first value).
         // Force to string, in the case of null.
