@@ -1029,6 +1029,39 @@ class GLPDO2MySQLTest extends TestCase
         $Statement->sql('SELECT 1 WHERE `location` IN (%%);')->bStrArr(['Germany', ['nested']]);
     }
 
+    /**
+     * '?' and '%%' inside string literals reach the database as plain text.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testPlaceholderCharactersInStringLiteralsExecute(): void
+    {
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+
+        $Statement->sql("SELECT 'Why?' AS `q`, ? AS `v`, '100%%' AS `p`;")->bStr('x');
+
+        $this->assertEquals(['q' => 'Why?', 'v' => 'x', 'p' => '100%%'], $this->db->selectRow($Statement));
+    }
+
+    /**
+     * A "-- comment" in one sql() call must not comment out the calls after it.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testLineCommentDoesNotSwallowLaterSqlCalls(): void
+    {
+        $Statement = new GLPDO2\Statement(GLPDO2\Bindings\MySQL\MySQLBindingFactory::build());
+
+        $Statement
+            ->sql('SELECT `name`')
+            ->sql('FROM   `test` -- which location?')
+            ->sql('WHERE  `location` = ?;')->bStr('Estonia');
+
+        $this->assertEquals([['name' => 'Reese']], $this->db->selectRows($Statement));
+    }
+
     // Insert
 
     /**

@@ -1,3 +1,7 @@
+Unreleased
+* Statement::sql() no longer turns '?' and '%%' inside quoted strings or comments into placeholders, so SQL like `WHERE note = 'Why?'` works. Inside backtick identifiers, '%%' is still a placeholder so `%%` with bRaw() can name a table.
+* Statement::execute() joins sql() calls with newlines, as getComputed() already did, so a "-- comment" in one call no longer comments out the calls after it.
+
 2026-11-25 (4.0.11)
 * Security: Statement::bStrArr() now binds each value as its own parameter. Before, values were pasted into the SQL unescaped, so a value containing a quote could change the query (SQL injection).
 * The binding-layer bStrArr() methods are deprecated; Statement no longer calls them.

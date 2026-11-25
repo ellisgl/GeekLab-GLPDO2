@@ -135,7 +135,7 @@ Is there a transaction in progress, returns bool.
 
 ### Misc Methods
 Statement->sql(string $text)<br/>
-Used to build up the SQL parameterized statement.
+Used to build up the SQL parameterized statement. Each call is one line of the statement. '?' and '%%' are placeholders only in SQL code: inside quoted strings ('...', "...") and comments (-- , #, /* */) they are left as plain text, and inside backtick identifiers only '%%' is a placeholder (for table names with bRaw()).
 
 Statement->reset()<br/>
 Used to reset Statement private variables. Usefully for creating multiple queries without having to create a new Statement object.

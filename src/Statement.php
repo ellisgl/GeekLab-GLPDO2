@@ -27,6 +27,15 @@ class Statement
     private array $rawNamed = []; // Raw named placeholders.
     private int $rawPos = 0;      // Position holder for raw statement processing.
     private int $arrPos = 0;      // Position holder for array element binds (bStrArr).
+
+    // Where sql() is in the statement text, so '?' and '%%' inside literals and comments are left alone.
+    // Kept across sql() calls, since a quoted string can span several of them.
+    private const LEX_CODE = 0;
+    private const LEX_QUOTED = 1;        // Inside '...', "..." or `...`; $lexQuote holds which.
+    private const LEX_LINE_COMMENT = 2;  // After "-- " or "#", until the end of the line.
+    private const LEX_BLOCK_COMMENT = 3; // Inside /* ... */.
+    private int $lexState = self::LEX_CODE;
+    private string $lexQuote = '';
     // /**
     //  * @var array{} | array{mixed} $rawSql
     //  */
@@ -350,9 +359,9 @@ class Statement
      */
     public function execute(PDO $PDO): PDOStatement
     {
-        // Prepare the SQL, force to string in case of null.
-        // Then replace raw placements with raw values.
-        $sql = $this->rawPlaceholderFill(implode(' ', $this->SQL));
+        // Join the sql() calls one per line, as getComputed() does, so a "-- comment" in one call
+        // doesn't swallow the calls after it. Then replace raw placements with raw values.
+        $sql = $this->rawPlaceholderFill(implode("\n", $this->SQL));
 
         /** @var PDOStatement $stmt */
         $stmt = $PDO->prepare($sql);
@@ -434,6 +443,9 @@ class Statement
 
     /**
      * Builds up the SQL parameterized statement.
+     * '?' becomes a named placeholder and '%%' a raw placeholder, except inside
+     * quoted strings ('...', "...") and comments (-- , #, /* * /).
+     * Inside backtick identifiers only '%%' is a placeholder, so `%%` with bRaw() can name a table.
      *
      * @param string $text
      *
@@ -441,27 +453,99 @@ class Statement
      */
     public function sql(string $text): self
     {
-        // Replace positioned placeholders with named placeholders (first value).
-        // Force to string, in the case of null.
-        $text = (string)preg_replace_callback(
-            '/\?/m',
-            function () {
-                return $this->placeholderGetName();
-            },
-            $text
-        );
+        $out = '';
+        $len = strlen($text);
 
-        $text = (string)preg_replace_callback(
-            '/%%/m',
-            function () {
-                return $this->getNextName('rawSql');
-            },
-            $text
-        );
+        for ($i = 0; $i < $len; $i++) {
+            $char = $text[$i];
+            $next = $i + 1 < $len ? $text[$i + 1] : '';
 
-        $this->SQL[] = $text;
+            switch ($this->lexState) {
+                case self::LEX_QUOTED:
+                    if ($this->lexQuote === '`' && $char === '%' && $next === '%') {
+                        // `%%` with bRaw() fills in an identifier, such as a table name.
+                        $out .= $this->getNextName('rawSql');
+                        $i++;
+                        continue 2;
+                    }
+
+                    if ($char === '\\' && $this->lexQuote !== '`') {
+                        // Backslash escape: copy it and the escaped character as is.
+                        $out .= $char . $next;
+                        $i++;
+                        continue 2;
+                    }
+
+                    if ($char === $this->lexQuote) {
+                        // A doubled quote ('') closes and immediately reopens, which works out the same.
+                        $this->lexState = self::LEX_CODE;
+                    }
+                    break;
+
+                case self::LEX_LINE_COMMENT:
+                    if ($char === "\n") {
+                        $this->lexState = self::LEX_CODE;
+                    }
+                    break;
+
+                case self::LEX_BLOCK_COMMENT:
+                    if ($char === '*' && $next === '/') {
+                        $out .= '*/';
+                        $i++;
+                        $this->lexState = self::LEX_CODE;
+                        continue 2;
+                    }
+                    break;
+
+                default:
+                    if ($char === '?') {
+                        $out .= $this->placeholderGetName();
+                        continue 2;
+                    }
+
+                    if ($char === '%' && $next === '%') {
+                        $out .= $this->getNextName('rawSql');
+                        $i++;
+                        continue 2;
+                    }
+
+                    if ($char === "'" || $char === '"' || $char === '`') {
+                        $this->lexState = self::LEX_QUOTED;
+                        $this->lexQuote = $char;
+                    } elseif ($char === '#' || ($char === '-' && $next === '-' && $this->isCommentGap($text, $i + 2))) {
+                        $this->lexState = self::LEX_LINE_COMMENT;
+                    } elseif ($char === '/' && $next === '*') {
+                        $out .= '/*';
+                        $i++;
+                        $this->lexState = self::LEX_BLOCK_COMMENT;
+                        continue 2;
+                    }
+            }
+
+            $out .= $char;
+        }
+
+        // Each sql() call is its own line in getComputed(), so a line comment ends with it.
+        if ($this->lexState === self::LEX_LINE_COMMENT) {
+            $this->lexState = self::LEX_CODE;
+        }
+
+        $this->SQL[] = $out;
 
         return $this;
+    }
+
+    /**
+     * MySQL only treats "--" as a comment when whitespace (or the end of the text) follows it.
+     *
+     * @param string $text
+     * @param int    $pos position just after "--"
+     *
+     * @return bool
+     */
+    private function isCommentGap(string $text, int $pos): bool
+    {
+        return $pos >= strlen($text) || in_array($text[$pos], [' ', "\t", "\r", "\n"], true);
     }
 
     /**
@@ -478,6 +562,8 @@ class Statement
         $this->rawNamed = [];
         $this->rawPos = 0;
         $this->arrPos = 0;
+        $this->lexState = self::LEX_CODE;
+        $this->lexQuote = '';
         // $this->rawSql = [];
 
         return $this;
