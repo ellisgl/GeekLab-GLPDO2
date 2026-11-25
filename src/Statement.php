@@ -10,8 +10,16 @@ use GeekLab\GLPDO2\Bindings\Bindings;
 
 class Statement
 {
-    private Bindings $bindings;   // Parameter bindings.
-    private int $bindPos = 0;     // Position for SQL binds.
+    // Where sql() is in the statement text, so '?' and '%%' inside literals and comments are left alone.
+    // Kept across sql() calls, since a quoted string can span several of them.
+    private const LEX_CODE          = 0;
+    private const LEX_QUOTED        = 1; // Inside a quoted string or identifier; $lexQuote holds its closing quote.
+    private const LEX_LINE_COMMENT  = 2; // After "--" or "#", until the end of the line.
+    private const LEX_BLOCK_COMMENT = 3; // Inside /* ... */; $lexDepth counts nesting (PostgreSQL).
+    private const LEX_DOLLAR        = 4; // Inside a PostgreSQL $tag$...$tag$ string; $lexQuote holds the tag.
+
+    private Bindings $bindings;    // Parameter bindings.
+    private int      $bindPos = 0; // Position for SQL binds.
     /**
      * @var array{} | array{mixed} $named
      */
@@ -24,29 +32,22 @@ class Statement
      * @var array{} | array{mixed} $shownSQL
      */
     private array $shownSQL = []; // SQL Statement for getComputed(). Differs only where "??" stands for "?".
-    private int $sqlPos = 0;      // Position holder for statement processing.
+    private int   $sqlPos   = 0;  // Position holder for statement processing.
     /**
      * @var array{} | array<int|string, mixed> $rawNamed
      */
     private array $rawNamed = []; // Raw named placeholders.
-    private int $rawPos = 0;      // Position for raw binds (bRaw, bFloat, bIntArray, bStrArr).
-    private int $rawSqlPos = 0;   // Position holder for '%%' placeholders found by sql().
-    private int $arrPos = 0;      // Position holder for array element binds (bStrArr).
+    private int $rawPos     = 0;  // Position for raw binds (bRaw, bFloat, bIntArray, bStrArr).
+    private int $rawSqlPos  = 0;  // Position holder for '%%' placeholders found by sql().
+    private int $arrPos     = 0;   // Position holder for array element binds (bStrArr).
 
     private Dialect $dialect;     // Decides how sql() finds quoted text and comments.
-
-    // Where sql() is in the statement text, so '?' and '%%' inside literals and comments are left alone.
-    // Kept across sql() calls, since a quoted string can span several of them.
-    private const LEX_CODE = 0;
-    private const LEX_QUOTED = 1;        // Inside a quoted string or identifier; $lexQuote holds its closing quote.
-    private const LEX_LINE_COMMENT = 2;  // After "--" or "#", until the end of the line.
-    private const LEX_BLOCK_COMMENT = 3; // Inside /* ... */; $lexDepth counts nesting (PostgreSQL).
-    private const LEX_DOLLAR = 4;        // Inside a PostgreSQL $tag$...$tag$ string; $lexQuote holds the tag.
-    private int $lexState = self::LEX_CODE;
-    private string $lexQuote = '';
-    private bool $lexBackslash = false;  // Whether a backslash escapes the next character in this quote.
-    private bool $lexIdent = false;      // Whether this quote is an identifier, where '%%' is still a placeholder.
-    private int $lexDepth = 0;
+    
+    private int    $lexState     = self::LEX_CODE;
+    private string $lexQuote     = '';
+    private bool   $lexBackslash = false;  // Whether a backslash escapes the next character in this quote.
+    private bool   $lexIdent     = false;      // Whether this quote is an identifier, where '%%' is still a placeholder.
+    private int    $lexDepth     = 0;
     // /**
     //  * @var array{} | array{mixed} $rawSql
     //  */
@@ -55,7 +56,7 @@ class Statement
     public function __construct(Bindings $bindings)
     {
         $this->bindings = $bindings;
-        $this->dialect = $bindings->getDialect();
+        $this->dialect  = $bindings->getDialect();
     }
 
     /**
@@ -112,7 +113,6 @@ class Statement
     }
 
     // Bind types
-
     /**
      * Bind a boolean value as bool, with NULL option.
      *
@@ -200,7 +200,6 @@ class Statement
 
         return $this;
     }
-
 
     /**
      * Bind an integer with optional NULL.
@@ -464,7 +463,6 @@ class Statement
         }
 
         $stmt->execute();
-
         return $stmt;
     }
 
@@ -536,18 +534,18 @@ class Statement
      */
     public function sql(string $text): self
     {
-        $out = '';   // For PDO.
-        $shown = ''; // For getComputed().
-        $len = strlen($text);
-        $mysql = $this->dialect === Dialect::MySQL;
-        $pg = $this->dialect === Dialect::PostgreSQL;
+        $out    = '';   // For PDO.
+        $shown  = ''; // For getComputed().
+        $len    = strlen($text);
+        $mysql  = $this->dialect === Dialect::MySQL;
+        $pg     = $this->dialect === Dialect::PostgreSQL;
         $sqlite = $this->dialect === Dialect::SQLite;
 
         for ($i = 0; $i < $len; ++$i) {
-            $char = $text[$i];
-            $next = $i + 1 < $len ? $text[$i + 1] : '';
-            $emit = $char;     // What this step adds to $out.
-            $emitShown = null; // What it adds to $shown, when that differs.
+            $char      = $text[$i];
+            $next      = $i + 1 < $len ? $text[$i + 1] : '';
+            $emit      = $char;                              // What this step adds to $out.
+            $emitShown = null;                               // What it adds to $shown, when that differs.
 
             switch ($this->lexState) {
                 case self::LEX_QUOTED:
@@ -692,9 +690,10 @@ class Statement
      */
     private function isEscapeStringPrefix(string $text, int $pos): bool
     {
-        return $pos > 0
-            && ($text[$pos - 1] === 'E' || $text[$pos - 1] === 'e')
-            && ($pos === 1 || !$this->isIdentifierChar($text[$pos - 2]));
+        return
+            $pos > 0 &&
+            ($text[$pos - 1] === 'E' || $text[$pos - 1] === 'e') &&
+            ($pos === 1 || !$this->isIdentifierChar($text[$pos - 2]));
     }
 
     /**
@@ -738,21 +737,20 @@ class Statement
      */
     public function reset(): self
     {
-        $this->bindPos = 0;
-        $this->named = [];
-        $this->SQL = [];
-        $this->shownSQL = [];
-        $this->sqlPos = 0;
-        $this->rawNamed = [];
-        $this->rawPos = 0;
-        $this->rawSqlPos = 0;
-        $this->arrPos = 0;
-        $this->lexState = self::LEX_CODE;
-        $this->lexQuote = '';
+        $this->bindPos      = 0;
+        $this->named        = [];
+        $this->SQL          = [];
+        $this->shownSQL     = [];
+        $this->sqlPos       = 0;
+        $this->rawNamed     = [];
+        $this->rawPos       = 0;
+        $this->rawSqlPos    = 0;
+        $this->arrPos       = 0;
+        $this->lexState     = self::LEX_CODE;
+        $this->lexQuote     = '';
         $this->lexBackslash = false;
-        $this->lexIdent = false;
-        $this->lexDepth = 0;
-        // $this->rawSql = [];
+        $this->lexIdent     = false;
+        $this->lexDepth     = 0;
 
         return $this;
     }
