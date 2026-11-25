@@ -257,6 +257,42 @@ class Statement
     }
 
     /**
+     * Bind an unsigned integer (0 to 18446744073709551615), with NULL option. Uses %%
+     * Values above PHP_INT_MAX can be given as integer strings. Floats are truncated toward zero.
+     * Negative values, non-numeric strings and values above the maximum throw InvalidArgumentException.
+     *
+     * @param float | bool | int | string | null $value
+     * @param bool                               $null
+     *
+     * @return Statement
+     * @throws InvalidArgumentException
+     */
+    public function bUInt(float | bool | int | string | null $value = null, bool $null = false): self
+    {
+        $binding = $this->bindings->bUInt($value, $null);
+        $this->rawBind($this->getNextName('raw'), $binding[0]);
+
+        return $this;
+    }
+
+    /**
+     * Convert an array of unsigned integers to comma separated values. Uses %%
+     * Great for IN() statements. Every value is validated as bUInt() does, and duplicates are removed.
+     *
+     * @param array{} | array{mixed} $data
+     *
+     * @return Statement
+     * @throws InvalidArgumentException
+     */
+    public function bUIntArray(array $data): self
+    {
+        $binding = $this->bindings->bUIntArray($data);
+        $this->rawBind($this->getNextName('raw'), $binding[0]);
+
+        return $this;
+    }
+
+    /**
      * Bind an object or JSON string to a string
      *
      * @param mixed $value

@@ -6,6 +6,7 @@ use PDO;
 use Exception;
 use InvalidArgumentException;
 use JsonException;
+use GeekLab\GLPDO2\Bindings\MySQL\MySQLNumericBindings;
 use GeekLab\GLPDO2\Dialect;
 
 class Bindings
@@ -149,6 +150,47 @@ class Bindings
     public function bIntArray(array $data): array
     {
         return $this->numeric->bIntArray($data);
+    }
+
+    /**
+     * Bind an unsigned integer (0 to 18446744073709551615), with NULL option. Uses %%
+     *
+     * @param float | bool | int | string | null $value
+     * @param bool                               $null
+     *
+     * @return array{string}
+     * @throws InvalidArgumentException
+     */
+    public function bUInt(float | bool | int | string | null $value = null, bool $null = false): array
+    {
+        return $this->unsigned()->bUInt($value, $null);
+    }
+
+    /**
+     * Convert an array of unsigned integers to comma separated values. Uses %%
+     * Great for IN() statements.
+     *
+     * @param array{} | array{mixed} $data
+     *
+     * @return array{string}
+     * @throws InvalidArgumentException
+     */
+    public function bUIntArray(array $data): array
+    {
+        return $this->unsigned()->bUIntArray($data);
+    }
+
+    /**
+     * The numeric bindings, if they handle unsigned integers. Otherwise the MySQL ones, which work
+     * for any database since they only validate the value.
+     *
+     * @return UnsignedNumericBindingInterface
+     */
+    private function unsigned(): UnsignedNumericBindingInterface
+    {
+        return $this->numeric instanceof UnsignedNumericBindingInterface
+            ? $this->numeric
+            : new MySQLNumericBindings();
     }
 
     /**

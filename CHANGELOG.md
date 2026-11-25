@@ -1,6 +1,8 @@
 Unreleased
 * Added Statement::bIdent() to quote table, column and database names for the database in use, with a '%%' placeholder. 'db.users.id' quotes each part, 'users.*' keeps the star, and an array gives a column list.
 * Added IdentifierBindingInterface, with QuotedIdentifierBindings (any quote characters), MySQLIdentifierBindings (backticks) and PostgreSQLIdentifierBindings (double quotes). Bindings takes it as an optional sixth argument and defaults to MySQL, so existing code doesn't change.
+* Added Statement::bUInt() and bUIntArray() for unsigned integers, 0 to 18446744073709551615 (BIGINT UNSIGNED). They reject negative values, accept values above PHP_INT_MAX as integer strings, and use '%%' so the value is compared exactly. A string parameter would be compared as a float in MySQL expressions and IN() lists.
+* Added UnsignedNumericBindingInterface (extends NumericBindingInterface), implemented by MySQLNumericBindings. Numeric bindings that don't implement it fall back to the MySQL versions for bUInt() and bUIntArray().
 * Added PostgreSQL support: Dialect::PostgreSQL and PostgreSQLBindingFactory. With it, Statement::sql() reads '...' strings without backslash escapes, E'...' strings, $tag$...$tag$ strings, "..." identifiers, "--" comments without a following space and nesting block comments, and "#" isn't a comment. "??" is a literal "?", for the jsonb ?, ?| and ?& operators.
 * Bindings takes an optional seventh argument, the Dialect, and has getDialect(). It defaults to MySQL.
 * CI runs a PostgreSQL integration test (GLPDO2PostgreSQLTest), skipped locally unless PGHOST is set.
