@@ -1,3 +1,9 @@
+2026-11-25 (4.0.10)
+* Added GitHub Actions CI: PHPUnit on PHP 8.1-8.5 against MySQL 8.4, plus PHPStan (level 8) and PSR-12 checks.
+* Upgraded PHPStan to 2.x and fixed the issues it found (redundant checks, bFloat() return type).
+* composer.json license corrected to BSD-3-Clause to match LICENSE.BSD.
+* Replaced Scrutinizer badges with CI and Packagist badges.
+
 2022-11-25 (4.0.9)
 * Style fixes.
 
