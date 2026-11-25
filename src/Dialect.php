@@ -5,6 +5,7 @@ namespace GeekLab\GLPDO2;
 use GeekLab\GLPDO2\Bindings\IdentifierBindingInterface;
 use GeekLab\GLPDO2\Bindings\MySQL\MySQLIdentifierBindings;
 use GeekLab\GLPDO2\Bindings\PostgreSQL\PostgreSQLIdentifierBindings;
+use GeekLab\GLPDO2\Bindings\SQLite\SQLiteIdentifierBindings;
 
 /**
  * The SQL dialect a statement is written in.
@@ -25,6 +26,12 @@ enum Dialect
     case PostgreSQL;
 
     /**
+     * SQLite 3: '...' strings without backslash escapes, "...", `...` and [...] identifiers,
+     * "--" and non-nesting block comments.
+     */
+    case SQLite;
+
+    /**
      * The identifier quoting this dialect uses.
      *
      * @return IdentifierBindingInterface
@@ -34,6 +41,7 @@ enum Dialect
         return match ($this) {
             self::MySQL => new MySQLIdentifierBindings(),
             self::PostgreSQL => new PostgreSQLIdentifierBindings(),
+            self::SQLite => new SQLiteIdentifierBindings(),
         };
     }
 }
