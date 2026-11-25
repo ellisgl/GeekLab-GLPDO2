@@ -24,7 +24,7 @@ class MySQLLogicBindings implements LogicBindingInterface
             return [null, PDO::PARAM_NULL];
         }
 
-        if ($value === null && $null === false) {
+        if ($value === null) {
             throw new InvalidArgumentException('Can not bind NULL in boolean spot.');
         }
 
@@ -47,7 +47,7 @@ class MySQLLogicBindings implements LogicBindingInterface
             return [null, PDO::PARAM_NULL];
         }
 
-        if ($value === null && $null === false) {
+        if ($value === null) {
             throw new InvalidArgumentException('Can not bind NULL in boolean spot.');
         }
 

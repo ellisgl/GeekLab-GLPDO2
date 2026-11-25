@@ -13,7 +13,7 @@ interface NumericBindingInterface
      * @param int                         $decimals
      * @param bool                        $null
      *
-     * @return array{?string}
+     * @return array{string}
      * @throws Exception
      */
     public function bFloat(float | int | string | null $value = null, int $decimals = 3, bool $null = false): array;
