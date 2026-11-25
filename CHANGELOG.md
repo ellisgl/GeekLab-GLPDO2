@@ -1,4 +1,5 @@
 Unreleased
+* Requires PHP 8.4 or newer (was 8.3). PHP 8.4's PDO understands PostgreSQL dollar-quoted strings, so a "?" or ":name" inside one no longer fails. CI tests PHP 8.4-8.5.
 * Added SQLite 3 support: Dialect::SQLite and SQLiteBindingFactory. With it, Statement::sql() reads '...' strings without backslash escapes, "...", `...` and [...] identifiers, "--" comments without a following space and non-nesting block comments, and "#" isn't a comment.
 * Added SQLiteNumericBindings: bUInt() and bUIntArray() stop at 9223372036854775807, SQLite's integer maximum, since SQLite reads larger numbers as floats and can't tell them apart.
 * MySQLNumericBindings' unsigned maximum is now the protected UINT_MAX constant, so subclasses can lower it.

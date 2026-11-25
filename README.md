@@ -71,7 +71,7 @@ With GLPDO2:
 composer require geeklab/glpdo2
 ```
 
-Requires PHP 8.3 or newer, with the `pdo_mysql` extension for MySQL and MariaDB, `pdo_pgsql` for PostgreSQL, or `pdo_sqlite` for SQLite 3. PHP 8.4 or newer is recommended for PostgreSQL; see [PostgreSQL](#postgresql).
+Requires PHP 8.4 or newer, with the `pdo_mysql` extension for MySQL and MariaDB, `pdo_pgsql` for PostgreSQL, or `pdo_sqlite` for SQLite 3.
 
 ## Quick start
 
@@ -330,10 +330,7 @@ With it, `sql()` reads the text by PostgreSQL's rules rather than MySQL's:
 
 `#` isn't a comment in PostgreSQL, so operators like `#>` and `#>>` work. For the jsonb operators, write `??` where you mean a literal `?`: `"data" ?? ?` checks whether the bound key exists. PDO turns `??` back into `?`, and `getComputed()` shows it as `?`.
 
-PDO scans the SQL again before sending it, and its scanner doesn't follow all of PostgreSQL's rules:
-
-- **PHP 8.3:** PDO doesn't recognise dollar-quoted strings, so a `?` or `:name` inside `$$...$$` fails with "mixed named and positional parameters". PHP 8.4 and newer handle them.
-- **Nested comments:** PDO ends a comment at the first `*/`. Don't put `?`, `:name` or quotes in the outer comment after a nested one closes.
+PDO scans the SQL again before sending it, and its scanner doesn't nest comments: it ends a comment at the first `*/`. Don't put `?`, `:name` or quotes in the outer comment after a nested one closes.
 
 The value bindings are the same as for MySQL. PostgreSQL is stricter about types, so add a cast where it can't infer one, such as `?::date`, `?::jsonb` or `?::int` in a select list. `bBoolInt()` binds `0` or `1`, which a PostgreSQL `boolean` column won't accept; use `bBool()` there.
 
@@ -365,7 +362,7 @@ With it, `sql()` reads the text by SQLite's rules:
 
 `#` and `$` have no special meaning, and `??` is two placeholders, since SQLite has no `?` operator.
 
-SQLite handles PDO placeholders itself, so none of the PDO limits described under [PostgreSQL](#postgresql) apply. SQLite has no boolean type: `bBool()` stores `1` or `0`. Dates from `bDate()` and `bDateTime()` are stored as text, which SQLite's date functions read. For unsigned integers above 2⁶³−1, see [Unsigned integers](#unsigned-integers).
+SQLite handles PDO placeholders itself, so the PDO limit described under [PostgreSQL](#postgresql) doesn't apply. SQLite has no boolean type: `bBool()` stores `1` or `0`. Dates from `bDate()` and `bDateTime()` are stored as text, which SQLite's date functions read. For unsigned integers above 2⁶³−1, see [Unsigned integers](#unsigned-integers).
 
 ## Custom bindings
 
@@ -406,7 +403,7 @@ $bindings = new Bindings(
 
 ## Limitations
 
-- **MySQL, MariaDB, PostgreSQL and SQLite 3.** Other databases may work for simple queries, but aren't tested. See [PostgreSQL](#postgresql) for limits that come from PDO.
+- **MySQL, MariaDB, PostgreSQL and SQLite 3.** Other databases may work for simple queries, but aren't tested. See [PostgreSQL](#postgresql) for a limit that comes from PDO.
 - **Invalid dates don't throw.** `bDate()` and `bDateTime()` bind `1970-01-01` (`1970-01-01 00:00:00`) for a value that isn't in the expected format, and only accept years 1900–2099. Validate dates first if that matters.
 - **`bLike()` doesn't escape wildcards.** A `%` or `_` in the value acts as a wildcard.
 - **`getComputed()` is approximate.** It shows string values in quotes without escaping them.
@@ -430,7 +427,7 @@ docker run -d --rm --name glpdo2-mysql -p 3306:3306 \
 MYSQLHOST=127.0.0.1 MYSQLDB=glpdo2 MYSQLUSER=root MYSQLPASS=root composer test
 ```
 
-[CI](.github/workflows/ci.yml) runs the tests on PHP 8.3–8.5 against MySQL 8.4.
+[CI](.github/workflows/ci.yml) runs the tests on PHP 8.4–8.5 against MySQL 8.4, PostgreSQL 17 and SQLite.
 
 ## Changelog and license
 

@@ -4,7 +4,6 @@ namespace GeekLab\GLPDO2;
 
 use GeekLab\GLPDO2\Bindings\PostgreSQL\PostgreSQLBindingFactory;
 use PDO;
-use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -111,10 +110,6 @@ class GLPDO2PostgreSQLTest extends TestCase
         $this->assertSame(['a' => 'Why?', 'b' => "it's?", 'c' => 1, 'd' => 7], $row);
     }
 
-    /**
-     * Before PHP 8.4, PDO's own scanner doesn't know dollar quoting and reads a "?" in one as a placeholder.
-     */
-    #[RequiresPhp('>= 8.4.0')]
     public function testDollarQuotedStringKeepsItsQuestionMarks(): void
     {
         $row = $this->db->selectRow(
@@ -124,7 +119,6 @@ class GLPDO2PostgreSQLTest extends TestCase
         $this->assertSame(['a' => 'ok? %%', 'b' => "it's? \$\$ ", 'c' => 7], $row);
     }
 
-    #[RequiresPhp('>= 8.4.0')]
     public function testDollarQuotedFunctionBody(): void
     {
         $this->db->queryUpdate(
