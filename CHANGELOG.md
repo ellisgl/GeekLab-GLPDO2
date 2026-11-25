@@ -1,17 +1,15 @@
-Unreleased
-* Requires PHP 8.4 or newer (was 8.3). PHP 8.4's PDO understands PostgreSQL dollar-quoted strings, so a "?" or ":name" inside one no longer fails. CI tests PHP 8.4-8.5.
+2026-11-25 (5.0.0)
+* Breaking: requires PHP 8.4 or newer (was 8.3). PHP 8.4's PDO understands PostgreSQL dollar-quoted strings, so a "?" or ":name" inside one no longer fails. CI tests PHP 8.4-8.5.
+* Added PostgreSQL support: Dialect::PostgreSQL and PostgreSQLBindingFactory. With it, Statement::sql() reads '...' strings without backslash escapes, E'...' strings, $tag$...$tag$ strings, "..." identifiers, "--" comments without a following space and nesting block comments, and "#" isn't a comment. "??" is a literal "?", for the jsonb ?, ?| and ?& operators.
 * Added SQLite 3 support: Dialect::SQLite and SQLiteBindingFactory. With it, Statement::sql() reads '...' strings without backslash escapes, "...", `...` and [...] identifiers, "--" comments without a following space and non-nesting block comments, and "#" isn't a comment.
-* Added SQLiteNumericBindings: bUInt() and bUIntArray() stop at 9223372036854775807, SQLite's integer maximum, since SQLite reads larger numbers as floats and can't tell them apart.
-* MySQLNumericBindings' unsigned maximum is now the protected UINT_MAX constant, so subclasses can lower it.
-* CI installs pdo_sqlite; GLPDO2SQLiteTest runs against an in-memory database.
+* Bindings takes two optional arguments: the identifier bindings (sixth) and the Dialect (seventh), and has getDialect(). Both default to MySQL, so existing code doesn't change.
 * Added Statement::bIdent() to quote table, column and database names for the database in use, with a '%%' placeholder. 'db.users.id' quotes each part, 'users.*' keeps the star, and an array gives a column list.
-* Added IdentifierBindingInterface, with QuotedIdentifierBindings (any quote characters), MySQLIdentifierBindings (backticks) and PostgreSQLIdentifierBindings (double quotes). Bindings takes it as an optional sixth argument and defaults to MySQL, so existing code doesn't change.
+* Added IdentifierBindingInterface, with QuotedIdentifierBindings (any quote characters), MySQLIdentifierBindings (backticks), PostgreSQLIdentifierBindings and SQLiteIdentifierBindings (double quotes).
 * Added Statement::bUInt() and bUIntArray() for unsigned integers, 0 to 18446744073709551615 (BIGINT UNSIGNED). They reject negative values, accept values above PHP_INT_MAX as integer strings, and use '%%' so the value is compared exactly. A string parameter would be compared as a float in MySQL expressions and IN() lists.
 * Added UnsignedNumericBindingInterface (extends NumericBindingInterface), implemented by MySQLNumericBindings. Numeric bindings that don't implement it fall back to the MySQL versions for bUInt() and bUIntArray().
-* Added PostgreSQL support: Dialect::PostgreSQL and PostgreSQLBindingFactory. With it, Statement::sql() reads '...' strings without backslash escapes, E'...' strings, $tag$...$tag$ strings, "..." identifiers, "--" comments without a following space and nesting block comments, and "#" isn't a comment. "??" is a literal "?", for the jsonb ?, ?| and ?& operators.
-* Bindings takes an optional seventh argument, the Dialect, and has getDialect(). It defaults to MySQL.
-* CI runs a PostgreSQL integration test (GLPDO2PostgreSQLTest), skipped locally unless PGHOST is set.
+* Added SQLiteNumericBindings: bUInt() and bUIntArray() stop at 9223372036854775807, SQLite's integer maximum, since SQLite reads larger numbers as floats and can't tell them apart. MySQLNumericBindings' unsigned maximum is the protected UINT_MAX constant, so subclasses can lower it.
 * Fixed raw ('%%') values containing '$1' or '\' being read as regex back references when they were put into the SQL.
+* CI runs PostgreSQL (GLPDO2PostgreSQLTest, skipped locally unless PGHOST is set) and SQLite (GLPDO2SQLiteTest, in memory) integration tests alongside MySQL.
 
 2026-11-25 (4.1.0)
 * Requires PHP 8.3 or newer (was 8.1). CI tests PHP 8.3-8.5.
